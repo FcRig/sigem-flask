@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
-@bp.route('/teste1', methods=['GET'])
+@bp.route('/teste', methods=['GET'])
 def teste():
     return 'Backend funcionando!'
 
@@ -23,7 +23,7 @@ def login():
     data = request.get_json()
     user = User.query.filter_by(username=data['username']).first()
     if user and user.check_password(data['password']):
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify(access_token=access_token)
     return jsonify({'msg': 'Usuário ou senha inválidos'}), 401
 
