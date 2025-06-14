@@ -34,7 +34,6 @@ def me():
     user = User.query.get(user_id)
     return jsonify(username=user.username, email=user.email)
 
-
 @bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_users():
