@@ -33,3 +33,14 @@ def me():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     return jsonify(username=user.username, email=user.email)
+
+
+@bp.route('/users', methods=['GET'])
+@jwt_required()
+def get_users():
+    users = User.query.all()
+    user_list = [
+        {"id": u.id, "username": u.username, "email": u.email}
+        for u in users
+    ]
+    return jsonify(user_list), 200
