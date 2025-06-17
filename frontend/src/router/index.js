@@ -4,8 +4,8 @@ import Register from '../views/Register.vue';
 import Home from '../views/Home.vue';
 
 const routes = [
-  { path: '/login', component: Login },
-  { path: '/register', component: Register },
+  { path: '/login', component: Login, meta: { layout: 'auth' } },
+  { path: '/register', component: Register, meta: { layout: 'auth' } },
   { path: '/', component: Home }
 ];
 
