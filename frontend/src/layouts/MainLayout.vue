@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <AppSidebar v-model="drawer" />
+    <AppSidebar v-if="user" v-model="drawer" />
     <AppHeader
       :user="user"
       @logout="logout"
