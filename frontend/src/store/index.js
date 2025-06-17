@@ -2,8 +2,9 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
+    user: null
     user: null,
-    token: localStorage.getItem('token') || null
+    token: localStorage.getItem('token')
   },
   mutations: {
     setUser(state, user) {
@@ -11,7 +12,11 @@ export default createStore({
     },
     setToken(state, token) {
       state.token = token;
-      localStorage.setItem('token', token);
+      if (token) {
+        localStorage.setItem('token', token);
+      } else {
+        localStorage.removeItem('token');
+      }
     },
     logout(state) {
       state.user = null;
