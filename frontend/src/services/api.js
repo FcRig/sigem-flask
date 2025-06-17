@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000'
+  // Base URL points to the Flask backend. Adjust the port if needed.
+  baseURL: 'http://localhost:5000/api'
 });
 
 export function registerUser(payload) {
