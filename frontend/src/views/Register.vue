@@ -28,6 +28,15 @@
                 ></v-text-field>
 
                 <v-text-field
+                  v-model="email"
+                  label="Email"
+                  prepend-inner-icon="mdi-email"
+                  outlined
+                  :rules="[rules.required, rules.email]"
+                  class="mb-4"
+                ></v-text-field>
+
+                <v-text-field
                   v-model="senha"
                   label="Senha"
                   prepend-inner-icon="mdi-lock"
@@ -69,6 +78,7 @@ import { ref } from 'vue'
 import { registerUser } from '../services/api'
 
 const cpf = ref('')
+const email = ref('')
 const senha = ref('')
 const formRef = ref(null)
 const formValid = ref(false)
@@ -76,6 +86,7 @@ const year = new Date().getFullYear()
 
 const rules = {
   required: v => !!v || 'Campo obrigatório',
+  email: v => /.+@.+\..+/.test(String(v)) || 'E-mail inválido',
   cpf: v => {
     const digits = String(v || '').replace(/\D/g, '')
     return digits.length === 11 || 'CPF inválido'
@@ -84,7 +95,7 @@ const rules = {
 
 function register() {
   if (!formRef.value?.validate()) return
-  registerUser({ username: cpf.value, password: senha.value })
+  registerUser({ username: cpf.value, email: email.value, password: senha.value })
     .then(() => console.log('registrado'))
     .catch(err => console.error(err))
 }
