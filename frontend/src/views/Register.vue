@@ -1,8 +1,7 @@
 <template>
-  <v-app>
-    <v-main class="fill-height">
-      <v-container fluid>
-        <v-row align="center" justify="center">
+  <div class="fill-height">
+    <v-container fluid>
+      <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="4">
             <v-card class="pa-6 rounded-lg elevation-8">
               <div class="logo-container">
@@ -62,8 +61,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-main>
-  </v-app>
+    </div>
 </template>
 
 <script setup>
