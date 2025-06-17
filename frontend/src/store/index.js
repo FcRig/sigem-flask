@@ -3,6 +3,7 @@ import { setToken, fetchCurrentUser as apiFetchCurrentUser } from '../services/a
 
 export default createStore({
   state: {
+    user: null
     user: null,
     token: localStorage.getItem('token') || null
   },
@@ -47,5 +48,6 @@ export default createStore({
       }
     }
   },
+  actions: {},
   modules: {}
 });
