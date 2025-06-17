@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
+    user: null
     user: null,
     token: localStorage.getItem('token')
   },
