@@ -1,6 +1,6 @@
 <template>
   <v-app-bar color="primary" dark>
-    <v-app-bar-nav-icon @click="$emit('toggle-drawer')" />
+    <v-app-bar-nav-icon v-if="user" @click="$emit('toggle-drawer')" />
     <v-toolbar-title>Sistema de Gestão do Núcleo de Multas - SIGEM</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-menu v-if="user" offset-y>
