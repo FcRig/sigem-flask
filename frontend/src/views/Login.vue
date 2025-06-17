@@ -66,6 +66,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { loginUser } from '../services/api'
 
 const cpf = ref('')
@@ -73,6 +75,8 @@ const senha = ref('')
 const formRef = ref(null)
 const formValid = ref(false)
 const year = new Date().getFullYear()
+const router = useRouter()
+const store = useStore()
 
 const rules = {
   required: v => !!v || 'Campo obrigatório',
@@ -82,11 +86,16 @@ const rules = {
   }
 }
 
-function login() {
+async function login() {
   if (!formRef.value?.validate()) return
-  loginUser({ username: cpf.value, password: senha.value })
-    .then(() => console.log('logado'))
-    .catch(err => console.error(err))
+  try {
+    const { data } = await loginUser({ username: cpf.value, password: senha.value })
+    store.commit('setToken', data.access_token)
+    await store.dispatch('fetchCurrentUser')
+    router.push('/')
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
 
