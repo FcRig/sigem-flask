@@ -66,7 +66,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { loginUser } from '../services/api'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { loginUser, getCurrentUser } from '../services/api'
+
+const store = useStore()
+const router = useRouter()
 
 const cpf = ref('')
 const senha = ref('')
@@ -85,7 +90,15 @@ const rules = {
 function login() {
   if (!formRef.value?.validate()) return
   loginUser({ username: cpf.value, password: senha.value })
-    .then(() => console.log('logado'))
+    .then(res => {
+      const token = res.data.access_token
+      store.commit('setToken', token)
+      return getCurrentUser()
+    })
+    .then(res => {
+      store.commit('setUser', res.data)
+      router.push('/')
+    })
     .catch(err => console.error(err))
 }
 </script>
