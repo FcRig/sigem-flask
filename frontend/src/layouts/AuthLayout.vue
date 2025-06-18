@@ -11,18 +11,11 @@
   </v-app>
 </template>
 
-<script>
-import AppHeader from '../components/Header.vue';
-import AppFooter from '../components/Footer.vue';
-import AppModal from '../components/AppModal.vue';
+<script setup>
+import { ref } from 'vue'
+import AppHeader from '../components/Header.vue'
+import AppFooter from '../components/Footer.vue'
+import AppModal from '../components/AppModal.vue'
 
-export default {
-  name: 'AuthLayout',
-  components: { AppHeader, AppFooter, AppModal },
-  data() {
-    return {
-      showModal: false
-    };
-  }
-};
+const showModal = ref(false)
 </script>

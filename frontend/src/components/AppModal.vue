@@ -6,24 +6,19 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'AppModal',
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
-    model: {
-      get() {
-        return this.modelValue;
-      },
-      set(val) {
-        this.$emit('update:modelValue', val);
-      }
-    }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
   }
-};
+})
+const emit = defineEmits(['update:modelValue'])
+
+const model = computed({
+  get: () => props.modelValue,
+  set: val => emit('update:modelValue', val)
+})
 </script>
