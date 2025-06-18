@@ -24,4 +24,20 @@ export function fetchCurrentUser() {
   return api.get('api/auth/me');
 }
 
+export function fetchUsers() {
+  return api.get('/auth/users');
+}
+
+export function fetchUser(id) {
+  return api.get(`/auth/users/${id}`);
+}
+
+export function updateUser(id, payload) {
+  return api.put(`/auth/users/${id}`, payload);
+}
+
+export function deleteUser(id) {
+  return api.delete(`/auth/users/${id}`);
+}
+
 export default api;

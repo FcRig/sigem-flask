@@ -11,9 +11,9 @@
       </template>
       <v-list>
         <v-list-item>
-          <v-list-item-title>{{ user.name }}</v-list-item-title>
+          <v-list-item-title>{{ user.username }}</v-list-item-title>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link :to="'/admin/users'">
           <v-list-item-title>Administradores</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$emit('logout')">

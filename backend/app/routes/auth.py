@@ -43,3 +43,34 @@ def get_users():
         for u in users
     ]
     return jsonify(user_list), 200
+
+
+@bp.route('/users/<int:user_id>', methods=['GET'])
+@jwt_required()
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify(id=user.id, username=user.username, email=user.email), 200
+
+
+@bp.route('/users/<int:user_id>', methods=['PUT'])
+@jwt_required()
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json() or {}
+    if 'username' in data:
+        user.username = data['username']
+    if 'email' in data:
+        user.email = data['email']
+    if data.get('password'):
+        user.set_password(data['password'])
+    db.session.commit()
+    return jsonify({'msg': 'Usuário atualizado com sucesso.'}), 200
+
+
+@bp.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'msg': 'Usuário removido com sucesso.'}), 200
