@@ -6,14 +6,14 @@
           <v-card class="pa-6 rounded-lg elevation-8">
             <div class="logo-container">
               <img
-                src="https://auto.prf.gov.br/assets/logo-PRF.8d8f70ac.svg"
+                src="@/assets/prf_logo.png"
                 alt="Logo PRF"
                 class="logo"
               />
             </div>
 
             <v-card-title class="text-h6 text-center mb-4">
-              Sistema de Gestão do Núcleo de Multas – SIGEM
+              <p>Sistema de Gestão do Núcleo de Multas <br>SIGEM</p>
             </v-card-title>
 
             <v-form ref="formRef" v-model="formValid">
@@ -46,8 +46,8 @@
                 Entrar
               </v-btn>
 
-              <router-link to="/register">
-                <v-btn color="secondary" variant="text" block>
+              <router-link to="/register" class="registrar">
+                <v-btn color="secondary" variant="text" block >
                   Criar conta
                 </v-btn>
               </router-link>
@@ -136,5 +136,9 @@ async function login() {
 .logo {
   width: 140px;
   height: auto;
+}
+
+.registrar {
+  text-decoration: none;
 }
 </style>

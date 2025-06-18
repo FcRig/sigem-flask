@@ -1,10 +1,18 @@
 <template>
-  <v-navigation-drawer v-model="drawer">
-    <v-list nav>
-      <v-list-item link to="/">
-        <v-list-item-title>Home</v-list-item-title>
+  <v-navigation-drawer v-model="drawer" color="#f5f5f5">    
+      <v-list-item dense>
+        <v-list-item-content >              
+          <v-list-item-title class="text-h6">
+            PRF
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            NPI-RS
+          </v-list-item-subtitle>
+        </v-list-item-content>
       </v-list-item>
-    </v-list>
+      
+      <v-divider></v-divider> 
+    
   </v-navigation-drawer>
 </template>
 

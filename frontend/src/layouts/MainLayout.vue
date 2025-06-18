@@ -24,7 +24,7 @@ import AppSidebar from '../components/Sidebar.vue'
 const store = useStore()
 const router = useRouter()
 
-const drawer = ref(false)
+const drawer = ref(true)
 const user = computed(() => store.state.user)
 
 function logout() {

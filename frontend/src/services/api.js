@@ -13,15 +13,15 @@ export function setToken(token) {
 }
 
 export function registerUser(payload) {
-  return api.post('api/auth/register', payload);
+  return api.post('/api/auth/register', payload);
 }
 
 export function loginUser(payload) {
-  return api.post('api/auth/login', payload);
+  return api.post('/api/auth/login', payload);
 }
 
 export function fetchCurrentUser() {
-  return api.get('api/auth/me');
+  return api.get('/api/auth/me');
 }
 
 export function fetchUsers() {
