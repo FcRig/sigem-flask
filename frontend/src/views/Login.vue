@@ -53,6 +53,25 @@
               </router-link>
             </v-form>
 
+            <v-snackbar
+              v-model="successSnackbar"
+              color="success"
+              location="top right"
+              timeout="1500"
+              @update:model-value="val => { if (!val) router.push('/') }"
+            >
+              {{ successMsg }}
+            </v-snackbar>
+
+            <v-snackbar
+              v-model="errorSnackbar"
+              color="error"
+              location="top right"
+              timeout="3000"
+            >
+              {{ errorMsg }}
+            </v-snackbar>
+
             <v-card-subtitle class="text-center mt-6 caption">
               © {{ year }} Polícia Rodoviária Federal
             </v-card-subtitle>
@@ -76,6 +95,10 @@ const formValid = ref(false)
 const year = new Date().getFullYear()
 const router = useRouter()
 const store = useStore()
+const successSnackbar = ref(false)
+const successMsg = ref('')
+const errorSnackbar = ref(false)
+const errorMsg = ref('')
 
 const rules = {
   required: v => !!v || 'Campo obrigatório',
@@ -88,8 +111,11 @@ async function login() {
     const { data } = await loginUser({ email: email.value, password: senha.value })
     store.commit('setToken', data.access_token)
     await store.dispatch('fetchCurrentUser')
-    router.push('/')
+    successMsg.value = 'Login realizado com sucesso'
+    successSnackbar.value = true
   } catch (err) {
+    errorMsg.value = err.response?.data?.msg || 'Erro ao fazer login'
+    errorSnackbar.value = true
     console.error(err)
   }
 }

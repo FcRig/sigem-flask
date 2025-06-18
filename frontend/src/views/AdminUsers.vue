@@ -45,6 +45,7 @@
           <v-btn color="primary" :disabled="!formValid" @click="saveEdit">Salvar</v-btn>
         </v-card-actions>
       </v-card>
+<<<<<<< codex/add-v-snackbar-for-operation-results
   </v-dialog>
   <v-snackbar
     v-model="snackbar"
@@ -54,6 +55,21 @@
   >
     {{ snackbarMsg }}
   </v-snackbar>
+=======
+    </v-dialog>
+
+    <v-dialog v-model="deleteDialog" max-width="400">
+      <v-card>
+        <v-card-title>Remover usuário</v-card-title>
+        <v-card-text>Confirma remover este usuário?</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="deleteDialog = false">Cancelar</v-btn>
+          <v-btn color="red" @click="confirmDelete">Remover</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+>>>>>>> main
   </v-container>
 </template>
 
@@ -63,6 +79,8 @@ import { fetchUsers, updateUser, deleteUser } from '../services/api'
 
 const users = ref([])
 const editDialog = ref(false)
+const deleteDialog = ref(false)
+const deleteId = ref(null)
 const editUser = ref({ id: null, username: '', email: '', administrador: false, password: '' })
 const formRef = ref(null)
 const formValid = ref(false)
@@ -118,6 +136,7 @@ async function saveEdit() {
   }
 }
 
+<<<<<<< codex/add-v-snackbar-for-operation-results
 async function removeUser(item) {
   if (!confirm('Confirma remover este usuário?')) return
   try {
@@ -131,6 +150,17 @@ async function removeUser(item) {
     snackbarColor.value = 'error'
     snackbar.value = true
   }
+=======
+function removeUser(item) {
+  deleteId.value = item.id
+  deleteDialog.value = true
+}
+
+async function confirmDelete() {
+  await deleteUser(deleteId.value)
+  deleteDialog.value = false
+  await loadUsers()
+>>>>>>> main
 }
 
 onMounted(loadUsers)
