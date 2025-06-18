@@ -18,12 +18,11 @@
 
             <v-form ref="formRef" v-model="formValid">
               <v-text-field
-                v-model="cpf"
-                label="CPF"
-                prepend-inner-icon="mdi-account"
-                maxlength="14"
+                v-model="email"
+                label="Email"
+                prepend-inner-icon="mdi-email"
                 outlined
-                :rules="[rules.required, rules.cpf]"
+                :rules="[rules.required, rules.email]"
                 class="mb-4"
               ></v-text-field>
 
@@ -70,7 +69,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { loginUser } from '../services/api'
 
-const cpf = ref('')
+const email = ref('')
 const senha = ref('')
 const formRef = ref(null)
 const formValid = ref(false)
@@ -80,16 +79,13 @@ const store = useStore()
 
 const rules = {
   required: v => !!v || 'Campo obrigatório',
-  cpf: v => {
-    const digits = String(v || '').replace(/\D/g, '')
-    return digits.length === 11 || 'CPF inválido'
-  }
+  email: v => /.+@.+\..+/.test(String(v)) || 'E-mail inválido'
 }
 
 async function login() {
   if (!formRef.value?.validate()) return
   try {
-    const { data } = await loginUser({ username: cpf.value, password: senha.value })
+    const { data } = await loginUser({ email: email.value, password: senha.value })
     store.commit('setToken', data.access_token)
     await store.dispatch('fetchCurrentUser')
     router.push('/')
