@@ -59,13 +59,21 @@
                   <v-btn color="secondary" variant="text" block>
                     Já possui conta? Entrar
                   </v-btn>
-                </router-link>
-              </v-form>
-              <v-snackbar
-                v-model="snackbar"
-                color="success"
-                location="top right"
-                timeout="1500"
+              </router-link>
+            </v-form>
+            <v-snackbar
+              v-model="errorSnackbar"
+              color="error"
+              location="top right"
+              timeout="3000"
+            >
+              {{ errorMsg }}
+            </v-snackbar>
+            <v-snackbar
+              v-model="snackbar"
+              color="success"
+              location="top right"
+              timeout="1500"
                 @update:model-value="val => { if (!val) router.push('/login') }"
               >
                 {{ snackbarMsg }}
@@ -94,6 +102,8 @@ const formValid = ref(false)
 const year = new Date().getFullYear()
 const snackbar = ref(false)
 const snackbarMsg = ref('')
+const errorSnackbar = ref(false)
+const errorMsg = ref('')
 const router = useRouter()
 
 const rules = {
@@ -101,14 +111,17 @@ const rules = {
   email: v => /.+@.+\..+/.test(String(v)) || 'E-mail inválido'
 }
 
-function register() {
+async function register() {
   if (!formRef.value?.validate()) return
-  registerUser({ username: username.value, email: email.value, password: senha.value })
-    .then(() => {
-      snackbarMsg.value = 'Cadastro realizado com sucesso'
-      snackbar.value = true
-    })
-    .catch(err => console.error(err))
+  try {
+    await registerUser({ username: username.value, email: email.value, password: senha.value })
+    snackbarMsg.value = 'Cadastro realizado com sucesso'
+    snackbar.value = true
+  } catch (err) {
+    errorMsg.value = err?.response?.data?.msg || err?.response?.data || err.message || 'Erro ao cadastrar usuário'
+    errorSnackbar.value = true
+    console.error(err)
+  }
 }
 </script>
 
