@@ -19,10 +19,15 @@
         </v-btn>
       </template>
       <v-list>        
-        <v-list-item v-if="user.administrador" link :to="'/admin/users'">
+        <v-list-item
+          v-if="user.administrador"
+          link
+          :to="'/admin/users'"
+          prepend-icon="mdi-cog"
+        >
           <v-list-item-title>Administração</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$emit('logout')">
+        <v-list-item prepend-icon="mdi-logout" @click="$emit('logout')">
           <v-list-item-title>Logout</v-list-item-title>
         </v-list-item>
       </v-list>
