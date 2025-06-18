@@ -45,18 +45,16 @@
           <v-btn color="primary" :disabled="!formValid" @click="saveEdit">Salvar</v-btn>
         </v-card-actions>
       </v-card>
-<<<<<<< codex/add-v-snackbar-for-operation-results
-  </v-dialog>
-  <v-snackbar
-    v-model="snackbar"
-    :color="snackbarColor"
-    location="top right"
-    timeout="1500"
-  >
-    {{ snackbarMsg }}
-  </v-snackbar>
-=======
     </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar"
+      :color="snackbarColor"
+      location="top right"
+      timeout="1500"
+    >
+      {{ snackbarMsg }}
+    </v-snackbar>
 
     <v-dialog v-model="deleteDialog" max-width="400">
       <v-card>
@@ -69,7 +67,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
->>>>>>> main
   </v-container>
 </template>
 
@@ -136,31 +133,24 @@ async function saveEdit() {
   }
 }
 
-<<<<<<< codex/add-v-snackbar-for-operation-results
-async function removeUser(item) {
-  if (!confirm('Confirma remover este usuário?')) return
-  try {
-    await deleteUser(item.id)
-    snackbarMsg.value = 'Usuário removido com sucesso'
-    snackbarColor.value = 'success'
-    snackbar.value = true
-    await loadUsers()
-  } catch (err) {
-    snackbarMsg.value = err.response?.data?.msg || 'Erro ao remover usuário'
-    snackbarColor.value = 'error'
-    snackbar.value = true
-  }
-=======
 function removeUser(item) {
   deleteId.value = item.id
   deleteDialog.value = true
 }
 
 async function confirmDelete() {
-  await deleteUser(deleteId.value)
-  deleteDialog.value = false
-  await loadUsers()
->>>>>>> main
+  try {
+    await deleteUser(deleteId.value)
+    snackbarMsg.value = 'Usuário removido com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    deleteDialog.value = false
+    await loadUsers()
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao remover usuário'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 
 onMounted(loadUsers)
