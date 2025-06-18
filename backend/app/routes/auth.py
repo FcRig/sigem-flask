@@ -45,6 +45,32 @@ def get_users():
     return jsonify(user_list), 200
 
 
+@bp.route('/users', methods=['POST'])
+@jwt_required()
+def create_user():
+    current_user = User.query.get(get_jwt_identity())
+    if not current_user or not current_user.administrador:
+        return jsonify({'msg': 'Acesso não autorizado'}), 403
+
+    data = request.get_json() or {}
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    administrador = data.get('administrador', False)
+
+    if not username or not email or not password:
+        return jsonify({'msg': 'Dados inválidos'}), 400
+
+    if User.query.filter((User.email == email) | (User.username == username)).first():
+        return jsonify({'msg': 'Usuário já existe'}), 400
+
+    user = User(username=username, email=email, administrador=administrador)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'msg': 'Usuário criado com sucesso.'}), 201
+
+
 @bp.route('/users/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user(user_id):
