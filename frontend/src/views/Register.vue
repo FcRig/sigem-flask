@@ -61,7 +61,13 @@
                   </v-btn>
                 </router-link>
               </v-form>
-              <v-snackbar v-model="snackbar" color="success">
+              <v-snackbar
+                v-model="snackbar"
+                color="success"
+                location="top right"
+                timeout="1500"
+                @update:model-value="val => { if (!val) router.push('/login') }"
+              >
                 {{ snackbarMsg }}
               </v-snackbar>
 
@@ -76,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { registerUser } from '../services/api'
 
@@ -90,6 +96,12 @@ const snackbar = ref(false)
 const snackbarMsg = ref('')
 const router = useRouter()
 
+watch(snackbar, val => {
+  if (!val && snackbarMsg.value) {
+    router.push('/login')
+  }
+})
+
 const rules = {
   required: v => !!v || 'Campo obrigatório',
   email: v => /.+@.+\..+/.test(String(v)) || 'E-mail inválido'
@@ -101,7 +113,6 @@ function register() {
     .then(() => {
       snackbarMsg.value = 'Cadastro realizado com sucesso'
       snackbar.value = true
-      setTimeout(() => router.push('/login'), 1500)
     })
     .catch(err => console.error(err))
 }
