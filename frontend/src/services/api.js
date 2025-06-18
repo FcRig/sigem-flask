@@ -25,19 +25,19 @@ export function fetchCurrentUser() {
 }
 
 export function fetchUsers() {
-  return api.get('/auth/users');
+  return api.get('api/auth/users');
 }
 
 export function fetchUser(id) {
-  return api.get(`/auth/users/${id}`);
+  return api.get(`api/auth/users/${id}`);
 }
 
 export function updateUser(id, payload) {
-  return api.put(`/auth/users/${id}`, payload);
+  return api.put(`api/auth/users/${id}`, payload);
 }
 
 export function deleteUser(id) {
-  return api.delete(`/auth/users/${id}`);
+  return api.delete(`api/auth/users/${id}`);
 }
 
 export default api;
