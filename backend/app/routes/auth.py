@@ -10,9 +10,9 @@ def teste():
     return 'Backend funcionando!'
 
 @bp.route('/register', methods=['POST'])
-def register():    
+def register():
     data = request.get_json()
-    user = User(username=data['username'], email=data['email'])
+    user = User(username=data['username'], email=data['email'], administrador=data.get('administrador', False))
     user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
@@ -32,14 +32,14 @@ def login():
 def me():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    return jsonify(username=user.username, email=user.email)
+    return jsonify(username=user.username, email=user.email, administrador=user.administrador)
 
 @bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_users():
     users = User.query.all()
     user_list = [
-        {"id": u.id, "username": u.username, "email": u.email}
+        {"id": u.id, "username": u.username, "email": u.email, "administrador": u.administrador}
         for u in users
     ]
     return jsonify(user_list), 200
@@ -49,7 +49,7 @@ def get_users():
 @jwt_required()
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
-    return jsonify(id=user.id, username=user.username, email=user.email), 200
+    return jsonify(id=user.id, username=user.username, email=user.email, administrador=user.administrador), 200
 
 
 @bp.route('/users/<int:user_id>', methods=['PUT'])
@@ -61,6 +61,8 @@ def update_user(user_id):
         user.username = data['username']
     if 'email' in data:
         user.email = data['email']
+    if 'administrador' in data:
+        user.administrador = data['administrador']
     if data.get('password'):
         user.set_password(data['password'])
     db.session.commit()

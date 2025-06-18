@@ -13,7 +13,7 @@
         <v-list-item>
           <v-list-item-title>{{ user.username }}</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="'/admin/users'">
+        <v-list-item v-if="user.administrador" link :to="'/admin/users'">
           <v-list-item-title>Administradores</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$emit('logout')">

@@ -3,6 +3,9 @@
     <v-card>
       <v-card-title>Usuários cadastrados</v-card-title>
       <v-data-table :items="users" :headers="headers" item-key="id">
+        <template #item.administrador="{ item }">
+          {{ item.administrador ? 'Sim' : 'Não' }}
+        </template>
         <template #item.actions="{ item }">
           <v-btn icon="mdi-pencil" size="small" @click="openEdit(item)" />
           <v-btn icon="mdi-delete" size="small" color="red" @click="removeUser(item)" />
@@ -25,6 +28,10 @@
               label="Email"
               :rules="[rules.required, rules.email]"
             ></v-text-field>
+            <v-checkbox
+              v-model="editUser.administrador"
+              label="Administrador"
+            ></v-checkbox>
             <v-text-field
               v-model="editUser.password"
               label="Senha"
@@ -48,7 +55,7 @@ import { fetchUsers, updateUser, deleteUser } from '../services/api'
 
 const users = ref([])
 const editDialog = ref(false)
-const editUser = ref({ id: null, username: '', email: '', password: '' })
+const editUser = ref({ id: null, username: '', email: '', administrador: false, password: '' })
 const formRef = ref(null)
 const formValid = ref(false)
 
@@ -56,6 +63,7 @@ const headers = [
   { title: 'ID', key: 'id' },
   { title: 'Usuário', key: 'username' },
   { title: 'Email', key: 'email' },
+  { title: 'Administrador', key: 'administrador' },
   { title: 'Ações', key: 'actions', sortable: false },
 ]
 
@@ -70,13 +78,14 @@ async function loadUsers() {
 }
 
 function openEdit(item) {
-  editUser.value = { id: item.id, username: item.username, email: item.email, password: '' }
+  editUser.value = { id: item.id, username: item.username, email: item.email, administrador: item.administrador, password: '' }
   editDialog.value = true
 }
 
 async function saveEdit() {
   if (!formRef.value?.validate()) return
   const payload = { username: editUser.value.username, email: editUser.value.email }
+  payload.administrador = editUser.value.administrador
   if (editUser.value.password) payload.password = editUser.value.password
   await updateUser(editUser.value.id, payload)
   editDialog.value = false
