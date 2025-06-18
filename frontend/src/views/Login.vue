@@ -83,8 +83,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { loginUser } from '../services/api'
 
@@ -94,6 +94,7 @@ const formRef = ref(null)
 const formValid = ref(false)
 const year = new Date().getFullYear()
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const successSnackbar = ref(false)
 const successMsg = ref('')
@@ -119,6 +120,30 @@ async function login() {
     console.error(err)
   }
 }
+
+function handleQueryError(error) {
+  if (error === 'unauthorized') {
+    errorMsg.value = 'Faça login para continuar'
+  } else if (error === 'not_found') {
+    errorMsg.value = 'Página não encontrada'
+  } else {
+    errorMsg.value = 'Erro desconhecido'
+  }
+  errorSnackbar.value = true
+}
+
+onMounted(() => {
+  if (route.query.error) {
+    handleQueryError(route.query.error)
+  }
+})
+
+watch(
+  () => route.query.error,
+  val => {
+    if (val) handleQueryError(val)
+  }
+)
 </script>
 
 <style scoped>
