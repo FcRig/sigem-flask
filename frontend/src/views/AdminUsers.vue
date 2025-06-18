@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>Usuários cadastrados</v-card-title>
+      <v-card-title class="d-flex justify-space-between align-center">
+        Usuários cadastrados
+        <v-btn color="primary" size="small" @click="openCreate">Novo usuário</v-btn>
+      </v-card-title>
       <v-data-table :items="users" :headers="headers" item-key="id">
         <template #item.administrador="{ item }">
           {{ item.administrador ? 'Sim' : 'Não' }}
@@ -44,6 +47,41 @@
           <v-btn text @click="editDialog = false">Cancelar</v-btn>
           <v-btn color="primary" :disabled="!formValid" @click="saveEdit">Salvar</v-btn>
         </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+    <v-dialog v-model="createDialog" max-width="400">
+      <v-card>
+        <v-card-title>Novo usuário</v-card-title>
+        <v-card-text>
+          <v-form ref="createFormRef" v-model="createFormValid">
+            <v-text-field
+              v-model="newUser.username"
+              label="Usuário"
+              :rules="[rules.required]"
+            ></v-text-field>
+            <v-text-field
+              v-model="newUser.email"
+              label="Email"
+              :rules="[rules.required, rules.email]"
+            ></v-text-field>
+            <v-text-field
+              v-model="newUser.password"
+              label="Senha"
+              type="password"
+              :rules="[rules.required]"
+            ></v-text-field>
+            <v-checkbox
+              v-model="newUser.administrador"
+              label="Administrador"
+            ></v-checkbox>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="createDialog = false">Cancelar</v-btn>
+          <v-btn color="primary" :disabled="!createFormValid" @click="saveCreate">Salvar</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-snackbar
@@ -70,15 +108,19 @@
 
 <script setup>
   import { ref, onMounted } from 'vue'
-  import { fetchUsers, updateUser, deleteUser } from '../services/api'
+  import { fetchUsers, updateUser, deleteUser, createUser } from '../services/api'
 
   const users = ref([])
   const editDialog = ref(false)
+  const createDialog = ref(false)
   const deleteDialog = ref(false)
   const deleteId = ref(null)
   const editUser = ref({ id: null, username: '', email: '', administrador: false, password: '' })
+  const newUser = ref({ username: '', email: '', password: '', administrador: false })
   const formRef = ref(null)
   const formValid = ref(false)
+  const createFormRef = ref(null)
+  const createFormValid = ref(false)
   const snackbar = ref(false)
   const snackbarMsg = ref('')
   const snackbarColor = ref('success')
@@ -102,6 +144,30 @@
       users.value = data
     } catch (err) {
       snackbarMsg.value = err.response?.data?.msg || 'Erro ao obter usuários'
+      snackbarColor.value = 'error'
+      snackbar.value = true
+    }
+  }
+
+  function openCreate() {
+    newUser.value = { username: '', email: '', password: '', administrador: false }
+    createFormValid.value = false
+    createDialog.value = true
+  }
+
+  async function saveCreate() {
+    if (!createFormRef.value?.validate()) return
+    const payload = { username: newUser.value.username, email: newUser.value.email, password: newUser.value.password }
+    payload.administrador = newUser.value.administrador
+    try {
+      await createUser(payload)
+      snackbarMsg.value = 'Usuário criado com sucesso'
+      snackbarColor.value = 'success'
+      snackbar.value = true
+      createDialog.value = false
+      await loadUsers()
+    } catch (err) {
+      snackbarMsg.value = err.response?.data?.msg || 'Erro ao criar usuário'
       snackbarColor.value = 'error'
       snackbar.value = true
     }
