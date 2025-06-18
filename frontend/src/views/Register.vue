@@ -61,6 +61,15 @@
                   </v-btn>
                 </router-link>
               </v-form>
+              <v-snackbar
+                v-model="snackbar"
+                color="success"
+                location="top right"
+                timeout="1500"
+                @update:model-value="val => { if (!val) router.push('/login') }"
+              >
+                {{ snackbarMsg }}
+              </v-snackbar>
 
               <v-card-subtitle class="text-center mt-6 caption">
                 © {{ year }} Polícia Rodoviária Federal
@@ -74,6 +83,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { registerUser } from '../services/api'
 
 const username = ref('')
@@ -82,6 +92,9 @@ const senha = ref('')
 const formRef = ref(null)
 const formValid = ref(false)
 const year = new Date().getFullYear()
+const snackbar = ref(false)
+const snackbarMsg = ref('')
+const router = useRouter()
 
 const rules = {
   required: v => !!v || 'Campo obrigatório',
@@ -91,7 +104,10 @@ const rules = {
 function register() {
   if (!formRef.value?.validate()) return
   registerUser({ username: username.value, email: email.value, password: senha.value })
-    .then(() => console.log('registrado'))
+    .then(() => {
+      snackbarMsg.value = 'Cadastro realizado com sucesso'
+      snackbar.value = true
+    })
     .catch(err => console.error(err))
 }
 </script>
