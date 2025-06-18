@@ -45,6 +45,17 @@
           <v-btn color="primary" :disabled="!formValid" @click="saveEdit">Salvar</v-btn>
         </v-card-actions>
       </v-card>
+<<<<<<< codex/add-v-snackbar-for-operation-results
+  </v-dialog>
+  <v-snackbar
+    v-model="snackbar"
+    :color="snackbarColor"
+    location="top right"
+    timeout="1500"
+  >
+    {{ snackbarMsg }}
+  </v-snackbar>
+=======
     </v-dialog>
 
     <v-dialog v-model="deleteDialog" max-width="400">
@@ -58,6 +69,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+>>>>>>> main
   </v-container>
 </template>
 
@@ -72,6 +84,9 @@ const deleteId = ref(null)
 const editUser = ref({ id: null, username: '', email: '', administrador: false, password: '' })
 const formRef = ref(null)
 const formValid = ref(false)
+const snackbar = ref(false)
+const snackbarMsg = ref('')
+const snackbarColor = ref('success')
 
 const headers = [
   { title: 'ID', key: 'id' },
@@ -87,8 +102,14 @@ const rules = {
 }
 
 async function loadUsers() {
-  const { data } = await fetchUsers()
-  users.value = data
+  try {
+    const { data } = await fetchUsers()
+    users.value = data
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao obter usuários'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 
 function openEdit(item) {
@@ -101,11 +122,35 @@ async function saveEdit() {
   const payload = { username: editUser.value.username, email: editUser.value.email }
   payload.administrador = editUser.value.administrador
   if (editUser.value.password) payload.password = editUser.value.password
-  await updateUser(editUser.value.id, payload)
-  editDialog.value = false
-  await loadUsers()
+  try {
+    await updateUser(editUser.value.id, payload)
+    snackbarMsg.value = 'Usuário atualizado com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    editDialog.value = false
+    await loadUsers()
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao atualizar usuário'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 
+<<<<<<< codex/add-v-snackbar-for-operation-results
+async function removeUser(item) {
+  if (!confirm('Confirma remover este usuário?')) return
+  try {
+    await deleteUser(item.id)
+    snackbarMsg.value = 'Usuário removido com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    await loadUsers()
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao remover usuário'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
+=======
 function removeUser(item) {
   deleteId.value = item.id
   deleteDialog.value = true
@@ -115,6 +160,7 @@ async function confirmDelete() {
   await deleteUser(deleteId.value)
   deleteDialog.value = false
   await loadUsers()
+>>>>>>> main
 }
 
 onMounted(loadUsers)
