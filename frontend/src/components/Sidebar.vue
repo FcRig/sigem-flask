@@ -10,6 +10,7 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
+      <v-list-item title="Home" prepend-icon="mdi-home" to="/"></v-list-item>
       <v-list-group value="autoprf">
         <template #activator="{ props }">
           <v-list-item
