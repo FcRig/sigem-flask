@@ -5,8 +5,9 @@
     <v-spacer></v-spacer>
     <v-menu v-if="user" offset-y>
       <template #activator="{ props }">
-        <v-btn v-bind="props" icon>
-          <v-icon>mdi-account</v-icon>
+        <v-btn v-bind="props" class="d-flex align-center" variant="text">
+          <v-icon class="mr-1">mdi-account-circle</v-icon>
+          <span>{{ user.username }}</span>
         </v-btn>
       </template>
       <v-list>
