@@ -20,21 +20,12 @@ def register():
 
 @bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json() or {}
-
-    # Accept both "email" and "username" fields to identify the user
-    identifier = data.get('email') or data.get('username')
-    if not identifier or 'password' not in data:
-        return jsonify({'msg': 'Credenciais inválidas.'}), 400
-
-    query_field = 'email' if 'email' in data else 'username'
-    user = User.query.filter_by(**{query_field: identifier}).first()
-
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
     if user and user.check_password(data['password']):
         access_token = create_access_token(identity=str(user.id))
         return jsonify(access_token=access_token)
-
-    return jsonify({'msg': 'Usuário ou senha inválidos'}), 401
+    return jsonify({'msg': 'Email ou senha inválidos'}), 401
 
 @bp.route('/me', methods=['GET'])
 @jwt_required()

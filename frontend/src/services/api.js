@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000'
+  baseURL: 'http://localhost:5000'
 });
 
 export function setToken(token) {
@@ -13,15 +13,15 @@ export function setToken(token) {
 }
 
 export function registerUser(payload) {
-  return api.post('/auth/register', payload);
+  return api.post('api/auth/register', payload);
 }
 
 export function loginUser(payload) {
-  return api.post('/auth/login', payload);
+  return api.post('api/auth/login', payload);
 }
 
 export function fetchCurrentUser() {
-  return api.get('/auth/me');
+  return api.get('api/auth/me');
 }
 
 export default api;
