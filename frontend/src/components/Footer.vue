@@ -4,9 +4,6 @@
   </v-footer>
 </template>
 
-<script>
-export default {
-  name: 'AppFooter'
-};
+<script setup>
 </script>
 

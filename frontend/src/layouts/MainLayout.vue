@@ -13,28 +13,22 @@
   </v-app>
 </template>
 
-<script>
-import AppHeader from '../components/Header.vue';
-import AppFooter from '../components/Footer.vue';
-import AppSidebar from '../components/Sidebar.vue';
-import { mapState } from 'vuex';
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import AppHeader from '../components/Header.vue'
+import AppFooter from '../components/Footer.vue'
+import AppSidebar from '../components/Sidebar.vue'
 
-export default {
-  name: 'MainLayout',
-  components: { AppHeader, AppFooter, AppSidebar },
-  data() {
-    return {
-      drawer: false
-    };
-  },
-  computed: {
-    ...mapState(['user'])
-  },
-  methods: {
-    logout() {
-      this.$store.commit('logout');
-      this.$router.push('/login');
-    }
-  }
-};
+const store = useStore()
+const router = useRouter()
+
+const drawer = ref(false)
+const user = computed(() => store.state.user)
+
+function logout() {
+  store.commit('logout')
+  router.push('/login')
+}
 </script>

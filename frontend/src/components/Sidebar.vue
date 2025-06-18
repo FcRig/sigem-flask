@@ -8,24 +8,19 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-export default {
-  name: 'AppSidebar',
-  props: {
-    modelValue: {
-      type: Boolean,
-      required: true
-    }
-  },
-  computed: {
-    drawer: {
-      get() {
-        return this.modelValue;
-      },
-      set(val) {
-        this.$emit('update:modelValue', val);
-      }
-    }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
   }
-};
+})
+const emit = defineEmits(['update:modelValue'])
+
+const drawer = computed({
+  get: () => props.modelValue,
+  set: val => emit('update:modelValue', val)
+})
 </script>

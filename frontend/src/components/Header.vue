@@ -24,11 +24,10 @@
   </v-app-bar>
 </template>
 
-<script>
-export default {
-  name: 'AppHeader',
-  props: {
-    user: Object
-  }
-};
+<script setup>
+defineProps({
+  user: Object
+})
+
+defineEmits(['toggle-drawer', 'logout'])
 </script>
