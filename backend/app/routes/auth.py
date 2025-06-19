@@ -14,11 +14,17 @@ def register():
     data = request.get_json()
     if not data.get('cpf'):
         return jsonify({'msg': 'CPF é obrigatório'}), 400
+    username = data.get('username')
+    email = data.get('email')
+    cpf = data.get('cpf')
+
+    if User.query.filter((User.email == email) | (User.username == username) | (User.cpf == cpf)).first():
+        return jsonify({'msg': 'Usuário já existe'}), 400
     user = User(
-        username=data['username'],
-        email=data['email'],
+        username=username,
+        email=email,
         administrador=data.get('administrador', False),
-        cpf=data.get('cpf')
+        cpf=cpf
     )
     user.set_password(data['password'])
     if data.get('senha_autoprf'):
