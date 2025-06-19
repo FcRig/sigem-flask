@@ -121,7 +121,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { updateUser } from '../services/api'
+import { updateUser, autoprfLogin } from '../services/api'
 
 const props = defineProps({
   modelValue: {
@@ -167,6 +167,10 @@ async function saveAutoprf() {
   if (!autoprfForm.value?.validate()) return
   try {
     await updateUser(store.state.user.id, {
+      senha_autoprf: autoprfSenha.value,
+      token_autoprf: autoprfToken.value
+    })
+    await autoprfLogin({
       senha_autoprf: autoprfSenha.value,
       token_autoprf: autoprfToken.value
     })
