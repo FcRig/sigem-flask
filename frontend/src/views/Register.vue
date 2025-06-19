@@ -36,6 +36,15 @@
                 ></v-text-field>
 
                 <v-text-field
+                  v-model="cpf"
+                  label="CPF"
+                  prepend-inner-icon="mdi-card-account-details"
+                  outlined
+                  :rules="[rules.required]"
+                  class="mb-4"
+                ></v-text-field>
+
+                <v-text-field
                   v-model="senha"
                   label="Senha"
                   prepend-inner-icon="mdi-lock"
@@ -96,6 +105,7 @@ import { registerUser } from '../services/api'
 
 const username = ref('')
 const email = ref('')
+const cpf = ref('')
 const senha = ref('')
 const formRef = ref(null)
 const formValid = ref(false)
@@ -114,7 +124,12 @@ const rules = {
 async function register() {
   if (!formRef.value?.validate()) return
   try {
-    await registerUser({ username: username.value, email: email.value, password: senha.value })
+    await registerUser({
+      username: username.value,
+      email: email.value,
+      cpf: cpf.value,
+      password: senha.value
+    })
     snackbarMsg.value = 'Cadastro realizado com sucesso'
     snackbar.value = true
   } catch (err) {

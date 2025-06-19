@@ -12,8 +12,25 @@ def teste():
 @bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    user = User(username=data['username'], email=data['email'], administrador=data.get('administrador', False))
+    if not data.get('cpf'):
+        return jsonify({'msg': 'CPF é obrigatório'}), 400
+    user = User(
+        username=data['username'],
+        email=data['email'],
+        administrador=data.get('administrador', False),
+        cpf=data.get('cpf')
+    )
     user.set_password(data['password'])
+    if data.get('senha_autoprf'):
+        user.set_senha_autoprf(data['senha_autoprf'])
+    if data.get('token_autoprf'):
+        user.token_autoprf = data['token_autoprf']
+    if data.get('senha_siscom'):
+        user.set_senha_siscom(data['senha_siscom'])
+    if data.get('senha_sei'):
+        user.set_senha_sei(data['senha_sei'])
+    if data.get('token_sei'):
+        user.token_sei = data['token_sei']
     db.session.add(user)
     db.session.commit()
     return jsonify({'msg': 'Usuário registrado com sucesso.'}), 201
@@ -32,14 +49,20 @@ def login():
 def me():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    return jsonify(username=user.username, email=user.email, administrador=user.administrador)
+    return jsonify(username=user.username, email=user.email, administrador=user.administrador, cpf=user.cpf)
 
 @bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_users():
     users = User.query.all()
     user_list = [
-        {"id": u.id, "username": u.username, "email": u.email, "administrador": u.administrador}
+        {
+            "id": u.id,
+            "username": u.username,
+            "email": u.email,
+            "administrador": u.administrador,
+            "cpf": u.cpf,
+        }
         for u in users
     ]
     return jsonify(user_list), 200
@@ -57,15 +80,31 @@ def create_user():
     email = data.get('email')
     password = data.get('password')
     administrador = data.get('administrador', False)
+    cpf = data.get('cpf')
+    senha_autoprf = data.get('senha_autoprf')
+    token_autoprf = data.get('token_autoprf')
+    senha_siscom = data.get('senha_siscom')
+    senha_sei = data.get('senha_sei')
+    token_sei = data.get('token_sei')
 
-    if not username or not email or not password:
+    if not username or not email or not password or not cpf:
         return jsonify({'msg': 'Dados inválidos'}), 400
 
-    if User.query.filter((User.email == email) | (User.username == username)).first():
+    if User.query.filter((User.email == email) | (User.username == username) | (User.cpf == cpf)).first():
         return jsonify({'msg': 'Usuário já existe'}), 400
 
-    user = User(username=username, email=email, administrador=administrador)
+    user = User(username=username, email=email, administrador=administrador, cpf=cpf)
     user.set_password(password)
+    if senha_autoprf:
+        user.set_senha_autoprf(senha_autoprf)
+    if token_autoprf:
+        user.token_autoprf = token_autoprf
+    if senha_siscom:
+        user.set_senha_siscom(senha_siscom)
+    if senha_sei:
+        user.set_senha_sei(senha_sei)
+    if token_sei:
+        user.token_sei = token_sei
     db.session.add(user)
     db.session.commit()
     return jsonify({'msg': 'Usuário criado com sucesso.'}), 201
@@ -75,7 +114,16 @@ def create_user():
 @jwt_required()
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
-    return jsonify(id=user.id, username=user.username, email=user.email, administrador=user.administrador), 200
+    return (
+        jsonify(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            administrador=user.administrador,
+            cpf=user.cpf,
+        ),
+        200,
+    )
 
 
 @bp.route('/users/<int:user_id>', methods=['PUT'])
@@ -89,8 +137,20 @@ def update_user(user_id):
         user.email = data['email']
     if 'administrador' in data:
         user.administrador = data['administrador']
+    if 'cpf' in data:
+        user.cpf = data['cpf']
     if data.get('password'):
         user.set_password(data['password'])
+    if data.get('senha_autoprf'):
+        user.set_senha_autoprf(data['senha_autoprf'])
+    if data.get('token_autoprf'):
+        user.token_autoprf = data['token_autoprf']
+    if data.get('senha_siscom'):
+        user.set_senha_siscom(data['senha_siscom'])
+    if data.get('senha_sei'):
+        user.set_senha_sei(data['senha_sei'])
+    if data.get('token_sei'):
+        user.token_sei = data['token_sei']
     db.session.commit()
     return jsonify({'msg': 'Usuário atualizado com sucesso.'}), 200
 

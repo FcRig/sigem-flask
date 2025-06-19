@@ -19,9 +19,11 @@
             title="AutoPRF"
           />
         </template>
-        <v-list-item title="Teste1" prepend-icon="mdi-file" />
-        <v-list-item title="Teste2" prepend-icon="mdi-file" />
-        <v-list-item title="Teste3" prepend-icon="mdi-file" />
+        <v-list-item
+          title="Autenticação"
+          prepend-icon="mdi-lock"
+          @click="autoprfDialog = true"
+        />
       </v-list-group>
 
       <v-list-group value="siscom">
@@ -32,9 +34,11 @@
             title="SISCOM"
           />
         </template>
-        <v-list-item title="Teste1" prepend-icon="mdi-file" />
-        <v-list-item title="Teste2" prepend-icon="mdi-file" />
-        <v-list-item title="Teste3" prepend-icon="mdi-file" />
+        <v-list-item
+          title="Autenticação"
+          prepend-icon="mdi-lock"
+          @click="siscomDialog = true"
+        />
       </v-list-group>
 
       <v-list-group value="sei">
@@ -45,16 +49,70 @@
             title="SEI"
           />
         </template>
-        <v-list-item title="Teste1" prepend-icon="mdi-file" />
-        <v-list-item title="Teste2" prepend-icon="mdi-file" />
-        <v-list-item title="Teste3" prepend-icon="mdi-file" />
+        <v-list-item
+          title="Autenticação"
+          prepend-icon="mdi-lock"
+          @click="seiDialog = true"
+        />
       </v-list-group>
     </v-list>
+
+    <v-dialog v-model="autoprfDialog" max-width="400">
+      <v-card>
+        <v-card-title>Autenticação AutoPRF</v-card-title>
+        <v-card-text>
+          <v-form ref="autoprfForm" v-model="autoprfValid">
+            <v-text-field v-model="autoprfSenha" label="Senha AutoPRF" type="password" :rules="[rules.required]" />
+            <v-text-field v-model="autoprfToken" label="Token AutoPRF" />
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="autoprfDialog = false">Cancelar</v-btn>
+          <v-btn color="primary" :disabled="!autoprfValid" @click="saveAutoprf">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="siscomDialog" max-width="400">
+      <v-card>
+        <v-card-title>Autenticação SISCOM</v-card-title>
+        <v-card-text>
+          <v-form ref="siscomForm" v-model="siscomValid">
+            <v-text-field v-model="siscomSenha" label="Senha SISCOM" type="password" :rules="[rules.required]" />
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="siscomDialog = false">Cancelar</v-btn>
+          <v-btn color="primary" :disabled="!siscomValid" @click="saveSiscom">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="seiDialog" max-width="400">
+      <v-card>
+        <v-card-title>Autenticação SEI</v-card-title>
+        <v-card-text>
+          <v-form ref="seiForm" v-model="seiValid">
+            <v-text-field v-model="seiSenha" label="Senha SEI" type="password" :rules="[rules.required]" />
+            <v-text-field v-model="seiToken" label="Token SEI" />
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="seiDialog = false">Cancelar</v-btn>
+          <v-btn color="primary" :disabled="!seiValid" @click="saveSei">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
+import { updateUser } from '../services/api'
 
 const props = defineProps({
   modelValue: {
@@ -68,4 +126,53 @@ const drawer = computed({
   get: () => props.modelValue,
   set: val => emit('update:modelValue', val)
 })
+
+const store = useStore()
+
+const autoprfDialog = ref(false)
+const siscomDialog = ref(false)
+const seiDialog = ref(false)
+
+const autoprfSenha = ref('')
+const autoprfToken = ref('')
+const siscomSenha = ref('')
+const seiSenha = ref('')
+const seiToken = ref('')
+
+const autoprfForm = ref(null)
+const autoprfValid = ref(false)
+const siscomForm = ref(null)
+const siscomValid = ref(false)
+const seiForm = ref(null)
+const seiValid = ref(false)
+
+const rules = {
+  required: v => !!v || 'Campo obrigatório'
+}
+
+async function saveAutoprf() {
+  if (!autoprfForm.value?.validate()) return
+  await updateUser(store.state.user.id, {
+    senha_autoprf: autoprfSenha.value,
+    token_autoprf: autoprfToken.value
+  })
+  autoprfDialog.value = false
+}
+
+async function saveSiscom() {
+  if (!siscomForm.value?.validate()) return
+  await updateUser(store.state.user.id, {
+    senha_siscom: siscomSenha.value
+  })
+  siscomDialog.value = false
+}
+
+async function saveSei() {
+  if (!seiForm.value?.validate()) return
+  await updateUser(store.state.user.id, {
+    senha_sei: seiSenha.value,
+    token_sei: seiToken.value
+  })
+  seiDialog.value = false
+}
 </script>
