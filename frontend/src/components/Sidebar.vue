@@ -106,6 +106,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar"
+      :color="snackbarColor"
+      location="top right"
+      timeout="1500"
+    >
+      {{ snackbarMsg }}
+    </v-snackbar>
   </v-navigation-drawer>
 </template>
 
@@ -146,33 +155,64 @@ const siscomValid = ref(false)
 const seiForm = ref(null)
 const seiValid = ref(false)
 
+const snackbar = ref(false)
+const snackbarMsg = ref('')
+const snackbarColor = ref('success')
+
 const rules = {
   required: v => !!v || 'Campo obrigatório'
 }
 
 async function saveAutoprf() {
   if (!autoprfForm.value?.validate()) return
-  await updateUser(store.state.user.id, {
-    senha_autoprf: autoprfSenha.value,
-    token_autoprf: autoprfToken.value
-  })
-  autoprfDialog.value = false
+  try {
+    await updateUser(store.state.user.id, {
+      senha_autoprf: autoprfSenha.value,
+      token_autoprf: autoprfToken.value
+    })
+    snackbarMsg.value = 'Dados AutoPRF salvos com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    autoprfDialog.value = false
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao salvar dados AutoPRF'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 
 async function saveSiscom() {
   if (!siscomForm.value?.validate()) return
-  await updateUser(store.state.user.id, {
-    senha_siscom: siscomSenha.value
-  })
-  siscomDialog.value = false
+  try {
+    await updateUser(store.state.user.id, {
+      senha_siscom: siscomSenha.value
+    })
+    snackbarMsg.value = 'Dados SISCOM salvos com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    siscomDialog.value = false
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao salvar dados SISCOM'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 
 async function saveSei() {
   if (!seiForm.value?.validate()) return
-  await updateUser(store.state.user.id, {
-    senha_sei: seiSenha.value,
-    token_sei: seiToken.value
-  })
-  seiDialog.value = false
+  try {
+    await updateUser(store.state.user.id, {
+      senha_sei: seiSenha.value,
+      token_sei: seiToken.value
+    })
+    snackbarMsg.value = 'Dados SEI salvos com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    seiDialog.value = false
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao salvar dados SEI'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
 }
 </script>
