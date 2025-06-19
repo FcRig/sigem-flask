@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from flask import current_app
-from scraping_utils import carregar_cookies
+from .scraping_utils import carregar_cookies
 
 class AutoPRFClient:
     def __init__(self):
