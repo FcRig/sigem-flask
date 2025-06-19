@@ -44,3 +44,21 @@ def test_me_returns_user_details(client, app):
     data = response.get_json()
     assert data == expected
 
+
+def test_register_rejects_duplicate_users(client, app):
+    with app.app_context():
+        create_user()
+
+    response = client.post(
+        "/api/auth/register",
+        json={
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "password",
+            "cpf": "12345678909",
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"msg": "Usuário já existe"}
+
