@@ -13,15 +13,18 @@ bp = Blueprint('autoprf', __name__, url_prefix='/api/autoprf')
 def login():
     user = User.query.get_or_404(get_jwt_identity())
     data = request.get_json() or {}
-    password = data.get('senha_autoprf')
-    token = data.get('token_autoprf')
+    password = data.get('senha_autoprf') or data.get('password')
+    token = data.get('token_autoprf') or data.get('token')
     if not password or not token:
         return jsonify({'msg': 'Credenciais inválidas'}), 400
 
     client = AutoPRFClient()
     cookies = client.login(user.cpf, password, token)
 
-    user.autoprf_session = json.dumps(cookies)  # salva como texto
+    if isinstance(cookies, str):
+        user.autoprf_session = cookies
+    else:
+        user.autoprf_session = json.dumps(cookies)
     db.session.commit()
     return jsonify({'cookies': cookies}), 200
 
