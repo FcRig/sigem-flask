@@ -31,6 +31,10 @@
               label="Email"
               :rules="[rules.required, rules.email]"
             ></v-text-field>
+            <v-text-field
+              v-model="editUser.cpf"
+              label="CPF"
+            ></v-text-field>
             <v-checkbox
               v-model="editUser.administrador"
               label="Administrador"
@@ -64,6 +68,10 @@
               v-model="newUser.email"
               label="Email"
               :rules="[rules.required, rules.email]"
+            ></v-text-field>
+            <v-text-field
+              v-model="newUser.cpf"
+              label="CPF"
             ></v-text-field>
             <v-text-field
               v-model="newUser.password"
@@ -115,8 +123,8 @@
   const createDialog = ref(false)
   const deleteDialog = ref(false)
   const deleteId = ref(null)
-  const editUser = ref({ id: null, username: '', email: '', administrador: false, password: '' })
-  const newUser = ref({ username: '', email: '', password: '', administrador: false })
+  const editUser = ref({ id: null, username: '', email: '', cpf: '', administrador: false, password: '' })
+  const newUser = ref({ username: '', email: '', cpf: '', password: '', administrador: false })
   const formRef = ref(null)
   const formValid = ref(false)
   const createFormRef = ref(null)
@@ -129,6 +137,7 @@
     { title: 'ID', key: 'id' },
     { title: 'Usuário', key: 'username' },
     { title: 'Email', key: 'email' },
+    { title: 'CPF', key: 'cpf' },
     { title: 'Administrador', key: 'administrador' },
     { title: 'Ações', key: 'actions', sortable: false },
   ]
@@ -150,14 +159,19 @@
   }
 
   function openCreate() {
-    newUser.value = { username: '', email: '', password: '', administrador: false }
+    newUser.value = { username: '', email: '', cpf: '', password: '', administrador: false }
     createFormValid.value = false
     createDialog.value = true
   }
 
   async function saveCreate() {
     if (!createFormRef.value?.validate()) return
-    const payload = { username: newUser.value.username, email: newUser.value.email, password: newUser.value.password }
+    const payload = {
+      username: newUser.value.username,
+      email: newUser.value.email,
+      cpf: newUser.value.cpf,
+      password: newUser.value.password
+    }
     payload.administrador = newUser.value.administrador
     try {
       await createUser(payload)
@@ -174,13 +188,24 @@
   }
 
   function openEdit(item) {
-    editUser.value = { id: item.id, username: item.username, email: item.email, administrador: item.administrador, password: '' }
+    editUser.value = {
+      id: item.id,
+      username: item.username,
+      email: item.email,
+      cpf: item.cpf,
+      administrador: item.administrador,
+      password: ''
+    }
     editDialog.value = true
   }
 
   async function saveEdit() {
     if (!formRef.value?.validate()) return
-    const payload = { username: editUser.value.username, email: editUser.value.email }
+    const payload = {
+      username: editUser.value.username,
+      email: editUser.value.email,
+      cpf: editUser.value.cpf
+    }
     payload.administrador = editUser.value.administrador
     if (editUser.value.password) payload.password = editUser.value.password
     try {
