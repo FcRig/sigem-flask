@@ -49,7 +49,16 @@ def login():
 def me():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    return jsonify(username=user.username, email=user.email, administrador=user.administrador, cpf=user.cpf)
+    return (
+        jsonify(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            administrador=user.administrador,
+            cpf=user.cpf,
+        ),
+        200,
+    )
 
 @bp.route('/users', methods=['GET'])
 @jwt_required()
