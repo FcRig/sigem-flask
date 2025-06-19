@@ -16,14 +16,15 @@ class AutoPRFClient:
 
     def login(self, cpf: str, password: str, token: str) -> str:
         driver = self.driver
-        driver.get('https://sistemas.dprf.gov.br/autoprf/faces/autenticacao/login.jsf')
+        driver.get('https://auto.prf.gov.br/#/login')
 
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.ID, 'form_login:usuario'))
         ).send_keys(cpf)
-        driver.find_element(By.ID, 'form_login:senha').send_keys(password)
-        driver.find_element(By.ID, 'form_login:token').send_keys(token)
-        driver.find_element(By.ID, 'form_login:entrar').click()
+        driver.find_element(By.CSS_SELECTOR, 'input[name="username"]').send_keys(cpf)
+        driver.find_element(By.CSS_SELECTOR, 'input[name="password"]').send_keys(password)
+        driver.find_element(By.CSS_SELECTOR, 'input[name="token"]').send_keys(token)
+        driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
 

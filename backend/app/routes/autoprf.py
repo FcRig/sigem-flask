@@ -12,8 +12,8 @@ bp = Blueprint('autoprf', __name__, url_prefix='/api/autoprf')
 def login():
     user = User.query.get_or_404(get_jwt_identity())
     data = request.get_json() or {}
-    password = data.get('password')
-    token = data.get('token')
+    password = data.get('senha_autoprf')
+    token = data.get('token_autoprf')
     if not password or not token:
         return jsonify({'msg': 'Credenciais inválidas'}), 400
 
