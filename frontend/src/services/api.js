@@ -44,4 +44,8 @@ export function deleteUser(id) {
   return api.delete(`/api/auth/users/${id}`);
 }
 
+export function autoprfLogin(payload) {
+  return api.post('/api/autoprf/login', payload);
+}
+
 export default api;
