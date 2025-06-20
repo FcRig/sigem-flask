@@ -36,9 +36,9 @@ def test_autoprf_login_stores_session(client, app, monkeypatch):
         assert cpf == cpf_value
         assert password == "autoprf-pass"
         assert token == "123456"
-        return "cookie=value"
+        return "jwt-token"
 
-    def fake_init(self):
+    def fake_init(self, jwt_token=None):
         self.driver = None
 
     monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
@@ -54,4 +54,4 @@ def test_autoprf_login_stores_session(client, app, monkeypatch):
     assert response.status_code == 200
     with app.app_context():
         updated = User.query.get(user.id)
-        assert updated.autoprf_session == "cookie=value"
+        assert updated.autoprf_session == "jwt-token"
