@@ -5,10 +5,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from flask import current_app
-from .scraping_utils import carregar_cookies
 
 class AutoPRFClient:
-    def __init__(self):
+    def __init__(self, jwt_token: str | None = None):
         chromedriver_path = current_app.config.get('CHROMEDRIVER_PATH')
         if not chromedriver_path:
             raise RuntimeError("CHROMEDRIVER_PATH não está definido na configuração.")
@@ -18,10 +17,10 @@ class AutoPRFClient:
         options.add_argument('--disable-dev-shm-usage')
 
         service = Service(chromedriver_path)
-        self.driver = webdriver.Chrome(service=service, options=options)       
-        self.cookies_json = ''
+        self.driver = webdriver.Chrome(service=service, options=options)
+        self.jwt_token = jwt_token or ''
 
-    def login(self, cpf: str, password: str, token: str) -> list[dict]:
+    def login(self, cpf: str, password: str, token: str) -> str:
         driver = self.driver
         driver.get('https://auto.prf.gov.br/#/login')
 
@@ -52,14 +51,29 @@ class AutoPRFClient:
             EC.presence_of_element_located((By.TAG_NAME, 'body'))
         )
 
-        # Coleta cookies 
-        cookies = driver.get_cookies()
-        driver.quit()    
-        return cookies
+        # Tenta obter JWT do armazenamento local ou cookies
+        jwt_token = driver.execute_script(
+            "return window.localStorage.getItem('jwt') || "
+            "window.localStorage.getItem('token') || "
+            "window.sessionStorage.getItem('jwt') || "
+            "window.sessionStorage.getItem('token');"
+        )
+
+        if not jwt_token:
+            for c in driver.get_cookies():
+                name = c.get('name', '').lower()
+                if 'jwt' in name or 'token' in name:
+                    jwt_token = c.get('value')
+                    break
+
+        driver.quit()
+        return jwt_token or ''
     
     def pesquisa_auto_infracao(self, auto_infracao: str) -> None:
-        if self.cookies_json:
-            carregar_cookies(self.driver, self.cookies_json, "https://auto.prf.gov.br")
+        if self.jwt_token:
+            # Exemplo de uso do JWT para autenticação em futuras requisições
+            self.driver.execute_cdp_cmd(
+                "Network.setExtraHTTPHeaders",
+                {"headers": {"Authorization": f"Bearer {self.jwt_token}"}},
+            )
         self.driver.find_element(By.CSS_SELECTOR, 'body > app-dashboard > div > app-sidebar > app-sidebar-nav > app-sidebar-nav-items > app-sidebar-nav-dropdown:nth-child(2) > a').click()
-        
-        

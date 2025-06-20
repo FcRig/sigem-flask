@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -19,14 +18,11 @@ def login():
         return jsonify({'msg': 'Credenciais inválidas'}), 400
 
     client = AutoPRFClient()
-    cookies = client.login(user.cpf, password, token)
+    jwt_token = client.login(user.cpf, password, token)
 
-    if isinstance(cookies, str):
-        user.autoprf_session = cookies
-    else:
-        user.autoprf_session = json.dumps(cookies)
+    user.autoprf_session = jwt_token
     db.session.commit()
-    return jsonify({'cookies': cookies}), 200
+    return jsonify({'jwt': jwt_token}), 200
 
 @bp.route('/pesquisar_ai', methods=['POST'])
 @jwt_required()
@@ -41,7 +37,7 @@ def pesquisar_auto_infracao():
     if not auto_infracao:
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
-    client = AutoPRFClient(cookies_json=user.autoprf_session)
+    client = AutoPRFClient(jwt_token=user.autoprf_session)
     client.pesquisa_auto_infracao(auto_infracao)
 
     return jsonify({'msg': 'Pesquisa realizada com sucesso'})
