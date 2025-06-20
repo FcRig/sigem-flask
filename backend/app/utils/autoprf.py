@@ -6,20 +6,21 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from flask import current_app
 from .scraping_utils import carregar_cookies
+from time import sleep
 
 class AutoPRFClient:
-    def __init__(self):
+    def __init__(self, cookies_json=None):
         chromedriver_path = current_app.config.get('CHROMEDRIVER_PATH')
         if not chromedriver_path:
             raise RuntimeError("CHROMEDRIVER_PATH não está definido na configuração.")
         options = Options()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
 
         service = Service(chromedriver_path)
         self.driver = webdriver.Chrome(service=service, options=options)       
-        self.cookies_json = ''
+        self.cookies_json = cookies_json
 
     def login(self, cpf: str, password: str, token: str) -> list[dict]:
         driver = self.driver
@@ -58,8 +59,12 @@ class AutoPRFClient:
         return cookies
     
     def pesquisa_auto_infracao(self, auto_infracao: str) -> None:
-        if self.cookies_json:
-            carregar_cookies(self.driver, self.cookies_json, "https://auto.prf.gov.br")
-        self.driver.find_element(By.CSS_SELECTOR, 'body > app-dashboard > div > app-sidebar > app-sidebar-nav > app-sidebar-nav-items > app-sidebar-nav-dropdown:nth-child(2) > a').click()
-        
+        if self.cookies_json:            
+            carregar_cookies(self.driver, self.cookies_json, "https://auto.prf.gov.br/#/dashboard")
+            self.driver.get("https://auto.prf.gov.br/#/dashboard")
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.TAG_NAME, 'app-dashboard'))
+            )
+
+        sleep(5)
         
