@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from flask import current_app
+from time import sleep
 
 class AutoPRFClient:
     def __init__(self, jwt_token: str | None = None):
@@ -51,13 +52,18 @@ class AutoPRFClient:
             EC.presence_of_element_located((By.TAG_NAME, 'body'))
         )
 
-        # Tenta obter JWT do armazenamento local ou cookies
-        jwt_token = driver.execute_script(
-            "return window.localStorage.getItem('jwt') || "
-            "window.localStorage.getItem('token') || "
-            "window.sessionStorage.getItem('jwt') || "
-            "window.sessionStorage.getItem('token');"
-        )
+        sleep(3)                  
+
+        jwt_token = driver.execute_script("""
+            try {
+                const raw = localStorage.getItem('jwt_sessao');
+                if (!raw) return '';
+                const parsed = JSON.parse(raw);
+                return parsed.token || '';
+            } catch (e) {
+                return '';
+            }
+        """)     
 
         if not jwt_token:
             for c in driver.get_cookies():
@@ -66,14 +72,29 @@ class AutoPRFClient:
                     jwt_token = c.get('value')
                     break
 
+        
         driver.quit()
         return jwt_token or ''
     
     def pesquisa_auto_infracao(self, auto_infracao: str) -> None:
         if self.jwt_token:
-            # Exemplo de uso do JWT para autenticação em futuras requisições
-            self.driver.execute_cdp_cmd(
-                "Network.setExtraHTTPHeaders",
-                {"headers": {"Authorization": f"Bearer {self.jwt_token}"}},
-            )
-        self.driver.find_element(By.CSS_SELECTOR, 'body > app-dashboard > div > app-sidebar > app-sidebar-nav > app-sidebar-nav-items > app-sidebar-nav-dropdown:nth-child(2) > a').click()
+            self.driver.get("https://auto.prf.gov.br")
+
+            import json
+            token_json = json.dumps({"token": self.jwt_token})
+            self.driver.execute_script(f"""
+                localStorage.setItem('jwt_sessao', {json.dumps(token_json)});
+            """)
+
+            self.driver.get("https://auto.prf.gov.br/#/dashboard")
+
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.TAG_NAME, "app-dashboard"))
+        )            
+
+        menu = WebDriverWait(self.driver, 15).until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Autuação')]"))
+        )
+        menu.click()
+
+
