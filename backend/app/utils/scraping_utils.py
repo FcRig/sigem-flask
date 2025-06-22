@@ -1,5 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
 
 def buscar_dados(url):
     r = requests.get(url)
@@ -18,4 +22,5 @@ def carregar_cookies(driver, cookies_json, base_url):
             driver.add_cookie(cookie)
         except Exception as e:
             print(f"[cookie erro] {cookie['name']}: {e}")
+
 

@@ -1,0 +1,2858 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Auto PRF: Visualização Auto de Infração CTB
+  </title>
+  <base href="/"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <link href="favicon.ico" rel="icon" type="image/x-icon"/>
+  <style>
+   @charset "UTF-8";:root{--blue:#20a8d8;--indigo:#6610f2;--purple:#6f42c1;--pink:#e83e8c;--red:#f86c6b;--orange:#f8cb00;--yellow:#ffc107;--green:#4dbd74;--teal:#20c997;--cyan:#17a2b8;--white:#fff;--gray:#73818f;--gray-dark:#2f353a;--light-blue:#63c2de;--primary:#20a8d8;--secondary:#c8ced3;--success:#4dbd74;--info:#63c2de;--warning:#ffc107;--danger:#f86c6b;--light:#f0f3f5;--dark:#2f353a;--breakpoint-xs:0;--breakpoint-sm:576px;--breakpoint-md:768px;--breakpoint-lg:992px;--breakpoint-xl:1200px;--font-family-sans-serif:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--font-family-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}*,:after,:before{box-sizing:border-box}html{font-family:sans-serif;line-height:1.15;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-size:.875rem;font-weight:400;line-height:1.5;color:#23282c;text-align:left;background-color:#e4e5e6}@media print{*,:after,:before{text-shadow:none!important;box-shadow:none!important}@page{size:a3}body{min-width:992px!important}}@media all and (-ms-high-contrast:none){html{display:flex;flex-direction:column}}.app{display:flex;flex-direction:column;min-height:100vh}@media (min-width:576px){}@media (min-width:768px){}@media (min-width:992px){}@media (min-width:1200px){}body{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}:root{--sk-size:40px;--sk-color:#333}:root{--surface-a:#ffffff;--surface-b:#efefef;--surface-c:#e9ecef;--surface-d:#dee2e6;--surface-e:#ffffff;--surface-f:#ffffff;--text-color:#212529;--text-color-secondary:#6c757d;--primary-color:#007bff;--primary-color-text:#ffffff;--font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;--surface-0:#ffffff;--surface-50:#f9fafb;--surface-100:#f8f9fa;--surface-200:#e9ecef;--surface-300:#dee2e6;--surface-400:#ced4da;--surface-500:#adb5bd;--surface-600:#6c757d;--surface-700:#495057;--surface-800:#343a40;--surface-900:#212529;--gray-50:#f9fafb;--gray-100:#f8f9fa;--gray-200:#e9ecef;--gray-300:#dee2e6;--gray-400:#ced4da;--gray-500:#adb5bd;--gray-600:#6c757d;--gray-700:#495057;--gray-800:#343a40;--gray-900:#212529;--content-padding:1.25rem;--inline-spacing:.5rem;--border-radius:4px;--surface-ground:#efefef;--surface-section:#ffffff;--surface-card:#ffffff;--surface-overlay:#ffffff;--surface-border:#dee2e6;--surface-hover:#e9ecef;--maskbg:rgba(0, 0, 0, .4);--highlight-bg:#007bff;--highlight-text-color:#ffffff;--focus-ring:0 0 0 .2rem rgba(38, 143, 255, .5);color-scheme:light}*{box-sizing:border-box}:root{--blue-50:#f3f8ff;--blue-100:#c5dcff;--blue-200:#97c1fe;--blue-300:#69a5fe;--blue-400:#3b8afd;--blue-500:#0d6efd;--blue-600:#0b5ed7;--blue-700:#094db1;--blue-800:#073d8b;--blue-900:#052c65;--green-50:#f4f9f6;--green-100:#c8e2d6;--green-200:#9ccbb5;--green-300:#70b595;--green-400:#459e74;--green-500:#198754;--green-600:#157347;--green-700:#125f3b;--green-800:#0e4a2e;--green-900:#0a3622;--yellow-50:#fffcf3;--yellow-100:#fff0c3;--yellow-200:#ffe494;--yellow-300:#ffd965;--yellow-400:#ffcd36;--yellow-500:#ffc107;--yellow-600:#d9a406;--yellow-700:#b38705;--yellow-800:#8c6a04;--yellow-900:#664d03;--cyan-50:#f3fcfe;--cyan-100:#c5f2fb;--cyan-200:#97e8f9;--cyan-300:#69def6;--cyan-400:#3bd4f3;--cyan-500:#0dcaf0;--cyan-600:#0baccc;--cyan-700:#098da8;--cyan-800:#076f84;--cyan-900:#055160;--pink-50:#fdf5f9;--pink-100:#f5cee1;--pink-200:#eda7ca;--pink-300:#e681b3;--pink-400:#de5a9b;--pink-500:#d63384;--pink-600:#b62b70;--pink-700:#96245c;--pink-800:#761c49;--pink-900:#561435;--indigo-50:#f7f3fe;--indigo-100:#dac6fc;--indigo-200:#bd98f9;--indigo-300:#a06bf7;--indigo-400:#833df4;--indigo-500:#6610f2;--indigo-600:#570ece;--indigo-700:#470ba9;--indigo-800:#380985;--indigo-900:#290661;--teal-50:#f4fcfa;--teal-100:#c9f2e6;--teal-200:#9fe8d2;--teal-300:#75debf;--teal-400:#4ad3ab;--teal-500:#20c997;--teal-600:#1bab80;--teal-700:#168d6a;--teal-800:#126f53;--teal-900:#0d503c;--orange-50:#fff9f3;--orange-100:#ffe0c7;--orange-200:#fec89a;--orange-300:#feaf6d;--orange-400:#fd9741;--orange-500:#fd7e14;--orange-600:#d76b11;--orange-700:#b1580e;--orange-800:#8b450b;--orange-900:#653208;--bluegray-50:#f8f9fb;--bluegray-100:#e0e4ea;--bluegray-200:#c7ced9;--bluegray-300:#aeb9c8;--bluegray-400:#95a3b8;--bluegray-500:#7c8ea7;--bluegray-600:#69798e;--bluegray-700:#576375;--bluegray-800:#444e5c;--bluegray-900:#323943;--purple-50:#f8f6fc;--purple-100:#dcd2f0;--purple-200:#c1aee4;--purple-300:#a68ad9;--purple-400:#8a66cd;--purple-500:#6f42c1;--purple-600:#5e38a4;--purple-700:#4e2e87;--purple-800:#3d246a;--purple-900:#2c1a4d;--red-50:#fdf5f6;--red-100:#f7cfd2;--red-200:#f0a8af;--red-300:#e9828c;--red-400:#e35b68;--red-500:#dc3545;--red-600:#bb2d3b;--red-700:#9a2530;--red-800:#791d26;--red-900:#58151c;--primary-50:#f2f8ff;--primary-100:#c2dfff;--primary-200:#91c6ff;--primary-300:#61adff;--primary-400:#3094ff;--primary-500:#007bff;--primary-600:#0069d9;--primary-700:#0056b3;--primary-800:#00448c;--primary-900:#003166}
+  </style>
+  <link href="styles.d99e1f40c7006eb3.css" media="all" onload="this.media='all'" rel="stylesheet"/>
+  <noscript>
+   <link href="styles.d99e1f40c7006eb3.css" rel="stylesheet"/>
+  </noscript>
+  <style>
+  </style>
+  <style>
+   [_nghost-onh-c26]{position:relative;display:block;pointer-events:none}[_nghost-onh-c26]   .ngx-spinner[_ngcontent-onh-c26]{transition:.35s linear all;display:block;position:absolute;top:5px;left:0px}[_nghost-onh-c26]   .ngx-spinner[_ngcontent-onh-c26]   .ngx-spinner-icon[_ngcontent-onh-c26]{width:14px;height:14px;border:solid 2px transparent;border-top-color:inherit;border-left-color:inherit;border-radius:50%;-webkit-animation:_ngcontent-onh-c26_loading-bar-spinner .4s linear infinite;animation:_ngcontent-onh-c26_loading-bar-spinner .4s linear infinite}[_nghost-onh-c26]   .ngx-bar[_ngcontent-onh-c26]{transition:width .35s;position:absolute;top:0;left:0;width:100%;height:2px;border-bottom-right-radius:1px;border-top-right-radius:1px}[dir=rtl]   [_nghost-onh-c26]   .ngx-bar[_ngcontent-onh-c26]{right:0;left:unset}[fixed=true][_nghost-onh-c26]{z-index:10002}[fixed=true][_nghost-onh-c26]   .ngx-bar[_ngcontent-onh-c26]{position:fixed}[fixed=true][_nghost-onh-c26]   .ngx-spinner[_ngcontent-onh-c26]{position:fixed;top:10px;left:10px}[dir=rtl]   [fixed=true][_nghost-onh-c26]   .ngx-spinner[_ngcontent-onh-c26]{right:10px;left:unset}@-webkit-keyframes _ngcontent-onh-c26_loading-bar-spinner{0%{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes _ngcontent-onh-c26_loading-bar-spinner{0%{transform:rotate(0)}to{transform:rotate(360deg)}}
+  </style>
+  <style>
+   [_nghost-onh-c33]{display:inline}
+  </style>
+  <style>
+   [_nghost-onh-c32]{display:inline}
+  </style>
+  <style>
+   .nav-dropdown-toggle[_ngcontent-onh-c13]{cursor:pointer}
+  </style>
+  <style>
+   .nav-dropdown-items[_ngcontent-onh-c13]{display:block}
+  </style>
+  <style>
+   .p-multiselect{display:inline-flex;cursor:pointer;position:relative;-webkit-user-select:none;user-select:none}.p-multiselect-trigger{display:flex;align-items:center;justify-content:center;flex-shrink:0}.p-multiselect-label-container{overflow:hidden;flex:1 1 auto;cursor:pointer}.p-multiselect-label{display:block;white-space:nowrap;cursor:pointer;overflow:hidden;text-overflow:ellipsis}.p-multiselect-label-empty{overflow:hidden;visibility:hidden}.p-multiselect-token{cursor:default;display:inline-flex;align-items:center;flex:0 0 auto}.p-multiselect-token-icon{cursor:pointer}.p-multiselect-items-wrapper{overflow:auto}.p-multiselect-items{margin:0;padding:0;list-style-type:none}.p-multiselect-item{cursor:pointer;display:flex;align-items:center;font-weight:400;white-space:nowrap;position:relative;overflow:hidden}.p-multiselect-header{display:flex;align-items:center;justify-content:space-between}.p-multiselect-filter-container{position:relative;flex:1 1 auto}.p-multiselect-filter-icon{position:absolute;top:50%;margin-top:-.5rem}.p-multiselect-filter-container .p-inputtext{width:100%}.p-multiselect-close{display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative}.p-fluid .p-multiselect{display:flex}.p-multiselect-clear-icon{position:absolute;top:50%;margin-top:-.5rem;cursor:pointer}.p-multiselect-clearable{position:relative}
+  </style>
+  <style>
+   .p-overlay{position:absolute;top:0;left:0}.p-overlay-modal{display:flex;align-items:center;justify-content:center;position:fixed;top:0;left:0;width:100%;height:100%}.p-overlay-content{transform-origin:inherit}.p-overlay-modal>.p-overlay-content{z-index:1;width:90%}.p-overlay-top{align-items:flex-start}.p-overlay-top-start{align-items:flex-start;justify-content:flex-start}.p-overlay-top-end{align-items:flex-start;justify-content:flex-end}.p-overlay-bottom{align-items:flex-end}.p-overlay-bottom-start{align-items:flex-end;justify-content:flex-start}.p-overlay-bottom-end{align-items:flex-end;justify-content:flex-end}.p-overlay-left{justify-content:flex-start}.p-overlay-left-start{justify-content:flex-start;align-items:flex-start}.p-overlay-left-end{justify-content:flex-start;align-items:flex-end}.p-overlay-right{justify-content:flex-end}.p-overlay-right-start{justify-content:flex-end;align-items:flex-start}.p-overlay-right-end{justify-content:flex-end;align-items:flex-end}
+  </style>
+  <style>
+   .p-datatable{position:relative}.p-datatable>.p-datatable-wrapper{overflow:auto}.p-datatable-table{border-spacing:0px;width:100%}.p-datatable .p-sortable-column{cursor:pointer;-webkit-user-select:none;user-select:none}.p-datatable .p-sortable-column .p-column-title,.p-datatable .p-sortable-column .p-sortable-column-icon,.p-datatable .p-sortable-column .p-sortable-column-badge{vertical-align:middle}.p-datatable .p-sortable-column .p-sortable-column-badge{display:inline-flex;align-items:center;justify-content:center}.p-datatable-hoverable-rows .p-selectable-row{cursor:pointer}.p-datatable-scrollable>.p-datatable-wrapper{position:relative}.p-datatable-scrollable-table>.p-datatable-thead{position:sticky;top:0;z-index:1}.p-datatable-scrollable-table>.p-datatable-frozen-tbody{position:sticky;z-index:1}.p-datatable-scrollable-table>.p-datatable-tfoot{position:sticky;bottom:0;z-index:1}.p-datatable-scrollable .p-frozen-column{position:sticky;background:inherit}.p-datatable-scrollable th.p-frozen-column{z-index:1}.p-datatable-flex-scrollable{display:flex;flex-direction:column;height:100%}.p-datatable-flex-scrollable>.p-datatable-wrapper{display:flex;flex-direction:column;flex:1;height:100%}.p-datatable-scrollable-table>.p-datatable-tbody>.p-rowgroup-header{position:sticky;z-index:1}.p-datatable-resizable-table>.p-datatable-thead>tr>th,.p-datatable-resizable-table>.p-datatable-tfoot>tr>td,.p-datatable-resizable-table>.p-datatable-tbody>tr>td{overflow:hidden;white-space:nowrap}.p-datatable-resizable-table>.p-datatable-thead>tr>th.p-resizable-column:not(.p-frozen-column){background-clip:padding-box;position:relative}.p-datatable-resizable-table-fit>.p-datatable-thead>tr>th.p-resizable-column:last-child .p-column-resizer{display:none}.p-datatable .p-column-resizer{display:block;position:absolute!important;top:0;right:0;margin:0;width:.5rem;height:100%;padding:0;cursor:col-resize;border:1px solid transparent}.p-datatable .p-column-resizer-helper{width:1px;position:absolute;z-index:10;display:none}.p-datatable .p-row-editor-init,.p-datatable .p-row-editor-save,.p-datatable .p-row-editor-cancel,.p-datatable .p-row-toggler{display:inline-flex;align-items:center;justify-content:center;overflow:hidden;position:relative}.p-datatable-reorder-indicator-up,.p-datatable-reorder-indicator-down{position:absolute}.p-datatable-reorderablerow-handle,[pReorderableColumn]{cursor:move}.p-datatable .p-datatable-loading-overlay{position:absolute;display:flex;align-items:center;justify-content:center;z-index:2}.p-column-filter-row{display:flex;align-items:center;width:100%}.p-column-filter-menu{display:inline-flex}.p-column-filter-row p-columnfilterformelement{flex:1 1 auto;width:1%}.p-column-filter-menu-button,.p-column-filter-clear-button{display:inline-flex;justify-content:center;align-items:center;cursor:pointer;text-decoration:none;overflow:hidden;position:relative}.p-column-filter-overlay{position:absolute;top:0;left:0}.p-column-filter-row-items{margin:0;padding:0;list-style:none}.p-column-filter-row-item{cursor:pointer}.p-column-filter-add-button,.p-column-filter-remove-button{justify-content:center}.p-column-filter-add-button .p-button-label,.p-column-filter-remove-button .p-button-label{flex-grow:0}.p-column-filter-buttonbar{display:flex;align-items:center;justify-content:space-between}.p-column-filter-buttonbar .p-button{width:auto}.p-datatable-tbody>tr>td>.p-column-title{display:none}.p-datatable-scroller-spacer{display:flex}.p-datatable .p-scroller .p-scroller-loading{transform:none!important;min-height:0;position:sticky;top:0;left:0}
+  </style>
+  <style>
+   .tooltip[_nghost-onh-c25]{display:block;pointer-events:none;position:absolute}.tooltip[_nghost-onh-c25]   .tooltip-arrow[_ngcontent-onh-c25]{position:absolute}
+  </style>
+  <style>
+   textarea.superior[_ngcontent-onh-c134]{border-bottom-left-radius:0;border-bottom-right-radius:0}textarea.inferior[_ngcontent-onh-c134]{border-top-left-radius:0;border-top-right-radius:0}
+  </style>
+  <style>
+   @charset "UTF-8";.ng-select{position:relative;display:block;box-sizing:border-box}.ng-select div,.ng-select input,.ng-select span{box-sizing:border-box}.ng-select [hidden]{display:none}.ng-select.ng-select-searchable .ng-select-container .ng-value-container .ng-input{opacity:1}.ng-select.ng-select-opened .ng-select-container{z-index:1001}.ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-placeholder,.ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-value{-webkit-user-select:none;user-select:none;cursor:default}.ng-select.ng-select-disabled .ng-arrow-wrapper{cursor:default}.ng-select.ng-select-filtered .ng-placeholder{display:none}.ng-select .ng-select-container{cursor:default;display:flex;outline:none;overflow:hidden;position:relative;width:100%}.ng-select .ng-select-container .ng-value-container{display:flex;flex:1}.ng-select .ng-select-container .ng-value-container .ng-input{opacity:0}.ng-select .ng-select-container .ng-value-container .ng-input>input{box-sizing:content-box;background:none transparent;border:0 none;box-shadow:none;outline:none;padding:0;cursor:default;width:100%}.ng-select .ng-select-container .ng-value-container .ng-input>input::-ms-clear{display:none}.ng-select .ng-select-container .ng-value-container .ng-input>input[readonly]{-webkit-user-select:none;user-select:none;width:0;padding:0}.ng-select.ng-select-single.ng-select-filtered .ng-select-container .ng-value-container .ng-value{visibility:hidden}.ng-select.ng-select-single .ng-select-container .ng-value-container,.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value .ng-value-icon{display:none}.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input{position:absolute;left:0;width:100%}.ng-select.ng-select-multiple.ng-select-disabled>.ng-select-container .ng-value-container .ng-value .ng-value-icon{display:none}.ng-select.ng-select-multiple .ng-select-container .ng-value-container{flex-wrap:wrap}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder{position:absolute}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value{white-space:nowrap}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value.ng-value-disabled .ng-value-icon{display:none}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value .ng-value-icon{cursor:pointer}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-input{flex:1;z-index:2}.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder{z-index:1}.ng-select .ng-clear-wrapper{cursor:pointer;position:relative;width:17px;-webkit-user-select:none;user-select:none}.ng-select .ng-clear-wrapper .ng-clear{display:inline-block;font-size:18px;line-height:1;pointer-events:none}.ng-select .ng-spinner-loader{border-radius:50%;width:17px;height:17px;margin-right:5px;font-size:10px;position:relative;text-indent:-9999em;border-top:2px solid rgba(66,66,66,.2);border-right:2px solid rgba(66,66,66,.2);border-bottom:2px solid rgba(66,66,66,.2);border-left:2px solid #424242;transform:translateZ(0);animation:load8 .8s infinite linear}.ng-select .ng-spinner-loader:after{border-radius:50%;width:17px;height:17px}@keyframes load8{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.ng-select .ng-arrow-wrapper{cursor:pointer;position:relative;text-align:center;-webkit-user-select:none;user-select:none}.ng-select .ng-arrow-wrapper .ng-arrow{pointer-events:none;display:inline-block;height:0;width:0;position:relative}.ng-dropdown-panel{box-sizing:border-box;position:absolute;opacity:0;width:100%;z-index:1050;-webkit-overflow-scrolling:touch}.ng-dropdown-panel .ng-dropdown-panel-items{display:block;height:auto;box-sizing:border-box;max-height:240px;overflow-y:auto}.ng-dropdown-panel .ng-dropdown-panel-items .ng-optgroup{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-dropdown-panel .ng-dropdown-panel-items .ng-option{box-sizing:border-box;cursor:pointer;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-dropdown-panel .ng-dropdown-panel-items .ng-option .ng-option-label:empty:before{content:"\200b"}.ng-dropdown-panel .ng-dropdown-panel-items .ng-option .highlighted{font-weight:700;text-decoration:underline}.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.disabled{cursor:default}.ng-dropdown-panel .scroll-host{overflow:hidden;overflow-y:auto;position:relative;display:block;-webkit-overflow-scrolling:touch}.ng-dropdown-panel .scrollable-content{top:0;left:0;width:100%;height:100%;position:absolute}.ng-dropdown-panel .total-padding{width:1px;opacity:0}
+  </style>
+  <style>
+   /*!*@layer primeng {*!*//*!*}*!*/
+  </style>
+ </head>
+ <body class="app ng-tns-0-0 header-fixed sidebar-md-show sidebar-fixed" lang="pt-BR" ng-version="15.2.9">
+  <div aria-describedby="cookieconsent:desc" aria-label="cookieconsent" aria-live="polite" class="cc-window cc-banner cc-type-info cc-theme-classic cc-bottom cc-color-override--1033558147 cc-invisible" role="dialog" style="display: none;">
+   <!--googleoff: all-->
+   <span class="cc-message" id="cookieconsent:desc">
+    Este sistema utiliza ferramentas e serviços de terceiros que utilizam cookies e nos ajudam a oferecer melhores experiências de navegação. Clique no botão “Aceitar”, caso concorde com o uso de cookies durante o acesso, ou continue com a navegação.
+    <a aria-label="learn more about cookies" class="cc-link" href="https://www.gov.br/pt-br/termos-de-uso" rel="noopener noreferrer nofollow" role="button" tabindex="0" target="_blank">
+     Saiba mais
+    </a>
+   </span>
+   <div class="cc-compliance">
+    <a aria-label="dismiss cookie message" class="cc-btn cc-dismiss" role="button" tabindex="0">
+     Aceitar
+    </a>
+   </div>
+   <!--googleon: all-->
+  </div>
+  <ngx-loading-bar _nghost-onh-c26="" fixed="true" style="color: rgb(34, 153, 221);">
+   <!-- -->
+  </ngx-loading-bar>
+  <router-outlet>
+  </router-outlet>
+  <app-dashboard>
+   <app-header class="app-header navbar">
+    <button appsidebartoggler="" class="d-lg-none navbar-toggler" type="button">
+     <span class="navbar-toggler-icon">
+     </span>
+    </button>
+    <!-- -->
+    <a class="navbar-brand" href="#/dashboard">
+     <!-- -->
+     <img alt="CoreUI Logo" class="navbar-brand-full" height="25" src="assets/img/prf.png" width="89"/>
+     <!-- -->
+     <img alt="CoreUI Logo" class="navbar-brand-minimized" height="30" src="assets/img/prf.png" width="30"/>
+     <!-- -->
+     <!-- -->
+     <!-- -->
+    </a>
+    <button class="d-lg-block d-none navbar-toggler" type="button">
+     <span class="navbar-toggler-icon">
+     </span>
+    </button>
+    <!-- -->
+    <ul class="nav navbar-nav d-md-down-none">
+     <li>
+      <a class="nome-sistema" href="#">
+       <app-title _nghost-onh-c33="">
+        AutoPRF
+        <!-- -->
+       </app-title>
+      </a>
+     </li>
+    </ul>
+    <ul class="nav navbar-nav ml-auto">
+     <app-menu-sistemas>
+      <li class="nav-item dropdown d-md-down-none mr-3" dropdown="" placement="bottom right">
+       <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" dropdowntoggle="" href="#" role="button">
+        <i class="fa fa-bars mr-1">
+        </i>
+        <span class="hidden-xs-down mr-1">
+         Sistemas
+        </span>
+        <span class="caret">
+        </span>
+       </a>
+       <!-- -->
+      </li>
+      <!-- -->
+     </app-menu-sistemas>
+     <li class="nav-item dropdown" dropdown="" placement="bottom right">
+      <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" dropdowntoggle="" href="#" role="button">
+       <span class="fa fa-user mr-1">
+       </span>
+       <span class="d-md-down-none mr-1">
+        FLAVIO CONTARATO RIGOTTE
+       </span>
+       <span class="caret">
+       </span>
+      </a>
+      <!-- -->
+     </li>
+     <!-- -->
+    </ul>
+    <!-- -->
+    <!-- -->
+   </app-header>
+   <div class="app-body">
+    <app-sidebar class="sidebar">
+     <app-sidebar-nav class="sidebar-nav ps" role="nav">
+      <app-sidebar-nav-items class="nav">
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-link class="nav-item">
+        <!-- -->
+        <!-- -->
+        <a class="nav-link" href="#/dashboard">
+         <app-sidebar-nav-link-content>
+          <i class="nav-icon icon-speedometer">
+          </i>
+          <!-- -->
+          Dashboard
+          <!-- -->
+          <!-- -->
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link-content>
+        </a>
+        <!-- -->
+        <!-- -->
+       </app-sidebar-nav-link>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown open" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon icon-note">
+         </i>
+         <!-- -->
+         Autuação
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/autuacao/bebida">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Auto Bebida
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link active" href="#/autuacao/ctb">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Auto CTB
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/autuacao/escolta">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Auto Escolta
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/autuacao/produto-perigoso">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Auto Produto Perigoso
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/autuacao/listar-auto-infracao">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-magnifier-add">
+            </i>
+            <!-- -->
+            Consultar AI
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon fa fa-dollar">
+         </i>
+         <!-- -->
+         Dívida
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/divida/consultar-desvinculacao">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Desvinculação
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/divida/consultar-revinculacao">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-pencil">
+            </i>
+            <!-- -->
+            Revinculação
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/divida/consultar-devedores">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-dollar">
+            </i>
+            <!-- -->
+            Devedores
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon fa fa-dollar">
+         </i>
+         <!-- -->
+         Financeiro
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/financeiro/listar-boletos">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-shield">
+            </i>
+            <!-- -->
+            Boletos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/financeiro/listar-pagamentos">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-shield">
+            </i>
+            <!-- -->
+            Pagamentos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon icon-pencil">
+         </i>
+         <!-- -->
+         Protocolo
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/solicitacao/protocolo">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-note">
+            </i>
+            <!-- -->
+            Protocolar
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/solicitacao/consultar">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-note">
+            </i>
+            <!-- -->
+            Consultar
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/solicitacao/decisaoLote">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-note">
+            </i>
+            <!-- -->
+            Decisão em Lote
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon icon-settings">
+         </i>
+         <!-- -->
+         Gestão
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-auditoria">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-search">
+            </i>
+            <!-- -->
+            Auditorias
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-contrato">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-file-text">
+            </i>
+            <!-- -->
+            Contratos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-documento-obrigatorio">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-id-card">
+            </i>
+            <!-- -->
+            Documentos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-equipamento-obrigatorio">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-shield">
+            </i>
+            <!-- -->
+            Equipamentos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-infracao">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-ban">
+            </i>
+            <!-- -->
+            Infrações
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-modelo-conteudo">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-text-width">
+            </i>
+            <!-- -->
+            Modelos Conteúdos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-modelo-documento">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-file-code-o">
+            </i>
+            <!-- -->
+            Modelos Documentos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-prazo">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-calendar">
+            </i>
+            <!-- -->
+            Prazos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-tipo-evento-externo">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-calendar">
+            </i>
+            <!-- -->
+            T. Eventos Externos
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/gestao/listar-valor-base">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon fa fa-usd">
+            </i>
+            <!-- -->
+            Valores Bases
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-dropdown _nghost-onh-c13="" appnavdropdown="" class="nav-item nav-dropdown" routerlinkactive="open">
+        <a _ngcontent-onh-c13="" appnavdropdowntoggle="" class="nav-link nav-dropdown-toggle">
+         <i _ngcontent-onh-c13="" class="nav-icon icon-magnifier">
+         </i>
+         <!-- -->
+         Monitor
+         <!-- -->
+         <!-- -->
+        </a>
+        <app-sidebar-nav-items _ngcontent-onh-c13="" class="nav-dropdown-items">
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/listar-correspondencias">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-envelope">
+            </i>
+            <!-- -->
+            Correspondências
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/listar-lote-correios">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-layers">
+            </i>
+            <!-- -->
+            Lotes
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/monitor-correios">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-loop">
+            </i>
+            <!-- -->
+            Monitor Notificações
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/listar-edital">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-book-open">
+            </i>
+            <!-- -->
+            Editais
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/monitor-edital">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-loop">
+            </i>
+            <!-- -->
+            Monitor Edital
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/monitor-geral">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-loop">
+            </i>
+            <!-- -->
+            Monitor Geral
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/monitor-renainf">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-loop">
+            </i>
+            <!-- -->
+            Monitor Renainf
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <app-sidebar-nav-link class="nav-item">
+          <!-- -->
+          <!-- -->
+          <a class="nav-link" href="#/monitor/monitor-processo-pendente">
+           <app-sidebar-nav-link-content>
+            <i class="nav-icon icon-loop">
+            </i>
+            <!-- -->
+            Monitor Processo
+            <!-- -->
+            <!-- -->
+            <!-- -->
+            <!-- -->
+           </app-sidebar-nav-link-content>
+          </a>
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link>
+         <!-- -->
+         <!-- -->
+         <!-- -->
+         <!-- -->
+        </app-sidebar-nav-items>
+       </app-sidebar-nav-dropdown>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <app-sidebar-nav-link class="nav-item mt-auto">
+        <!-- -->
+        <a class="nav-link nav-link-success" href="https://suporte.prf.gov.br" target="_blank">
+         <app-sidebar-nav-link-content>
+          <i class="nav-icon icon-support">
+          </i>
+          <!-- -->
+          Fale Conosco
+          <!-- -->
+          <!-- -->
+          <!-- -->
+          <!-- -->
+         </app-sidebar-nav-link-content>
+        </a>
+        <!-- -->
+        <!-- -->
+        <!-- -->
+       </app-sidebar-nav-link>
+       <!-- -->
+       <!-- -->
+       <!-- -->
+       <!-- -->
+      </app-sidebar-nav-items>
+      <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+       <div class="ps__thumb-x" style="left: 0px; width: 0px;" tabindex="0">
+       </div>
+      </div>
+      <div class="ps__rail-y" style="top: 0px; right: 0px;">
+       <div class="ps__thumb-y" style="top: 0px; height: 0px;" tabindex="0">
+       </div>
+      </div>
+     </app-sidebar-nav>
+     <app-sidebar-minimizer class="sidebar-minimizer" role="button">
+     </app-sidebar-minimizer>
+    </app-sidebar>
+    <main class="main">
+     <div class="container-fluid p-3 h-100">
+      <app-alert _nghost-onh-c30="">
+       <!-- -->
+      </app-alert>
+      <router-outlet>
+      </router-outlet>
+      <app-lavrar-auto-ctb _nghost-onh-c164="" class="ng-star-inserted">
+       <div _ngcontent-onh-c164="" class="animated fadeIn p-0 mt-0">
+        <form _ngcontent-onh-c164="" appfocusinvalidinput="" class="ng-untouched ng-pristine ng-invalid" novalidate="">
+         <div _ngcontent-onh-c164="" class="card card-accent-success ng-star-inserted">
+          <div _ngcontent-onh-c164="" class="card-header d-flex justify-content-between">
+           <h2 _ngcontent-onh-c164="" class="mb-0">
+            <span _ngcontent-onh-c164="" class="icon-note mr-2">
+            </span>
+            Lavrar Auto de Infração
+            <span _ngcontent-onh-c164="" class="badge badge-success">
+             CTB
+            </span>
+           </h2>
+           <h4 _ngcontent-onh-c164="" class="ng-star-inserted">
+            <span _ngcontent-onh-c164="" class="badge badge-dark">
+             J000213696
+            </span>
+           </h4>
+           <!-- -->
+          </div>
+          <ul _ngcontent-onh-c164="" class="list-group list-group-flush ng-star-inserted">
+           <li _ngcontent-onh-c164="" class="list-group-item">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Identificação da Infração
+             </span>
+            </h4>
+            <app-infracao _ngcontent-onh-c164="" _nghost-onh-c119="">
+             <div _ngcontent-onh-c119="" class="row">
+              <!-- -->
+              <div _ngcontent-onh-c119="" class="col-md-8">
+               <div _ngcontent-onh-c119="" class="form-group">
+                <label _ngcontent-onh-c119="" class="mb-0">
+                 Código/Descrição da infração
+                </label>
+                <ng-select _ngcontent-onh-c119="" bindlabel="descricaoInfracao" class="ng-select-typeahead ng-select-searchable ng-select-clearable ng-select ng-select-single ng-untouched ng-pristine ng-select-disabled" name="descricao" required="">
+                 <div class="ng-select-container ng-has-value">
+                  <div class="ng-value-container">
+                   <div class="ng-placeholder">
+                   </div>
+                   <div class="ng-value ng-star-inserted">
+                    <!-- -->
+                    74630 - Transitar em velocidade superior à máxima permitida em mais de 20% até 50%
+                    <!-- -->
+                   </div>
+                   <!-- -->
+                   <!-- -->
+                   <!-- -->
+                   <!-- -->
+                   <div aria-expanded="false" aria-haspopup="listbox" class="ng-input" role="combobox">
+                    <input aria-autocomplete="list" autocapitalize="off" autocomplete="a76845ab1c2a" autocorrect="off" disabled="" type="text"/>
+                   </div>
+                  </div>
+                  <!-- -->
+                  <!-- -->
+                  <span class="ng-arrow-wrapper">
+                   <span class="ng-arrow">
+                   </span>
+                  </span>
+                 </div>
+                 <!-- -->
+                </ng-select>
+                <app-message _ngcontent-onh-c119="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c119="" class="col-md-4">
+               <div _ngcontent-onh-c119="" class="form-group">
+                <label _ngcontent-onh-c119="" class="mb-0" for="amparoLegal">
+                 Amparo Legal
+                </label>
+                <input _ngcontent-onh-c119="" class="form-control ng-untouched ng-pristine ng-valid" id="amparoLegal" name="amparoLegal" readonly="" tabindex="-1"/>
+               </div>
+              </div>
+              <div _ngcontent-onh-c119="" class="col-md-4">
+               <div _ngcontent-onh-c119="" class="form-group">
+                <label _ngcontent-onh-c119="" class="mb-0 ng-star-inserted">
+                 Gravidade
+                </label>
+                <!-- -->
+                <!-- -->
+                <input _ngcontent-onh-c119="" class="form-control ng-untouched ng-pristine ng-valid" id="gravidade" name="gravidade" readonly="" tabindex="-1"/>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c119="" class="col-md-4">
+               <div _ngcontent-onh-c119="" class="form-group">
+                <label _ngcontent-onh-c119="" class="mb-0">
+                 Tipo de Infrator
+                </label>
+                <input _ngcontent-onh-c119="" class="form-control ng-untouched ng-pristine ng-valid" id="tpInfrator" name="tipoInfrator" readonly="" tabindex="-1"/>
+               </div>
+              </div>
+             </div>
+             <app-documento-obrigatorio _ngcontent-onh-c164="" _nghost-onh-c116="">
+              <div _ngcontent-onh-c116="" class="row">
+               <!-- -->
+              </div>
+             </app-documento-obrigatorio>
+             <app-equipamento-obrigatorio _ngcontent-onh-c164="" _nghost-onh-c117="">
+              <div _ngcontent-onh-c117="" class="row">
+               <!-- -->
+              </div>
+             </app-equipamento-obrigatorio>
+             <div _ngcontent-onh-c119="" class="row">
+              <!-- -->
+             </div>
+             <!-- -->
+             <!-- -->
+            </app-infracao>
+           </li>
+           <li _ngcontent-onh-c164="" class="list-group-item">
+            <div _ngcontent-onh-c164="" class="row">
+             <div _ngcontent-onh-c164="" class="col-md-4">
+              <div _ngcontent-onh-c164="" class="form-group mb-0">
+               <label _ngcontent-onh-c164="" class="mb-0">
+               </label>
+               <div _ngcontent-onh-c164="" class="form-check form-check-inline">
+                <input _ngcontent-onh-c164="" class="form-check-input ng-untouched ng-pristine ng-valid" disabled="true" id="abordagem1" name="abordagem" type="radio"/>
+                <label _ngcontent-onh-c164="" class="form-check-label">
+                 Com Abordagem
+                </label>
+               </div>
+               <div _ngcontent-onh-c164="" class="form-check form-check-inline">
+                <input _ngcontent-onh-c164="" class="form-check-input ng-untouched ng-pristine ng-valid" disabled="true" id="abordagem2" name="abordagem" type="radio"/>
+                <label _ngcontent-onh-c164="" class="form-check-label">
+                 Sem Abordagem
+                </label>
+               </div>
+              </div>
+             </div>
+            </div>
+           </li>
+           <li _ngcontent-onh-c164="" class="list-group-item ng-star-inserted">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Identificação do Veículo
+             </span>
+            </h4>
+            <app-veiculo _ngcontent-onh-c164="" _nghost-onh-c135="">
+             <div _ngcontent-onh-c135="" class="row">
+              <div _ngcontent-onh-c135="" class="col-md-4 ng-star-inserted">
+               <div _ngcontent-onh-c135="" class="form-group">
+                <label _ngcontent-onh-c135="" class="mb-0">
+                 Emplacamento
+                </label>
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="emplacamento" required="">
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Nacional">
+                  Nacional
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Licenciado no Exterior">
+                  Licenciado no Exterior
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Sem Placa">
+                  Sem Placa
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-4 ng-star-inserted">
+               <div _ngcontent-onh-c135="" class="form-group">
+                <label _ngcontent-onh-c135="" class="mb-0">
+                 Placa
+                </label>
+                <div _ngcontent-onh-c135="" class="input-group">
+                 <input _ngcontent-onh-c135="" appuppercase="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="7" name="placa" required=""/>
+                 <!-- -->
+                </div>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-4 ng-star-inserted">
+               <div _ngcontent-onh-c135="" class="form-group">
+                <label _ngcontent-onh-c135="" class="mb-0">
+                 Chassi
+                </label>
+                <div _ngcontent-onh-c135="" class="input-group">
+                 <input _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="17" name="chassi" required=""/>
+                 <!-- -->
+                </div>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Renavam
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <input _ngcontent-onh-c135="" apprenavam="" class="form-control ng-untouched ng-pristine" disabled="" mask="00000000000" maxlength="11" name="renavam" required=""/>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-3 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                País
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="pais" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Argentina">
+                  Argentina
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Bolívia">
+                  Bolívia
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Uruguai">
+                  Uruguai
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Venezuela">
+                  Venezuela
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Guiana">
+                  Guiana
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Chile">
+                  Chile
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Paraguai">
+                  Paraguai
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Mexico">
+                  Mexico
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Estados Unidos">
+                  Estados Unidos
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Canada">
+                  Canada
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="Outros">
+                  Outros
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                UF
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group ng-star-inserted">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="ufVeiculo" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: AC">
+                  AC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: AL">
+                  AL
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: AP">
+                  AP
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: AM">
+                  AM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: BA">
+                  BA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: CE">
+                  CE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: DF">
+                  DF
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="8: ES">
+                  ES
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="9: GO">
+                  GO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="10: MA">
+                  MA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="11: MT">
+                  MT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="12: MS">
+                  MS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="13: MG">
+                  MG
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="14: PA">
+                  PA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="15: PB">
+                  PB
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="16: PR">
+                  PR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="17: PE">
+                  PE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="18: PI">
+                  PI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="19: RJ">
+                  RJ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="20: RN">
+                  RN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="21: RS">
+                  RS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="22: RO">
+                  RO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="23: RR">
+                  RR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="24: SC">
+                  SC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="25: SP">
+                  SP
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="26: SE">
+                  SE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="27: TO">
+                  TO
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+               <!-- -->
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-3 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Marca
+               </label>
+               <fieldset _ngcontent-onh-c135="" class="form-group" disabled="">
+                <legend _ngcontent-onh-c135="" class="d-none">
+                 Marca
+                </legend>
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine ng-valid" name="marca" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: Object">
+                  SR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: Object">
+                  AGRALE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: Object">
+                  ALFA ROMEO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: Object">
+                  AMV
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: Object">
+                  APRILIA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: Object">
+                  ASIA MOTORS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: Object">
+                  AUDI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="8: Object">
+                  BAJAJ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="9: Object">
+                  BMW
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="10: Object">
+                  BRAMONT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="11: Object">
+                  BRANDY
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="12: Object">
+                  BUENO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="13: Object">
+                  BUGRE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="14: Object">
+                  CADILLAC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="15: Object">
+                  CALOI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="16: Object">
+                  CAOACHERY
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="17: Object">
+                  CBT JIPE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="18: Object">
+                  CHERY
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="19: Object">
+                  CHEV
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="20: Object">
+                  CHEVROLET
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="21: Object">
+                  CHRYSLER
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="22: Object">
+                  CICLOMOTOR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="23: Object">
+                  CITROEN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="24: Object">
+                  CITROËN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="25: Object">
+                  DAEWOO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="26: Object">
+                  DAF
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="27: Object">
+                  DAFRA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="28: Object">
+                  DAIHATSU
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="29: Object">
+                  DAMBROZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="30: Object">
+                  DODGE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="31: Object">
+                  DUCATI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="32: Object">
+                  EFFA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="33: Object">
+                  FERRARI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="34: Object">
+                  FIAT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="35: Object">
+                  FLASH
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="36: Object">
+                  FORD
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="37: Object">
+                  FOTON
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="38: Object">
+                  GM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="39: Object">
+                  GMC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="40: Object">
+                  GUERRA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="41: Object">
+                  GURGEL
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="42: Object">
+                  H-D
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="43: Object">
+                  H.DAVIDSON
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="44: Object">
+                  HAFEI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="45: Object">
+                  HARLEY DAVIDSON
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="46: Object">
+                  HARLEY-DAVIDSON
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="47: Object">
+                  HONDA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="48: Object">
+                  HYUNDAI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="49: Object">
+                  IBIPORÃ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="50: Object">
+                  IMP
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="51: Object">
+                  INDIAN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="52: Object">
+                  INTERNATIONAL
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="53: Object">
+                  ITAPEMIRIM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="54: Object">
+                  IVECO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="55: Object">
+                  IVECOFIAT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="56: Object">
+                  JAC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="57: Object">
+                  JAGUAR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="58: Object">
+                  JEEP
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="59: Object">
+                  JTA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="60: Object">
+                  JTA-SUZUKI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="61: Object">
+                  JTA-SUZUKI GSX-S750 AZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="62: Object">
+                  JTZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="63: Object">
+                  KASINSKI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="64: Object">
+                  KAWASAKI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="65: Object">
+                  KIA MOTORS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="66: Object">
+                  KTM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="67: Object">
+                  LADA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="68: Object">
+                  LAMBORGHINI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="69: Object">
+                  LAND ROVER
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="70: Object">
+                  LEXUS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="71: Object">
+                  LIBRELATO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="72: Object">
+                  LIFAN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="73: Object">
+                  LR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="74: Object">
+                  M.A.
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="75: Object">
+                  M.BENZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="76: Object">
+                  MAN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="77: Object">
+                  MARCOPOLO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="78: Object">
+                  MASCARELLO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="79: Object">
+                  MASERATI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="80: Object">
+                  MAXIBUS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="81: Object">
+                  MAZDA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="82: Object">
+                  MBENZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="83: Object">
+                  MERCEDES BENZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="84: Object">
+                  MERCEDES-BENZ
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="85: Object">
+                  MINI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="86: Object">
+                  MITSUBISHI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="87: Object">
+                  MIURA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="88: Object">
+                  MMC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="89: Object">
+                  MOTO GUZZI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="90: Object">
+                  MOTO TRAXX
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="91: Object">
+                  MOTOCAR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="92: Object">
+                  MOTOR-CASA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="93: Object">
+                  MOTORINO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="94: Object">
+                  MOTTU
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="95: Object">
+                  MPOLO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="96: Object">
+                  NAVISTAR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="97: Object">
+                  NEOBUS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="98: Object">
+                  NISSAN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="99: Object">
+                  NOMA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="100: Object">
+                  OLLS-ROYCE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="101: Object">
+                  ORCA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="102: Object">
+                  PASTRE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="103: Object">
+                  PEUGEOT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="104: Object">
+                  POLARIS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="105: Object">
+                  PONTIAC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="106: Object">
+                  PORSCHE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="107: Object">
+                  PUMA-ALFA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="108: Object">
+                  R
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="109: Object">
+                  RAM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="110: Object">
+                  RANDON
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="111: Object">
+                  RE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="112: Object">
+                  REB
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="113: Object">
+                  RECRUSUL
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="114: Object">
+                  RENAULT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="115: Object">
+                  ROVER
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="116: Object">
+                  SATURN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="117: Object">
+                  SC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="118: Object">
+                  SCANIA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="119: Object">
+                  SE
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="120: Object">
+                  SEAT
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="121: Object">
+                  SELVAGEM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="122: Object">
+                  SHINERAY
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="123: Object">
+                  SMART
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="124: Object">
+                  SR
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="125: Object">
+                  SRM
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="126: Object">
+                  SSANGYONG
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="127: Object">
+                  SUBARU
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="128: Object">
+                  SUNDOWN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="129: Object">
+                  SUZUKI
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="130: Object">
+                  TAC
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="131: Object">
+                  TARGOS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="132: Object">
+                  TOYOTA
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="133: Object">
+                  TRAXX
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="134: Object">
+                  TRIUMPH
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="135: Object">
+                  TROLLER
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="136: Object">
+                  TVS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="137: Object">
+                  VOLKS
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="138: Object">
+                  VOLKSWAGEN
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="139: Object">
+                  VOLVO
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="140: Object">
+                  VW
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="141: Object">
+                  YAMAHA
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </fieldset>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <fieldset _ngcontent-onh-c135="" class="form-group" disabled="">
+                <legend _ngcontent-onh-c135="" class="d-none">
+                 Outra Marca
+                </legend>
+                <label _ngcontent-onh-c135="" class="mb-0">
+                 Outra Marca
+                </label>
+                <div _ngcontent-onh-c135="" class="input-group">
+                 <div _ngcontent-onh-c135="" class="input-group-prepend">
+                  <div _ngcontent-onh-c135="" class="input-group-text">
+                   <input _ngcontent-onh-c135="" aria-label="Outra Marca" class="ng-untouched ng-pristine ng-valid" name="outraMarca" type="checkbox"/>
+                  </div>
+                 </div>
+                 <input _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="20" name="nomeOutraMarca" required=""/>
+                </div>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </fieldset>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-4 ng-star-inserted">
+               <div _ngcontent-onh-c135="" class="form-group">
+                <label _ngcontent-onh-c135="" class="mb-0">
+                 Modelo
+                </label>
+                <input _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="30" name="modelo" required=""/>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Cor
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="cor" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: Amarela">
+                  Amarela
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: Azul">
+                  Azul
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: Bege">
+                  Bege
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: Branca">
+                  Branca
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: Cinza">
+                  Cinza
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: Dourada">
+                  Dourada
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: Fantasia">
+                  Fantasia
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="8: Grená">
+                  Grená
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="9: Laranja">
+                  Laranja
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="10: Marrom">
+                  Marrom
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="11: Prata">
+                  Prata
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="12: Preta">
+                  Preta
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="13: Rosa">
+                  Rosa
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="14: Roxa">
+                  Roxa
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="15: Verde">
+                  Verde
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="16: Vermelha">
+                  Vermelha
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Espécie
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="especie" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: Carga">
+                  Carga
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: Coleção">
+                  Coleção
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: Competição">
+                  Competição
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: Especial">
+                  Especial
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: Misto">
+                  Misto
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: Passageiro">
+                  Passageiro
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: Tração">
+                  Tração
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Tipo do Veículo
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="tipo" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: Automóvel">
+                  Automóvel
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: Bicicleta">
+                  Bicicleta
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: Bonde">
+                  Bonde
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: Caminhão">
+                  Caminhão
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: Caminhão Tanque">
+                  Caminhão Tanque
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: Caminhão Trator">
+                  Caminhão Trator
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: Caminhonete">
+                  Caminhonete
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="8: Camioneta">
+                  Camioneta
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="9: Carro de Mão">
+                  Carro de Mão
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="10: Carroça">
+                  Carroça
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="11: Charrete">
+                  Charrete
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="12: Ciclomotor">
+                  Ciclomotor
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="13: Microônibus">
+                  Microônibus
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="14: Motocicleta">
+                  Motocicleta
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="15: Motoneta">
+                  Motoneta
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="16: Motor-Casa">
+                  Motor-Casa
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="17: Ônibus">
+                  Ônibus
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="18: Quadriciclo">
+                  Quadriciclo
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="19: Reboque">
+                  Reboque
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="20: Semi-reboque">
+                  Semi-reboque
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="21: Side-car">
+                  Side-car
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="22: Trator de rodas">
+                  Trator de rodas
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="23: Trator Esteira">
+                  Trator Esteira
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="24: Trator Misto">
+                  Trator Misto
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="25: Triciclo">
+                  Triciclo
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="26: Utilitário">
+                  Utilitário
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <div _ngcontent-onh-c135="" class="col-md-2 ng-star-inserted">
+               <label _ngcontent-onh-c135="" class="mb-0">
+                Categoria
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <select _ngcontent-onh-c135="" class="form-control ng-untouched ng-pristine" disabled="" name="categoria" required="">
+                 <option _ngcontent-onh-c135="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="1: Particular">
+                  Particular
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="2: Aluguel">
+                  Aluguel
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="3: Oficial">
+                  Oficial
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="4: Experiência">
+                  Experiência
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="5: Aprendizagem">
+                  Aprendizagem
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="6: Fabricante">
+                  Fabricante
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="7: Chefe de Missão Diplomática">
+                  Chefe de Missão Diplomática
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="8: Corpo Consular">
+                  Corpo Consular
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="9: Organismo Internacional">
+                  Organismo Internacional
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="10: Corpo Diplomático">
+                  Corpo Diplomático
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="11: Missão/Repartição/Representação Internacional">
+                  Missão/Repartição/Representação Internacional
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="12: Acordo de Cooperação Internacional">
+                  Acordo de Cooperação Internacional
+                 </option>
+                 <option _ngcontent-onh-c135="" class="ng-star-inserted" value="13: Outra">
+                  Outra
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c135="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <!-- -->
+              <!-- -->
+              <!-- -->
+             </div>
+             <app-envolvido _ngcontent-onh-c135="" _nghost-onh-c115="" class="ng-star-inserted">
+              <fieldset _ngcontent-onh-c115="" disabled="">
+               <div _ngcontent-onh-c115="" class="row">
+                <!-- -->
+                <!-- -->
+                <!-- -->
+               </div>
+               <!-- -->
+               <div _ngcontent-onh-c115="" class="row">
+                <div _ngcontent-onh-c115="" class="col-md-2">
+                 <fieldset _ngcontent-onh-c115="" class="form-group" disabled="">
+                  <legend _ngcontent-onh-c115="" class="d-none">
+                   Tipo Documento
+                  </legend>
+                  <label _ngcontent-onh-c115="" class="mb-0">
+                   Tipo Documento
+                  </label>
+                  <select _ngcontent-onh-c115="" class="form-control ng-untouched ng-pristine ng-valid" required="">
+                   <option _ngcontent-onh-c115="" value="0: undefined">
+                   </option>
+                   <option _ngcontent-onh-c115="" class="ng-star-inserted" value="1: CPF">
+                    CPF
+                   </option>
+                   <option _ngcontent-onh-c115="" class="ng-star-inserted" value="2: CNPJ">
+                    CNPJ
+                   </option>
+                   <!-- -->
+                  </select>
+                  <app-message _ngcontent-onh-c115="" _nghost-onh-c35="">
+                   <!-- -->
+                  </app-message>
+                 </fieldset>
+                </div>
+                <div _ngcontent-onh-c115="" class="col-md-3">
+                 <fieldset _ngcontent-onh-c115="" class="form-group" disabled="">
+                  <legend _ngcontent-onh-c115="" class="d-none">
+                   Nº Documento
+                  </legend>
+                  <label _ngcontent-onh-c115="" class="mb-0">
+                   Nº Documento
+                  </label>
+                  <div _ngcontent-onh-c115="" class="input-group">
+                   <input _ngcontent-onh-c115="" class="form-control ng-untouched ng-pristine ng-valid" mask="A*" maxlength="14" pattern="^$|^[A-Za-z0-9]+" required="" validation="true"/>
+                   <!-- -->
+                  </div>
+                  <app-message _ngcontent-onh-c115="" _nghost-onh-c35="">
+                   <!-- -->
+                  </app-message>
+                 </fieldset>
+                </div>
+                <div _ngcontent-onh-c115="" class="col-md-7">
+                 <fieldset _ngcontent-onh-c115="" class="form-group" disabled="">
+                  <legend _ngcontent-onh-c115="" class="d-none">
+                   Nome/Razão Social
+                  </legend>
+                  <label _ngcontent-onh-c115="" class="mb-0">
+                   Nome/Razão Social
+                  </label>
+                  <input _ngcontent-onh-c115="" class="form-control ng-untouched ng-pristine ng-valid" maxlength="150" required=""/>
+                  <app-message _ngcontent-onh-c115="" _nghost-onh-c35="">
+                   <!-- -->
+                  </app-message>
+                 </fieldset>
+                </div>
+                <!-- -->
+                <!-- -->
+               </div>
+              </fieldset>
+             </app-envolvido>
+             <!-- -->
+             <div _ngcontent-onh-c135="" class="row">
+              <div _ngcontent-onh-c135="" class="col-md-4 ng-star-inserted">
+               <label _ngcontent-onh-c135="">
+                Tipo de Composição
+               </label>
+               <div _ngcontent-onh-c135="" class="form-group">
+                <div _ngcontent-onh-c135="" class="form-check form-check-inline ng-star-inserted">
+                 <fieldset _ngcontent-onh-c135="" disabled="">
+                  <legend _ngcontent-onh-c135="" class="d-none">
+                   Tipo de Composição
+                  </legend>
+                  <input _ngcontent-onh-c135="" class="form-check-input ng-untouched ng-pristine" disabled="" name="tipoComposicao" required="" type="radio"/>
+                  <label _ngcontent-onh-c135="" class="form-check-label">
+                   Simples
+                  </label>
+                 </fieldset>
+                </div>
+                <div _ngcontent-onh-c135="" class="form-check form-check-inline ng-star-inserted">
+                 <fieldset _ngcontent-onh-c135="" disabled="">
+                  <legend _ngcontent-onh-c135="" class="d-none">
+                   Tipo de Composição
+                  </legend>
+                  <input _ngcontent-onh-c135="" class="form-check-input ng-untouched ng-pristine" disabled="" name="tipoComposicao" required="" type="radio"/>
+                  <label _ngcontent-onh-c135="" class="form-check-label">
+                   Combinação
+                  </label>
+                 </fieldset>
+                </div>
+                <!-- -->
+               </div>
+              </div>
+              <!-- -->
+             </div>
+             <!-- -->
+             <app-modal-consulta-veiculo _ngcontent-onh-c135="" _nghost-onh-c132="">
+              <!-- -->
+             </app-modal-consulta-veiculo>
+            </app-veiculo>
+           </li>
+           <!-- -->
+           <!-- -->
+           <li _ngcontent-onh-c164="" class="list-group-item">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Local da Infração
+             </span>
+            </h4>
+            <app-local _ngcontent-onh-c164="" _nghost-onh-c129="">
+             <fieldset _ngcontent-onh-c129="" disabled="">
+              <div _ngcontent-onh-c129="" class="row">
+               <div _ngcontent-onh-c129="" class="col-md-6">
+                <fieldset _ngcontent-onh-c129="" class="form-group">
+                 <legend _ngcontent-onh-c129="" class="d-none">
+                  Código/Município/UF
+                 </legend>
+                 <label _ngcontent-onh-c129="" class="mb-0">
+                  Código/Município/UF
+                 </label>
+                 <ng-select _ngcontent-onh-c129="" class="ng-select-typeahead ng-select-searchable ng-select-clearable ng-select ng-select-single ng-untouched ng-pristine ng-valid" name="municipio" required="">
+                  <div class="ng-select-container ng-has-value">
+                   <div class="ng-value-container">
+                    <div class="ng-placeholder">
+                    </div>
+                    <div class="ng-value ng-star-inserted">
+                     <!-- -->
+                     73636 - POUSO NOVO - RS
+                     <!-- -->
+                    </div>
+                    <!-- -->
+                    <!-- -->
+                    <!-- -->
+                    <!-- -->
+                    <div aria-expanded="false" aria-haspopup="listbox" class="ng-input" role="combobox">
+                     <input aria-autocomplete="list" autocapitalize="off" autocomplete="abbae5724cf4" autocorrect="off" type="text"/>
+                    </div>
+                   </div>
+                   <!-- -->
+                   <span class="ng-clear-wrapper ng-star-inserted" title="Clear all">
+                    <span aria-hidden="true" class="ng-clear">
+                     ×
+                    </span>
+                   </span>
+                   <!-- -->
+                   <span class="ng-arrow-wrapper">
+                    <span class="ng-arrow">
+                    </span>
+                   </span>
+                  </div>
+                  <!-- -->
+                 </ng-select>
+                 <app-message _ngcontent-onh-c129="" _nghost-onh-c35="">
+                  <!-- -->
+                 </app-message>
+                </fieldset>
+               </div>
+               <div _ngcontent-onh-c129="" class="col-md-4">
+                <fieldset _ngcontent-onh-c129="" class="form-group">
+                 <legend _ngcontent-onh-c129="" class="d-none">
+                  BR
+                 </legend>
+                 <label _ngcontent-onh-c129="" class="mb-0">
+                  BR
+                 </label>
+                 <select _ngcontent-onh-c129="" class="form-control ng-untouched ng-pristine" disabled="" name="rodovia" required="">
+                  <option _ngcontent-onh-c129="" value="0: undefined">
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="1: Object">
+                   101 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="2: Object">
+                   101 - FIM PISTA INVERSA / VARIANTE DA GRUTA
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="3: Object">
+                   101 - ENTR BR-101 (ACESSO SUL P/CAPÃO DA CANOA)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="4: Object">
+                   116 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="5: Object">
+                   116 - P/PORTO ALEGRE
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="6: Object">
+                   116 - ENTR BR-116/290 (PORTO ALEGRE)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="7: Object">
+                   116 - ENTR R. EDU CHAVES
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="8: Object">
+                   116 - 2ª PONTE S/RIO GUAÍBA (ENTR R.DONA TEODORA E FREDERICO MENTZ)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="9: Object">
+                   116 - ENTR BR-386
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="10: Object">
+                   153 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="11: Object">
+                   153 - P/PORTO CACHOEIRA DO SUL *TRECHO URBANO*
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="12: Object">
+                   158 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="13: Object">
+                   158 - 13ª CIA DAM ITAARA - ACESSO
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="14: Object">
+                   158 - SEDE CAMPO DE INSTRUÇÃO DE SANTA MARIA
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="15: Object">
+                   158 - FRONT BRASIL/URUGUAI (SANTANA DO LIVRAMENTO)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="16: Object">
+                   285 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="17: Object">
+                   285 - FRONT BRASIL/ARGENTINA (PONTE S/ RIO URUGUAI)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="18: Object">
+                   287 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="19: Object">
+                   287 - PÓRTICO DE ENTRADA DA UFSM
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="20: Object">
+                   287 - ACESSO SÃO VICENTE DO SUL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="21: Object">
+                   290 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="22: Object">
+                   290 - 2ª PONTE S/RIO GUAÍBA (ENTR R.DONA TEODORA E FREDERICO MENTZ)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="23: Object">
+                   290 - ACESSO BUTIA
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="24: Object">
+                   290 - PORTO SECO DE URUGUAIANA - ACESSO
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="25: Object">
+                   293 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="26: Object">
+                   293 - ENTR AV. PROTÁSIO ALVES (PINHEIRO MACHADO)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="27: Object">
+                   293 - FRONT BRASIL/URUGUAI (PONTE DA CONCÓRDIA)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="28: Object">
+                   293 - ENTR AV PRES VARGAS (AV STA TECLA/BAGÉ) *TRECHO URBANO*
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="29: Object">
+                   377 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="30: Object">
+                   386 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="31: Object">
+                   392 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="32: Object">
+                   392 - ENTR R. MINAS DO CAMAQUÃ (SANTANA DA BOA VISTA)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="33: Object">
+                   392 - MOLHES DA BARRA (ACES MOLHES DA BARRA)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="34: Object">
+                   392 - PORTAL UFPEL/ACESSO ECLUSA S GONÇALO
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="35: Object">
+                   392 - ENTR RODOVIA DA INTEGRAÇÃO (SANTA MARIA)
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="36: Object">
+                   438 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="37: Object">
+                   448 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="38: Object">
+                   453 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="39: Object">
+                   468 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="40: Object">
+                   470 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="41: Object">
+                   471 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="42: Object">
+                   472 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="43: Object">
+                   473 - PRINCIPAL
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="44: Object">
+                   480 - PRINCIPAL
+                  </option>
+                  <!-- -->
+                 </select>
+                 <app-message _ngcontent-onh-c129="" _nghost-onh-c35="">
+                  <!-- -->
+                 </app-message>
+                </fieldset>
+               </div>
+               <div _ngcontent-onh-c129="" class="col-md-2">
+                <fieldset _ngcontent-onh-c129="" class="form-group">
+                 <legend _ngcontent-onh-c129="" class="d-none">
+                  Km
+                 </legend>
+                 <label _ngcontent-onh-c129="" class="mb-0">
+                  Km
+                 </label>
+                 <input _ngcontent-onh-c129="" appnonegative="" class="form-control ng-untouched ng-pristine" disabled="" max="9999" maxlength="15" min="0" name="km" required="" type="number"/>
+                 <app-message _ngcontent-onh-c129="" _nghost-onh-c35="">
+                  <!-- -->
+                 </app-message>
+                </fieldset>
+               </div>
+               <div _ngcontent-onh-c129="" class="col-md-3">
+                <fieldset _ngcontent-onh-c129="" class="form-group">
+                 <legend _ngcontent-onh-c129="" class="d-none">
+                  Sentido
+                 </legend>
+                 <label _ngcontent-onh-c129="" class="mb-0">
+                  Sentido
+                 </label>
+                 <select _ngcontent-onh-c129="" class="form-control ng-untouched ng-pristine" disabled="" name="sentido" required="">
+                  <option _ngcontent-onh-c129="" value="0: undefined">
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="1: Crescente">
+                   Crescente
+                  </option>
+                  <option _ngcontent-onh-c129="" class="ng-star-inserted" value="2: Decrescente">
+                   Decrescente
+                  </option>
+                  <!-- -->
+                 </select>
+                 <app-message _ngcontent-onh-c129="" _nghost-onh-c35="">
+                  <!-- -->
+                 </app-message>
+                </fieldset>
+               </div>
+               <div _ngcontent-onh-c129="" class="col-md-5">
+                <fieldset _ngcontent-onh-c129="" class="form-group">
+                 <legend _ngcontent-onh-c129="" class="d-none">
+                  Data/Hora
+                 </legend>
+                 <label _ngcontent-onh-c129="" class="mb-0">
+                  Data/Hora
+                 </label>
+                 <app-data-hora _ngcontent-onh-c129="" _nghost-onh-c128="" class="ng-untouched ng-pristine" name="dataHora" ngmodelgroup="dataHoraGrupo" required="">
+                  <div _ngcontent-onh-c128="" class="input-group">
+                   <input _ngcontent-onh-c128="" class="form-control ng-untouched ng-pristine" disabled="" max="2025-06-20" name="dataInfracao" type="date"/>
+                   <input _ngcontent-onh-c128="" class="form-control ng-untouched ng-pristine" disabled="" name="horaInfracao" type="time"/>
+                  </div>
+                 </app-data-hora>
+                 <app-message _ngcontent-onh-c129="" _nghost-onh-c35="">
+                  <!-- -->
+                 </app-message>
+                </fieldset>
+               </div>
+              </div>
+             </fieldset>
+            </app-local>
+           </li>
+           <!-- -->
+           <!-- -->
+           <!-- -->
+           <li _ngcontent-onh-c164="" class="list-group-item ng-star-inserted">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Medições
+             </span>
+            </h4>
+            <app-medicao _ngcontent-onh-c164="" _nghost-onh-c131="">
+             <div _ngcontent-onh-c131="" class="row">
+              <div _ngcontent-onh-c131="" class="col-md-3">
+               <div _ngcontent-onh-c131="" class="form-group">
+                <label _ngcontent-onh-c131="" class="mb-0">
+                 Tipo de Medição
+                </label>
+                <input _ngcontent-onh-c131="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="150" name="tipoMedicao" required=""/>
+                <app-message _ngcontent-onh-c131="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c131="" class="col-md-3">
+               <div _ngcontent-onh-c131="" class="form-group">
+                <label _ngcontent-onh-c131="" class="mb-0">
+                 Comprovado por
+                </label>
+                <select _ngcontent-onh-c131="" class="form-control ng-untouched ng-pristine" disabled="" name="comprovadoPor">
+                 <option _ngcontent-onh-c131="" value="0: undefined">
+                 </option>
+                 <option _ngcontent-onh-c131="" class="ng-star-inserted" value="1: Equipamento">
+                  Equipamento
+                 </option>
+                 <!-- -->
+                </select>
+                <app-message _ngcontent-onh-c131="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c131="" class="col-12 ng-star-inserted">
+               <div _ngcontent-onh-c131="" class="table-responsive">
+                <table _ngcontent-onh-c131="" class="table table-bordered table-striped table-sm">
+                 <caption _ngcontent-onh-c131="" class="d-none">
+                 </caption>
+                 <tr _ngcontent-onh-c131="">
+                  <th _ngcontent-onh-c131="" scope="col">
+                   Item
+                  </th>
+                  <th _ngcontent-onh-c131="" scope="col">
+                   Medição Realizada
+                  </th>
+                  <th _ngcontent-onh-c131="" scope="col">
+                   Valor Considerado
+                  </th>
+                  <th _ngcontent-onh-c131="" scope="col">
+                   Limite Regulamentado
+                  </th>
+                  <th _ngcontent-onh-c131="" scope="col">
+                   Excesso Verificado
+                  </th>
+                 </tr>
+                 <tr _ngcontent-onh-c131="" class="ng-star-inserted">
+                  <td _ngcontent-onh-c131="">
+                   <input _ngcontent-onh-c131="" class="form-control form-control-sm ng-untouched ng-pristine ng-invalid" readonly="" required=""/>
+                  </td>
+                  <td _ngcontent-onh-c131="">
+                   <app-input-number _ngcontent-onh-c131="" class="ng-untouched ng-pristine" required="">
+                    <span data-pc-name="inputnumber" data-pc-section="root">
+                     <input aria-valuemax="999999" aria-valuemin="0" aria-valuenow="97" class="form-control form-control-sm" data-pc-section="input" disabled="" inputmode="decimal" max="999999" min="0" name="medicaoReal-0" required="true" role="spinbutton"/>
+                    </span>
+                   </app-input-number>
+                   <app-message _ngcontent-onh-c131="" _nghost-onh-c35="">
+                    <!-- -->
+                   </app-message>
+                  </td>
+                  <td _ngcontent-onh-c131="">
+                   <app-input-number _ngcontent-onh-c131="" class="ng-untouched ng-pristine" required="">
+                    <span data-pc-name="inputnumber" data-pc-section="root">
+                     <input aria-valuemax="999999" aria-valuemin="0" aria-valuenow="90" class="form-control form-control-sm" data-pc-section="input" disabled="" inputmode="decimal" max="999999" min="0" name="itemMedidoMedicaoConsiderada-0" required="true" role="spinbutton"/>
+                    </span>
+                   </app-input-number>
+                   <app-message _ngcontent-onh-c131="" _nghost-onh-c35="">
+                    <!-- -->
+                   </app-message>
+                  </td>
+                  <td _ngcontent-onh-c131="">
+                   <app-input-number _ngcontent-onh-c131="" class="ng-untouched ng-pristine" required="">
+                    <span data-pc-name="inputnumber" data-pc-section="root">
+                     <input aria-valuemax="999999" aria-valuemin="0" aria-valuenow="60" class="form-control form-control-sm" data-pc-section="input" disabled="" inputmode="decimal" max="999999" min="0" name="limitePermitido0" required="true" role="spinbutton"/>
+                    </span>
+                   </app-input-number>
+                   <app-message _ngcontent-onh-c131="" _nghost-onh-c35="">
+                    <!-- -->
+                   </app-message>
+                  </td>
+                  <td _ngcontent-onh-c131="">
+                   <input _ngcontent-onh-c131="" class="form-control form-control-sm ng-untouched ng-pristine ng-valid" decimalmarker="," mask="separator.2" readonly="" required=""/>
+                  </td>
+                 </tr>
+                 <!-- -->
+                 <!-- -->
+                </table>
+               </div>
+              </div>
+              <!-- -->
+             </div>
+            </app-medicao>
+           </li>
+           <!-- -->
+           <li _ngcontent-onh-c164="" class="list-group-item ng-star-inserted">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Equipamento/Instrumento de Aferição Utilizado
+             </span>
+            </h4>
+            <app-equipamento-afericao _ngcontent-onh-c164="" _nghost-onh-c118="">
+             <div _ngcontent-onh-c118="" class="row">
+              <div _ngcontent-onh-c118="" class="col-md-3">
+               <div _ngcontent-onh-c118="" class="form-group">
+                <label _ngcontent-onh-c118="" class="mb-0">
+                 Número de Série
+                </label>
+                <input _ngcontent-onh-c118="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="20" name="numeroEquipamentoAfericao" required=""/>
+                <app-message _ngcontent-onh-c118="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c118="" class="col-md-3">
+               <div _ngcontent-onh-c118="" class="form-group">
+                <label _ngcontent-onh-c118="" class="mb-0">
+                 Descrição
+                </label>
+                <input _ngcontent-onh-c118="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="100" name="descricaoEquipamentoAfericao" required=""/>
+                <app-message _ngcontent-onh-c118="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c118="" class="col-md-3">
+               <div _ngcontent-onh-c118="" class="form-group">
+                <label _ngcontent-onh-c118="" class="mb-0">
+                 Marca
+                </label>
+                <input _ngcontent-onh-c118="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="50" name="marcaEquipamentoAfericao" required="" type="text"/>
+                <app-message _ngcontent-onh-c118="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+              <div _ngcontent-onh-c118="" class="col-md-3">
+               <div _ngcontent-onh-c118="" class="form-group">
+                <label _ngcontent-onh-c118="" class="mb-0">
+                 Modelo
+                </label>
+                <input _ngcontent-onh-c118="" class="form-control ng-untouched ng-pristine" disabled="" maxlength="50" name="modeloEquipamentoAfericao" required="" type="text"/>
+                <app-message _ngcontent-onh-c118="" _nghost-onh-c35="">
+                 <!-- -->
+                </app-message>
+               </div>
+              </div>
+             </div>
+            </app-equipamento-afericao>
+           </li>
+           <!-- -->
+           <li _ngcontent-onh-c164="" class="list-group-item">
+            <h4 _ngcontent-onh-c164="" class="mb-4">
+             <span _ngcontent-onh-c164="" class="badge badge-pill badge-secondary">
+              Observações
+             </span>
+            </h4>
+            <app-observacao _ngcontent-onh-c164="" _nghost-onh-c134="">
+             <div _ngcontent-onh-c134="" class="row">
+              <fieldset _ngcontent-onh-c134="" class="col-12" disabled="">
+               <legend _ngcontent-onh-c134="" class="d-none">
+                Observação
+               </legend>
+               <!-- -->
+               <textarea _ngcontent-onh-c134="" class="form-control ng-untouched ng-pristine ng-valid" maxlength="1000" name="observacaoDigitada"></textarea>
+               <app-message _ngcontent-onh-c134="" _nghost-onh-c35="">
+                <!-- -->
+               </app-message>
+               <small _ngcontent-onh-c134="" class="form-text text-muted">
+                0/1000
+               </small>
+              </fieldset>
+             </div>
+            </app-observacao>
+           </li>
+          </ul>
+          <!-- -->
+          <div _ngcontent-onh-c164="" class="card-footer">
+           <button _ngcontent-onh-c164="" class="btn btn-secondary mr-1" tabindex="0" type="button">
+            Cancelar
+           </button>
+           <!-- -->
+           <button _ngcontent-onh-c164="" class="btn btn-info mr-1 ng-star-inserted" type="button">
+            Imprimir
+           </button>
+           <!-- -->
+           <button _ngcontent-onh-c164="" class="btn btn-warning mr-1 ng-star-inserted" disabled="" tabindex="0" type="button">
+            Emitir NAE e NPE
+           </button>
+           <!-- -->
+          </div>
+         </div>
+         <!-- -->
+        </form>
+       </div>
+       <app-modal-novo-auto _ngcontent-onh-c164="" _nghost-onh-c72="">
+        <!-- -->
+       </app-modal-novo-auto>
+       <app-modal-impressao-auto _ngcontent-onh-c164="" _nghost-onh-c111="">
+        <!-- -->
+       </app-modal-impressao-auto>
+       <app-modal-confirmacao _ngcontent-onh-c164="" _nghost-onh-c44="">
+        <!-- -->
+       </app-modal-confirmacao>
+      </app-lavrar-auto-ctb>
+      <!-- -->
+     </div>
+    </main>
+   </div>
+   <app-footer class="app-footer">
+    <span>
+     <strong>
+      <app-title _nghost-onh-c33="">
+       AutoPRF
+       <!-- -->
+      </app-title>
+     </strong>
+    </span>
+    <span class="ml-auto">
+     versão
+     <span class="text-muted">
+      <app-version _nghost-onh-c32="">
+       <a _ngcontent-onh-c32="" href="#">
+        2.4.9
+       </a>
+      </app-version>
+     </span>
+    </span>
+   </app-footer>
+  </app-dashboard>
+  <!-- -->
+ </body>
+</html>
