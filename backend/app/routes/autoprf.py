@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import User
 from ..extensions import db
-from ..utils.autoprf import AutoPRFClient
+from ..services.autoprf_client import AutoPRFClient
 
 bp = Blueprint('autoprf', __name__, url_prefix='/api/autoprf')
 
@@ -38,6 +38,6 @@ def pesquisar_auto_infracao():
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
     client = AutoPRFClient(jwt_token=user.autoprf_session)
-    client.pesquisa_auto_infracao(auto_infracao)
+    result = client.pesquisa_auto_infracao(auto_infracao)
 
-    return jsonify({'msg': 'Pesquisa realizada com sucesso'})
+    return jsonify(result)

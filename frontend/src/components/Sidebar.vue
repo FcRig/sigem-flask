@@ -142,6 +142,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { updateUser, autoprfLogin, pesquisarAutoInfracao } from '../services/api'
 
 const props = defineProps({
@@ -158,6 +159,7 @@ const drawer = computed({
 })
 
 const store = useStore()
+const router = useRouter()
 
 const autoprfDialog = ref(false)
 const autoprfPesquisaDialog = ref(false)
@@ -213,12 +215,14 @@ async function saveAutoprf() {
 async function pesquisarAI() {
   if (!autoprfPesquisaForm.value?.validate()) return
   try {
-    await pesquisarAutoInfracao({ auto_infracao: autoInfracao.value })
+    const { data } = await pesquisarAutoInfracao({ auto_infracao: autoInfracao.value })
+    store.commit('setAiResult', data)
     snackbarMsg.value = 'Pesquisa enviada com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
     autoprfPesquisaDialog.value = false
     autoInfracao.value = ''
+    router.push('/resultado-ai')
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao pesquisar AI'
     snackbarColor.value = 'error'
