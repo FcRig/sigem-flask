@@ -5,7 +5,8 @@ export default createStore({
   state: {
     user: null,
     token: localStorage.getItem('token') || null,
-    aiResult: null
+    aiResult: null,
+    loading: false
   },
   mutations: {
     setToken(state, token) {
@@ -22,6 +23,9 @@ export default createStore({
     },
     setAiResult(state, data) {
       state.aiResult = data
+    },
+    setLoading(state, value) {
+      state.loading = value
     },
     logout(state) {
       state.user = null
