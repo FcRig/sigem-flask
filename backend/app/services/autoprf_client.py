@@ -63,7 +63,7 @@ class AutoPRFClient:
         wait_click(driver, By.CSS_SELECTOR, "body > div > div > a")
         wait_visible_send_keys(driver, By.NAME, "numero", auto_infracao)
         wait_click(driver, By.CSS_SELECTOR, "button[type='submit']")
-        wait_click(driver, By.CSS_SELECTOR, "span.fa.fa-search-plus")
+        wait_click(driver, By.CSS_SELECTOR, 'span[class="fa fa-search-plus"]')
 
         result = {"infracao": {}, "veiculo": {}, "local": {}}
 
@@ -161,7 +161,12 @@ class AutoPRFClient:
             By.XPATH,
             "//label[contains(text(), 'Código/Município/UF')]/following::div[4]",
         )
-        result["local"]["codigo_municipio_uf"] = municipio_element.text
+        result["local"]["codigo_municipio_uf"] = municipio_element
+
+       
+
+        
+
 
         driver.quit()
         return result

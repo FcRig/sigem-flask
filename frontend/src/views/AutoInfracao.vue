@@ -5,7 +5,7 @@
       <v-col cols="12">
         <v-card class="pa-4" elevation="2">
           <h2>
-            Lavrar Auto de Infração
+            Auto de Infração
             <v-chip color="green" text-color="white">CTB</v-chip>
           </h2>
         </v-card>
@@ -14,7 +14,7 @@
 
     <!-- Identificação da Infração -->
     <v-card class="pa-4 mb-4" elevation="2">
-      <h3>Identificação da Infração</h3>
+      <h3 class="pa-4">Identificação da Infração</h3>
       <v-row dense>
         <v-col cols="12" md="8">
           <v-text-field
@@ -44,18 +44,21 @@
             readonly
           />
         </v-col>
+        <v-col cols="6" md="4">
+          <v-text-field
+            :model-value="ai?.infracao?.tipo_abordagem"
+            label="Abordagem"
+            readonly
+          />
+
+        </v-col>
       </v-row>
 
-      <v-text-field
-        :model-value="ai?.infracao?.tipo_abordagem"
-        label="Abordagem"
-        readonly
-      />
     </v-card>
 
     <!-- Identificação do Veículo -->
     <v-card class="pa-4" elevation="2">
-      <h3>Identificação do Veículo</h3>
+      <h3 class="pa-4">Identificação do Veículo</h3>
       <v-row dense>
         <v-col cols="12" md="3">
           <v-text-field
@@ -148,7 +151,7 @@
             readonly
           />
         </v-col>
-        <v-col cols="12" md="3">
+        <v-col cols="6" md="3">
           <v-text-field
             :model-value="ai?.veiculo?.tipo_documento"
             label="Tipo Documento"
@@ -169,10 +172,30 @@
             readonly
           />
         </v-col>
-        <v-col cols="12">
+        <v-col cols="6" md="3">
           <v-text-field
             :model-value="ai?.veiculo?.tipo_composicao"
             label="Tipo de Composição"
+            readonly
+          />
+        </v-col>
+      </v-row>
+    </v-card>
+    <!-- Local da Infração -->
+    <v-card class="pa-4 mb-4" elevation="2">
+      <h3 class="pa-4">Local da Infração</h3>
+      <v-row dense>
+        <v-col cols="12" md="6">
+          <v-text-field
+            :model-value="ai?.local?.codigo_municipio_uf"
+            label="Código/Município/UF"
+            readonly
+          />
+        </v-col>
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.local?.rodovia"
+            label="BR"
             readonly
           />
         </v-col>
