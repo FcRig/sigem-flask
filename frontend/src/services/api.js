@@ -52,4 +52,28 @@ export function pesquisarAutoInfracao(payload) {
   return api.post('/api/autoprf/pesquisar_ai', payload);
 }
 
+export function setupLoadingInterceptors(store) {
+  api.interceptors.request.use(
+    config => {
+      store.commit('setLoading', true);
+      return config;
+    },
+    error => {
+      store.commit('setLoading', false);
+      return Promise.reject(error);
+    }
+  );
+
+  api.interceptors.response.use(
+    response => {
+      store.commit('setLoading', false);
+      return response;
+    },
+    error => {
+      store.commit('setLoading', false);
+      return Promise.reject(error);
+    }
+  );
+}
+
 export default api;
