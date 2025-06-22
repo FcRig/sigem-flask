@@ -3,6 +3,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
+import AutoInfracao from '../views/AutoInfracao.vue'
 import store from '../store'
 
 const routes = [
@@ -10,6 +11,7 @@ const routes = [
   { path: '/register', component: Register, meta: { layout: 'auth' } },
   { path: '/', component: Home, meta: { requiresAuth: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAuth: true } },
+  { path: '/resultado-ai', component: AutoInfracao, meta: { requiresAuth: true } },
   { path: '/:pathMatch(.*)*', redirect: '/login?error=not_found' }
 ]
 

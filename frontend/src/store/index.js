@@ -4,7 +4,8 @@ import { setToken, fetchCurrentUser as apiFetchCurrentUser } from '../services/a
 export default createStore({
   state: {
     user: null,
-    token: localStorage.getItem('token') || null
+    token: localStorage.getItem('token') || null,
+    aiResult: null
   },
   mutations: {
     setToken(state, token) {
@@ -18,6 +19,9 @@ export default createStore({
     },
     setUser(state, user) {
       state.user = user
+    },
+    setAiResult(state, data) {
+      state.aiResult = data
     },
     logout(state) {
       state.user = null
