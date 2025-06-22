@@ -13,7 +13,7 @@ class AutoPRFClient:
         if not chromedriver_path:
             raise RuntimeError("CHROMEDRIVER_PATH não está definido na configuração.")
         options = Options()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         options.add_argument("--window-size=1920,1080")
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
@@ -113,7 +113,7 @@ class AutoPRFClient:
         input_ai.click()
 
         icone_lupa_ai = WebDriverWait(driver, 15).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, 'span[class="fa fa-search-plus'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "span.fa.fa-search-plus"))
         )
         icone_lupa_ai.click()
 
