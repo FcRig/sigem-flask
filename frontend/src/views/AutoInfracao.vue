@@ -17,26 +17,40 @@
       <h3>Identificação da Infração</h3>
       <v-row dense>
         <v-col cols="12" md="8">
-          <v-text-field label="Código/Descrição da infração" readonly />
+          <v-text-field
+            :model-value="ai?.infracao?.codigo_descricao"
+            label="Código/Descrição da infração"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field label="Amparo Legal" readonly />
+          <v-text-field
+            :model-value="ai?.infracao?.amparo_legal"
+            label="Amparo Legal"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="4">
-          <v-text-field label="Gravidade" readonly />
+          <v-text-field
+            :model-value="ai?.infracao?.gravidade"
+            label="Gravidade"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="4">
-          <v-select
-            :items="['Condutor', 'Proprietário']"
+          <v-text-field
+            :model-value="ai?.infracao?.tipo_infrator"
             label="Tipo de Infrator"
+            readonly
           />
         </v-col>
       </v-row>
 
-      <v-radio-group inline label="Abordagem">
-        <v-radio label="Com Abordagem" value="com" />
-        <v-radio label="Sem Abordagem" value="sem" />
-      </v-radio-group>
+      <v-text-field
+        :model-value="ai?.infracao?.tipo_abordagem"
+        label="Abordagem"
+        readonly
+      />
     </v-card>
 
     <!-- Identificação do Veículo -->
@@ -44,58 +58,123 @@
       <h3>Identificação do Veículo</h3>
       <v-row dense>
         <v-col cols="12" md="3">
-          <v-select label="Emplacamento" :items="['Nacional']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.emplacamento"
+            label="Emplacamento"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field label="Placa" />
+          <v-text-field
+            :model-value="ai?.veiculo?.placa"
+            label="Placa"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field label="Chassi" />
+          <v-text-field
+            :model-value="ai?.veiculo?.chassi"
+            label="Chassi"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field label="Renavam" />
+          <v-text-field
+            :model-value="ai?.veiculo?.renavam"
+            label="Renavam"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="3">
-          <v-select label="País" :items="['Brasil']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.pais"
+            label="País"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="2">
-          <v-select label="UF" :items="['RS', 'SP', 'RJ']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.uf"
+            label="UF"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="4">
-          <v-select label="Marca" :items="['FIAT', 'CHEVROLET', 'FORD']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.marca"
+            label="Marca"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="2">
-          <v-checkbox label="Outra Marca" />
+          <v-text-field
+            :model-value="ai?.veiculo?.outra_marca"
+            label="Outra Marca"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field label="Modelo" />
+          <v-text-field
+            :model-value="ai?.veiculo?.modelo"
+            label="Modelo"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="3">
-          <v-select label="Cor" :items="['Preta', 'Branca', 'Prata']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.cor"
+            label="Cor"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="3">
-          <v-select label="Espécie" :items="['Passageiro', 'Carga']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.especie"
+            label="Espécie"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="3">
-          <v-select label="Tipo do Veículo" :items="['Automóvel']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.tipo"
+            label="Tipo do Veículo"
+            readonly
+          />
         </v-col>
         <v-col cols="6" md="3">
-          <v-select label="Categoria" :items="['Oficial', 'Particular']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.categoria"
+            label="Categoria"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="3">
-          <v-select label="Tipo Documento" :items="['CNPJ', 'CPF']" />
+          <v-text-field
+            :model-value="ai?.veiculo?.tipo_documento"
+            label="Tipo Documento"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field label="Nº Documento" />
+          <v-text-field
+            :model-value="ai?.veiculo?.numero_documento"
+            label="Nº Documento"
+            readonly
+          />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field label="Nome/Razão Social" />
+          <v-text-field
+            :model-value="ai?.veiculo?.nome_razao_social"
+            label="Nome/Razão Social"
+            readonly
+          />
         </v-col>
         <v-col cols="12">
-          <v-radio-group inline label="Tipo de Composição">
-            <v-radio label="Simples" value="simples" />
-            <v-radio label="Combinação" value="combinacao" />
-          </v-radio-group>
+          <v-text-field
+            :model-value="ai?.veiculo?.tipo_composicao"
+            label="Tipo de Composição"
+            readonly
+          />
         </v-col>
       </v-row>
     </v-card>
@@ -103,4 +182,18 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+const store = useStore()
+const router = useRouter()
+
+const ai = computed(() => store.state.aiResult)
+
+onMounted(() => {
+  if (!ai.value) {
+    router.push('/')
+  }
+})
 </script>
