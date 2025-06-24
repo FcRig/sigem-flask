@@ -199,8 +199,84 @@
             readonly
           />
         </v-col>
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.local?.km"
+            label="Km"
+            readonly
+          />
+        </v-col>
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.local?.sentido"
+            label="sentido"
+            readonly
+          />
+        </v-col>
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.local?.data_hora"
+            label="Data/Hora"
+            readonly
+          />
+        </v-col>
       </v-row>
     </v-card>
+    <!-- Medições -->
+    <v-card class="pa-4 mb-4" elevation="2">
+      <h3 class="pa-4">Medições</h3>
+      <v-row dense>       
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.tipo"
+            label="Tipo de medição"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.comprovacao"
+            label="Comprovado por"
+            readonly
+          />
+        </v-col>       
+      </v-row>      
+      <v-row dense>                
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.realizada"
+            label="Medição realizada"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.considerada"
+            label="Valor considerado"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="3" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.limite"
+            label="Limite regulamentado"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="6" md="3">
+          <v-text-field
+            :model-value="ai?.medicoes?.excesso"
+            label="Excesso verificado"
+            readonly
+          />
+        </v-col>       
+      </v-row>      
+      
+      
+    </v-card>   
+    
+    
+       
   </v-container>
 </template>
 

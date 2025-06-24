@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from flask import current_app
 from time import sleep
+from datetime import datetime
 
 from ..utils.scraping_utils import (
     init_chrome_driver,
@@ -65,7 +66,7 @@ class AutoPRFClient:
         wait_click(driver, By.CSS_SELECTOR, "button[type='submit']")
         wait_click(driver, By.CSS_SELECTOR, 'span[class="fa fa-search-plus"]')
 
-        result = {"infracao": {}, "veiculo": {}, "local": {}}
+        result = {"infracao": {}, "veiculo": {}, "local": {}, "medicoes": {}, "equipamento": {}, "observacoes": {}}
 
         input_element = wait_presence(
             driver, By.CSS_SELECTOR, "ng-select div.ng-value.ng-star-inserted"
@@ -161,11 +162,53 @@ class AutoPRFClient:
             By.XPATH,
             "//label[contains(text(), 'Código/Município/UF')]/following::div[4]",
         )
-        result["local"]["codigo_municipio_uf"] = municipio_element
-
-       
-
+        result["local"]["codigo_municipio_uf"] = municipio_element.text.strip()
         
+        # Rodovia
+        select_element = driver.find_element(By.NAME, "rodovia")
+        options = select_element.find_elements(By.TAG_NAME, "option")
+        
+        for option in options:
+            if option.is_selected():                
+                texto = option.text.strip()
+                break
+        else:           
+            texto = None       
+        
+        result["local"]["rodovia"] = texto             
+
+        # Km          
+        result["local"]["km"] = driver.find_element(By.NAME,"km").get_attribute("value")       
+
+        # Sentido
+        result["local"]["sentido"] = driver.find_element(By.NAME,"sentido").get_attribute("value").split(": ")[-1]    
+
+        # Data/Hora
+        data = driver.find_element(By.NAME,"dataInfracao").get_attribute("value")   
+        data_formatada = datetime.strptime(data, "%Y-%m-%d").strftime("%d/%m/%Y") 
+
+        hora = driver.find_element(By.NAME,"horaInfracao").get_attribute("value")       
+
+        result["local"]["data_hora"] = f'{data_formatada} {hora}'
+
+        # Tipo medição
+        result["medicoes"]["tipo"] = driver.find_element(By.NAME,"tipoMedicao").get_attribute("value")
+
+        # Comprovado por
+        result["medicoes"]["comprovacao"] = driver.find_element(By.NAME,"comprovadoPor").get_attribute("value").split(": ")[-1] 
+
+        # Equipamento
+        result["medicoes"]["realizada"] = driver.find_element(By.NAME,"medicaoReal-0").get_attribute("value") 
+        result["medicoes"]["considerada"] = driver.find_element(By.NAME,"itemMedidoMedicaoConsiderada-0").get_attribute("value") 
+
+        """ input_element = driver.find_element(
+            By.CSS_SELECTOR,
+            "app-medicao table tr.ng-star-inserted td:nth-child(5) input"
+        )
+
+        result["medicoes"]["limite"] = input_element.get_attribute("value") """ 
+
+            
 
 
         driver.quit()
