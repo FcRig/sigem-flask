@@ -83,31 +83,90 @@ class AutoPRFClient:
             return result
 
         # Informacoes da infracao
-        codigo = item.get("codigoInfracao")
-        descricao = item.get("descricaoInfracao")
+        infracao = item.get("infracao", {})
+        codigo = infracao.get("codigo")
+        descricao = infracao.get("descricao")
         if codigo or descricao:
-            result["infracao"]["codigo_descricao"] = f"{codigo} - {descricao}" if codigo else descricao
-        result["infracao"]["amparo_legal"] = item.get("amparoLegal")
+            result["infracao"]["codigo_descricao"] = (
+                f"{codigo} - {descricao}" if codigo else descricao
+            )
+        result["infracao"]["amparo_legal"] = infracao.get("amparoLegal")
+        gravidade = (infracao.get("valorBase") or {}).get("gravidade")
+        if gravidade:
+            result["infracao"]["gravidade"] = gravidade
+        if infracao.get("tipoInfrator"):
+            result["infracao"]["tipo_infrator"] = infracao.get("tipoInfrator")
         result["infracao"]["tipo_abordagem"] = (
             "Com Abordagem" if item.get("comAbordagem") else "Sem Abordagem"
         )
 
         # Veiculo
-        result["veiculo"]["emplacamento"] = item.get("tipoEmplacamento")
-        result["veiculo"]["placa"] = item.get("placa")
-        result["veiculo"]["renavam"] = item.get("renavam")
-        result["veiculo"]["chassi"] = item.get("chassi")
-        result["veiculo"]["uf"] = item.get("uf")
+        veiculo = item.get("veiculo", {})
+        result["veiculo"]["emplacamento"] = veiculo.get("emplacamento")
+        result["veiculo"]["placa"] = veiculo.get("placa")
+        result["veiculo"]["renavam"] = veiculo.get("renavam")
+        result["veiculo"]["chassi"] = veiculo.get("chassi")
+        result["veiculo"]["pais"] = veiculo.get("pais")
+        result["veiculo"]["uf"] = veiculo.get("uf")
+        result["veiculo"]["marca"] = (veiculo.get("marca") or {}).get("nome")
+        result["veiculo"]["modelo"] = veiculo.get("modelo")
+        result["veiculo"]["cor"] = veiculo.get("cor")
+        result["veiculo"]["especie"] = veiculo.get("especie")
+        result["veiculo"]["tipo"] = veiculo.get("tipo")
+        result["veiculo"]["categoria"] = veiculo.get("categoria")
+        result["veiculo"]["tipo_composicao"] = veiculo.get("tipoComposicao")
+
+        envolvidos = item.get("envolvidos") or []
+        proprietario = next(
+            (e for e in envolvidos if "Propriet\u00e1rio" in e.get("tiposEnvolvimento", [])),
+            None,
+        )
+        if proprietario:
+            doc = (proprietario.get("documentos") or [{}])[0]
+            result["veiculo"]["tipo_documento"] = doc.get("tipoDocumento")
+            result["veiculo"]["numero_documento"] = doc.get("numero")
+            result["veiculo"]["nome_razao_social"] = proprietario.get("nome")
 
         # Localizacao
-        result["local"]["codigo_municipio_uf"] = item.get("nomeMunicipio")
-        result["local"]["rodovia"] = item.get("rodoviaSigla")
-        km = item.get("km")
+        local = item.get("local", {})
+        municipio = local.get("municipio") or {}
+        cod = municipio.get("codigoMunicipioRenainf")
+        nome = municipio.get("nome")
+        uf = municipio.get("uf")
+        if cod or nome or uf:
+            if cod:
+                result["local"]["codigo_municipio_uf"] = f"{cod} - {nome}/{uf}" if nome or uf else str(cod)
+            else:
+                result["local"]["codigo_municipio_uf"] = f"{nome}/{uf}" if nome or uf else None
+        result["local"]["rodovia"] = (local.get("rodovia") or {}).get("sigla")
+        km = local.get("km")
         result["local"]["km"] = str(km) if km is not None else None
-        result["local"]["sentido"] = item.get("sentido")
-        if item.get("dataHora"):
-            dt = datetime.fromisoformat(item["dataHora"])
-            result["local"]["data_hora"] = dt.strftime("%d/%m/%Y %H:%M:%S")
+        result["local"]["sentido"] = local.get("sentido")
+        data_hora = item.get("dataHoraLocal") or item.get("dataHora")
+        if data_hora:
+            try:
+                dt = datetime.fromisoformat(data_hora)
+                result["local"]["data_hora"] = dt.strftime("%d/%m/%Y %H:%M:%S")
+            except ValueError:
+                result["local"]["data_hora"] = data_hora
+
+        # Campo medições
+        medicao = item.get("medicao") or {}
+        result["medicoes"]["tipo"] = infracao.get("medicao")
+        result["medicoes"]["comprovacao"] = medicao.get("comprovadoPor")
+        itens = medicao.get("itensMedidos") or []
+        if itens:
+            med = itens[0]
+            result["medicoes"]["realizada"] = med.get("medicaoReal")
+            result["medicoes"]["considerada"] = med.get("medicaoConsiderada")
+            result["medicoes"]["limite"] = med.get("limitePermitido")
+            result["medicoes"]["excesso"] = med.get("excesso")
+
+        equipamento = medicao.get("equipamentoMedicao") or {}
+        result["equipamento"]["numero"] = equipamento.get("numeroSerie")
+        result["equipamento"]["descricao"] = equipamento.get("descricao")
+        result["equipamento"]["marca"] = equipamento.get("marca")
+        result["equipamento"]["modelo"] = equipamento.get("modelo")
 
         result["observacoes"] = item.get("observacao")
         return result
