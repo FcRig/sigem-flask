@@ -46,6 +46,8 @@ class AutoPRFClient:
         headers = {}
         if self.jwt_token:
             headers["Authorization"] = f"Bearer {self.jwt_token}"
+        # First request retrieves the page information so we can obtain the
+        # identifier of the auto de infração
         response = requests.get(
             f"{self.BASE_URL}/auto-infracao/page",
             params={"numero": numero},
@@ -54,6 +56,8 @@ class AutoPRFClient:
         response.raise_for_status()
         data = response.json() if response.content else {}
         item = (data.get("items") or [{}])[0]
+
+        auto_id = item.get("id")
 
         result = {
             "infracao": {},
@@ -64,6 +68,17 @@ class AutoPRFClient:
             "observacoes": None,
         }
 
+        if not auto_id:
+            # If we could not find the identifier we return an empty result
+            return result
+
+        # Fetch full details for the auto using its id
+        response = requests.get(
+            f"{self.BASE_URL}/auto-infracao/{auto_id}",
+            headers=headers,
+        )
+        response.raise_for_status()
+        item = response.json() if response.content else {}
         if not item:
             return result
 
