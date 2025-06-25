@@ -24,7 +24,7 @@ def login():
     db.session.commit()
     return jsonify({'jwt': jwt_token}), 200
 
-@bp.route('/pesquisar_ai', methods=['POST'])
+@bp.route('/pesquisar_ai', methods=['GET'])
 @jwt_required()
 def pesquisar_auto_infracao():
     user = User.query.get_or_404(get_jwt_identity())

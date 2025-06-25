@@ -11,19 +11,35 @@ class AutoPRFClient:
         self.jwt_token = jwt_token or ""
 
     def login(self, cpf: str, password: str, token: str) -> str:
-        """Authenticate on AutoPRF and return the session JWT."""
+        """ Autentica no sistema AutoPRF e retorna o token JWT da sessão."""   
+             
         payload = {
             "ip": "0.0.0.0",
             "usuario": cpf,
             "senha": password,
             "token": token,
         }
-        response = requests.post(f"{self.BASE_URL}/auth/login", json=payload)
-        response.raise_for_status()
-        data = response.json() if response.content else {}
-        jwt = data.get("token") or data.get("jwt") or ""
-        self.jwt_token = jwt
-        return jwt
+
+        try:
+            response = requests.post(f"{self.BASE_URL}/auth/login", json=payload)
+            response.raise_for_status()
+
+            jwt = response.text.strip()
+            if not jwt or len(jwt) < 20:
+                raise ValueError("Token JWT ausente ou inválido.")
+
+            self.jwt_token = jwt
+            return jwt
+
+        except requests.HTTPError as e:
+            print(f"[AutoPRF] Erro HTTP na autenticação: {e} - Status: {response.status_code}")
+            print(f"Resposta do servidor: {response.text}")
+            raise
+
+        except Exception as e:
+            print(f"[AutoPRF] Erro inesperado no login: {e}")
+            raise
+
 
     def pesquisa_auto_infracao(self, numero: str) -> dict:
         """Return data about an Auto de Infracao in the same structure used by the frontend."""
