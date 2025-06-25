@@ -270,11 +270,56 @@
             readonly
           />
         </v-col>       
-      </v-row>      
-      
-      
+      </v-row>       
     </v-card>   
-    
+    <!-- Equipamento -->
+    <v-card class="pa-4 mb-4" elevation="2">
+      <h3 class="pa-4">Equipamento/Instrumento de aferição utilizado</h3>
+      <v-row dense>       
+        <v-col cols="3" >
+          <v-text-field
+            :model-value="ai?.equipamento?.numero"
+            label="Número de série"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="3" >
+          <v-text-field
+            :model-value="ai?.equipamento?.descricao"
+            label="Descrição"
+            readonly
+          />
+        </v-col>                     
+        <v-col cols="3" >
+          <v-text-field
+            :model-value="ai?.equipamento?.marca"
+            label="Marca"
+            readonly
+          />
+        </v-col>       
+        <v-col cols="3" >
+          <v-text-field
+            :model-value="ai?.equipamento?.modelo"
+            label="Valor considerado"
+            readonly
+          />
+        </v-col>                
+      </v-row>       
+    </v-card>       
+    <!-- Observações -->
+    <v-card class="pa-4 mb-4" elevation="2">
+      <h3 class="pa-4">Observações</h3>
+      <v-row dense>       
+        <v-col cols="12" >
+          <v-textarea
+            :model-value="ai?.observacoes"
+            label="Observações"
+            readonly
+            
+          />
+        </v-col>                           
+      </v-row>       
+    </v-card>       
     
        
   </v-container>

@@ -13,7 +13,7 @@ class AutoPRFClient:
         if not chromedriver_path:
             raise RuntimeError("CHROMEDRIVER_PATH não está definido na configuração.")
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument("--window-size=1920,1080")
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
