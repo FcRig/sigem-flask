@@ -36,6 +36,13 @@
                   Proprietário/possuidor previsto em lei:
                   {{ instituicaoNome(env.numeroDocumento) }}
                 </v-chip>
+                <v-chip
+                  v-else
+                  color="red"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor não previsto em lei
+                </v-chip>
               </v-card-text>
             </v-card>
           </v-col>
