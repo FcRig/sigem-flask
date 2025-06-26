@@ -24,6 +24,14 @@
                 <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
                 <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
                 <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
+                <v-chip
+                  v-if="showInstituicao(env)"
+                  color="primary"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor previsto em lei:
+                  {{ instituicaoNome(env.numeroDocumento) }}
+                </v-chip>
               </v-card-text>
             </v-card>
           </v-col>
@@ -44,13 +52,37 @@ const valid = ref(false)
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
+const instituicoes = {
+  '89175541000164': 'Brigada Militar',
+  '00058163000125': 'Polícia Civil',
+  '28610005000155': 'Corpo de Bombeiros',
+  '02510700000151': 'EPTC'
+}
+
+function sanitize(cnpj) {
+  return (cnpj || '').replace(/\D/g, '')
+}
+
+function instituicaoNome(cnpj) {
+  return instituicoes[sanitize(cnpj)]
+}
+
+function showInstituicao(env) {
+  const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
+  if (!/propriet[aá]rio|possuidor/.test(envolvimento)) return false
+  return !!instituicaoNome(env.numeroDocumento)
+}
+
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     if (data.id) {
       const res = await obterEnvolvidos(data.id)
-      envolvidos.value = res.data
+      envolvidos.value = res.data.filter(env => {
+        const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
+        return !/condutor/.test(envolvimento)
+      })
     } else {
       envolvidos.value = []
     }
