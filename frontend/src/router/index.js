@@ -8,15 +8,27 @@ import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import store from '../store'
 
 const routes = [
-  { path: '/login', component: Login, meta: { layout: 'auth' } },
-  { path: '/register', component: Register, meta: { layout: 'auth' } },
-  { path: '/', component: Home, meta: { requiresAuth: true } },
-  { path: '/admin/users', component: AdminUsers, meta: { requiresAuth: true } },
-  { path: '/resultado-ai', component: AutoInfracao, meta: { requiresAuth: true } },
+  { path: '/login', component: Login, meta: { layout: 'auth', title: 'Login' } },
+  { path: '/register', component: Register, meta: { layout: 'auth', title: 'Cadastro de Usuário' } },
+  {
+    path: '/',
+    component: Home,
+    meta: { requiresAuth: true, title: 'Bem-vindo!' }
+  },
+  {
+    path: '/admin/users',
+    component: AdminUsers,
+    meta: { requiresAuth: true, title: 'Administração de Usuários' }
+  },
+  {
+    path: '/resultado-ai',
+    component: AutoInfracao,
+    meta: { requiresAuth: true, title: 'Pesquisa do Auto de Infração' }
+  },
   {
     path: '/cancelamentos/veiculos-emergencia',
     component: VeiculosEmergencia,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: 'Veículos de Emergência' }
   },
   { path: '/:pathMatch(.*)*', redirect: '/login?error=not_found' }
 ]

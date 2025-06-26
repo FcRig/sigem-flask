@@ -7,6 +7,7 @@
       @toggle-drawer="drawer = !drawer"
     />
     <v-main>
+      <PageTitle />
       <slot />
     </v-main>
     <AppFooter />
@@ -20,6 +21,7 @@ import { useStore } from 'vuex'
 import AppHeader from '../components/Header.vue'
 import AppFooter from '../components/Footer.vue'
 import AppSidebar from '../components/Sidebar.vue'
+import PageTitle from '../components/PageTitle.vue'
 
 const store = useStore()
 const router = useRouter()
