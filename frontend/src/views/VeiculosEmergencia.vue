@@ -37,8 +37,7 @@
       }}
     </v-chip>
   </v-card>
-
-
+  
   <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
@@ -81,6 +80,7 @@ import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/api'
 const numeroAi = ref('')
 const envolvidos = ref([])
 const amparoInfo = ref(null)
+const permitido = ref(false)
 const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
@@ -94,25 +94,6 @@ const instituicoes = {
   '02510700000151': 'EPTC'
 }
 
-const amparoMap = {
-  '74550': {
-    codigo: '745-50',
-    descricao: 'Transitar em velocidade superior à máxima permitida em até 20%',
-    amparo: 'Art. 218, I'
-  },
-  '74630': {
-    codigo: '746-30',
-    descricao:
-      'Transitar em velocidade superior à máxima permitida para o local, medida por instrumento ou equipamento hábil efetuada por medidor de velocidade, em rodovias,vias de trânsito rápido, vias arteriais e demais vias, quando a velocidade for superior à máxima em até 20% (vinte por cento).',
-    amparo: 'Art. 218, II'
-  },
-  '74710': {
-    codigo: '747-10',
-    descricao:
-      'Transitar em velocidade superior à máxima permitida para o local, medida por instrumento ou equipamento hábil efetuada por medidor de velocidade, em rodovias, vias de trânsito rápido, vias arteriais e demais vias, quando a velocidade for superior à máxima em até 50%.',
-    amparo: 'Art. 218, III'
-  }
-}
 
 function sanitize(cnpj) {
   return (cnpj || '').replace(/\D/g, '')
@@ -134,9 +115,20 @@ async function buscar() {
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     if (data.id) {
-      const match = (data.infracao?.codigo_descricao || '').match(/^(\d{3})-?(\d{2})/)
-      const codigo = match ? match[1] + match[2] : ''
-      amparoInfo.value = amparoMap[codigo] || null
+      const cd = data.infracao?.codigo_descricao || ''
+      const [codPart, ...descParts] = cd.split(/\s*-\s*/)
+      const codigo = codPart?.trim() || ''
+      const descricao = descParts.join(' - ').trim()
+      amparoInfo.value = cd
+        ? {
+            codigo,
+            descricao,
+            amparo: data.infracao?.amparo_legal || ''
+          }
+        : null
+
+      const digits = codigo.replace(/\D/g, '')
+      permitido.value = ['74550', '74630', '74710'].includes(digits)
       checked.value = true
 
       const res = await obterEnvolvidos(data.id)
@@ -147,12 +139,14 @@ async function buscar() {
     } else {
       envolvidos.value = []
       amparoInfo.value = null
+      permitido.value = false
       checked.value = true
     }
   } catch (err) {
     console.error(err)
     envolvidos.value = []
     amparoInfo.value = null
+    permitido.value = false
     checked.value = true
   }
 }
