@@ -281,10 +281,13 @@ async function saveSei() {
 </script>
 
 <style scoped>
-/* Allow long menu titles to wrap instead of being truncated */
-.app-sidebar .v-list-item-title,
-.app-sidebar .v-list-item-subtitle {
-  white-space: normal;
-  word-break: break-word;
-}
+  .app-sidebar .v-list-group__items .v-list-item {
+    padding-inline-start: 18px !important;
+  }
+
+  .app-sidebar .v-list-group__items .v-list-item__prepend {
+    margin-inline-start: 0 !important;
+    margin-inline-end: 8px !important;
+  }
 </style>
+
