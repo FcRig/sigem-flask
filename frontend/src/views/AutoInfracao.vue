@@ -11,6 +11,11 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row class="my-2">
+      <v-col cols="12" class="text-right">
+        <v-btn color="primary" @click="limparConsulta">Limpar</v-btn>
+      </v-col>
+    </v-row>
 
     <!-- Identificação da Infração -->
     <v-card class="pa-4 mb-4" elevation="2">
@@ -340,4 +345,9 @@ onMounted(() => {
     router.push('/')
   }
 })
+
+function limparConsulta() {
+  store.commit('setAiResult', null)
+  router.push('/')
+}
 </script>
