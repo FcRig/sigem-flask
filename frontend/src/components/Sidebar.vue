@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" color="#f5f5f5">
+  <v-navigation-drawer v-model="drawer" color="#f5f5f5" class="app-sidebar">
     <v-list-item dense>
       <v-list-item-content>
         <v-list-item-title class="text-h6">PRF</v-list-item-title>
@@ -279,3 +279,12 @@ async function saveSei() {
   }
 }
 </script>
+
+<style scoped>
+/* Allow long menu titles to wrap instead of being truncated */
+.app-sidebar .v-list-item-title,
+.app-sidebar .v-list-item-subtitle {
+  white-space: normal;
+  word-break: break-word;
+}
+</style>
