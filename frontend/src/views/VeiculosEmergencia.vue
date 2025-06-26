@@ -24,20 +24,20 @@
       <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
       <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
     </v-card-text>
+    <v-chip
+      v-if="checked"
+      class="mb-4"
+      :color="amparoInfo ? 'green' : 'red'"
+      dark
+    >
+      {{
+        amparoInfo
+          ? 'Enquadramento legal permitido'
+          : 'Enquadramento legal não permitido'
+      }}
+    </v-chip>
   </v-card>
 
-  <v-chip
-    v-if="checked"
-    class="mb-4"
-    :color="amparoInfo ? 'green' : 'red'"
-    dark
-  >
-    {{
-      amparoInfo
-        ? 'Enquadramento legal permitido'
-        : 'Enquadramento legal não permitido'
-    }}
-  </v-chip>
 
   <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
