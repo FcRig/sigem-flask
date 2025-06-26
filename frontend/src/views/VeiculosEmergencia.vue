@@ -24,21 +24,20 @@
       <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
       <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
     </v-card-text>
+    <v-chip
+      v-if="checked"
+      class="mb-4"
+      :color="amparoInfo ? 'green' : 'red'"
+      dark
+    >
+      {{
+        amparoInfo
+          ? 'Enquadramento legal permitido'
+          : 'Enquadramento legal não permitido'
+      }}
+    </v-chip>
   </v-card>
-
-  <v-chip
-    v-if="checked"
-    class="mb-4"
-    :color="permitido ? 'green' : 'red'"
-    dark
-  >
-    {{
-      permitido
-        ? 'Enquadramento legal permitido'
-        : 'Enquadramento legal não permitido'
-    }}
-  </v-chip>
-
+  
   <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
@@ -57,6 +56,13 @@
                 >
                   Proprietário/possuidor previsto em lei:
                   {{ instituicaoNome(env.numeroDocumento) }}
+                </v-chip>
+                <v-chip
+                  v-else
+                  color="red"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor não previsto em lei
                 </v-chip>
               </v-card-text>
             </v-card>
