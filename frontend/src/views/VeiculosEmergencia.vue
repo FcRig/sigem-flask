@@ -15,9 +15,31 @@
           </v-form>
         </v-card>
       </v-col>
-    </v-row>
+  </v-row>
 
-    <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
+  <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
+    <v-card-title>Amparo legal</v-card-title>
+    <v-card-text>
+      <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
+      <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
+      <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
+    </v-card-text>
+  </v-card>
+
+  <v-chip
+    v-if="checked"
+    class="mb-4"
+    :color="amparoInfo ? 'green' : 'red'"
+    dark
+  >
+    {{
+      amparoInfo
+        ? 'Enquadramento legal permitido'
+        : 'Enquadramento legal não permitido'
+    }}
+  </v-chip>
+
+  <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
         <v-row dense>
@@ -51,6 +73,8 @@ import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/api'
 
 const numeroAi = ref('')
 const envolvidos = ref([])
+const amparoInfo = ref(null)
+const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
 
@@ -61,6 +85,26 @@ const instituicoes = {
   '00058163000125': 'Polícia Civil',
   '28610005000155': 'Corpo de Bombeiros',
   '02510700000151': 'EPTC'
+}
+
+const amparoMap = {
+  '74550': {
+    codigo: '745-50',
+    descricao: 'Transitar em velocidade superior à máxima permitida em até 20%',
+    amparo: 'Art. 218, I'
+  },
+  '74630': {
+    codigo: '746-30',
+    descricao:
+      'Transitar em velocidade superior à máxima permitida para o local, medida por instrumento ou equipamento hábil efetuada por medidor de velocidade, em rodovias,vias de trânsito rápido, vias arteriais e demais vias, quando a velocidade for superior à máxima em até 20% (vinte por cento).',
+    amparo: 'Art. 218, II'
+  },
+  '74710': {
+    codigo: '747-10',
+    descricao:
+      'Transitar em velocidade superior à máxima permitida para o local, medida por instrumento ou equipamento hábil efetuada por medidor de velocidade, em rodovias, vias de trânsito rápido, vias arteriais e demais vias, quando a velocidade for superior à máxima em até 50%.',
+    amparo: 'Art. 218, III'
+  }
 }
 
 function sanitize(cnpj) {
@@ -79,9 +123,15 @@ function showInstituicao(env) {
 
 async function buscar() {
   if (!formRef.value?.validate()) return
+  checked.value = false
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     if (data.id) {
+      const match = (data.infracao?.codigo_descricao || '').match(/^(\d{3})-?(\d{2})/)
+      const codigo = match ? match[1] + match[2] : ''
+      amparoInfo.value = amparoMap[codigo] || null
+      checked.value = true
+
       const res = await obterEnvolvidos(data.id)
       envolvidos.value = res.data.filter(env => {
         const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
@@ -89,10 +139,14 @@ async function buscar() {
       })
     } else {
       envolvidos.value = []
+      amparoInfo.value = null
+      checked.value = true
     }
   } catch (err) {
     console.error(err)
     envolvidos.value = []
+    amparoInfo.value = null
+    checked.value = true
   }
 }
 </script>
