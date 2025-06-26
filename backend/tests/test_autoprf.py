@@ -65,6 +65,7 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
     token = get_token(client)
 
     expected = {
+        "id": 99,
         "infracao": {"codigo_descricao": "desc"},
         "veiculo": {"placa": "ABC"},
         "local": {"codigo_municipio_uf": "000"},
@@ -84,6 +85,36 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
     response = client.post(
         "/api/autoprf/pesquisar_ai",
         json={"auto_infracao": "1234"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == expected
+
+
+def test_envolvidos_returns_list(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+
+    token = get_token(client)
+
+    expected = [{"id": 1, "nome": "test"}]
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_envolvidos(self, auto_id):
+        assert auto_id == 123
+        return expected
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "get_envolvidos", fake_envolvidos)
+
+    response = client.get(
+        "/api/autoprf/envolvidos/123",
         headers={"Authorization": f"Bearer {token}"},
     )
 

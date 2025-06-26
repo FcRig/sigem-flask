@@ -52,6 +52,10 @@ export function pesquisarAutoInfracao(payload) {
   return api.post('/api/autoprf/pesquisar_ai', payload);
 }
 
+export function obterEnvolvidos(id) {
+  return api.get(`/api/autoprf/envolvidos/${id}`);
+}
+
 export function setupLoadingInterceptors(store) {
   api.interceptors.request.use(
     config => {

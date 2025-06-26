@@ -4,6 +4,7 @@ import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import AutoInfracao from '../views/AutoInfracao.vue'
+import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import store from '../store'
 
 const routes = [
@@ -12,6 +13,11 @@ const routes = [
   { path: '/', component: Home, meta: { requiresAuth: true } },
   { path: '/admin/users', component: AdminUsers, meta: { requiresAuth: true } },
   { path: '/resultado-ai', component: AutoInfracao, meta: { requiresAuth: true } },
+  {
+    path: '/cancelamentos/veiculos-emergencia',
+    component: VeiculosEmergencia,
+    meta: { requiresAuth: true }
+  },
   { path: '/:pathMatch(.*)*', redirect: '/login?error=not_found' }
 ]
 

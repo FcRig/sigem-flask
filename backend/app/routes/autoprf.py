@@ -41,3 +41,17 @@ def pesquisar_auto_infracao():
     result = client.pesquisa_auto_infracao(auto_infracao)
 
     return jsonify(result)
+
+
+@bp.route('/envolvidos/<int:auto_id>', methods=['GET'])
+@jwt_required()
+def obter_envolvidos(auto_id):
+    user = User.query.get_or_404(get_jwt_identity())
+
+    if not user.autoprf_session:
+        return jsonify({'msg': 'Sessão não iniciada'}), 400
+
+    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    result = client.get_envolvidos(auto_id)
+
+    return jsonify(result)

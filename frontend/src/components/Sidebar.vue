@@ -29,6 +29,20 @@
           prepend-icon="mdi-magnify"
           @click="autoprfPesquisaDialog = true"
         />
+        <v-list-group value="autoprf-cancel">
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="mdi-cancel"
+              title="Cancelamentos"
+            />
+          </template>
+          <v-list-item
+            title="Veículos de Emergência"
+            prepend-icon="mdi-ambulance"
+            to="/cancelamentos/veiculos-emergencia"
+          />
+        </v-list-group>
       </v-list-group>
 
       <v-list-group value="siscom">
