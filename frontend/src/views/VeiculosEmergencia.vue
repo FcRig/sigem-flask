@@ -1,17 +1,21 @@
 <template>
   <v-container>
-    <v-card class="pa-4 mb-4" elevation="2">
-      <v-form ref="formRef" v-model="valid">
-        <v-text-field
-          v-model="numeroAi"
-          label="Número do Auto de Infração"
-          :rules="[rules.required]"
-        />
-        <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
-          Pesquisar
-        </v-btn>
-      </v-form>
-    </v-card>
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-card class="pa-4 mb-4" elevation="2" title="Auto de Infração">
+          <v-form ref="formRef" v-model="valid">
+            <v-text-field
+              v-model="numeroAi"
+              label="Número do Auto de Infração"
+              :rules="[rules.required]"
+            />
+            <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
+              Pesquisar
+            </v-btn>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
