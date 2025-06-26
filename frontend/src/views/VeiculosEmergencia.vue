@@ -51,7 +51,7 @@
                 <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
                 <v-chip
                   v-if="showInstituicao(env)"
-                  color="primary"
+                  color="green"
                   class="mt-2"
                 >
                   Proprietário/possuidor previsto em lei:
