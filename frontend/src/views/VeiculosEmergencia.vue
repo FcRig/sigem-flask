@@ -12,6 +12,9 @@
             <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
               Pesquisar
             </v-btn>
+            <v-btn color="secondary" class="mt-2 ml-2" @click="limpar">
+              Limpar
+            </v-btn>
           </v-form>
         </v-card>
       </v-col>
@@ -149,5 +152,14 @@ async function buscar() {
     permitido.value = false
     checked.value = true
   }
+}
+
+function limpar() {
+  numeroAi.value = ''
+  envolvidos.value = []
+  amparoInfo.value = null
+  permitido.value = false
+  checked.value = false
+  formRef.value?.resetValidation()
 }
 </script>
