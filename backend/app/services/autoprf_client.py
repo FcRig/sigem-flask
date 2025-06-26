@@ -60,6 +60,7 @@ class AutoPRFClient:
         auto_id = item.get("id")
 
         result = {
+            "id": auto_id,
             "infracao": {},
             "veiculo": {},
             "local": {},
@@ -170,3 +171,15 @@ class AutoPRFClient:
 
         result["observacoes"] = item.get("observacao")
         return result
+
+    def get_envolvidos(self, auto_id: int | str) -> list:
+        """Return the list of people/vehicles involved in a given Auto de Infracao."""
+        headers = {}
+        if self.jwt_token:
+            headers["Authorization"] = f"Bearer {self.jwt_token}"
+        response = requests.get(
+            f"{self.BASE_URL}/auto-infracao/env/{auto_id}",
+            headers=headers,
+        )
+        response.raise_for_status()
+        return response.json() if response.content else []
