@@ -30,11 +30,11 @@
     <v-chip
       v-if="checked"
       class="mb-4"
-      :color="amparoInfo ? 'green' : 'red'"
+      :color="permitido ? 'green' : 'red'"
       dark
     >
       {{
-        amparoInfo
+        permitido
           ? 'Enquadramento legal permitido'
           : 'Enquadramento legal não permitido'
       }}
@@ -97,6 +97,10 @@ const instituicoes = {
   '02510700000151': 'EPTC'
 }
 
+// Relação de códigos com enquadramento legal permitido
+const codigosPermitidos = ['745-50', '746-30', '747-10']
+const codigosPermitidosDigits = codigosPermitidos.map(c => c.replace(/\D/g, ''))
+
 
 function sanitize(cnpj) {
   return (cnpj || '').replace(/\D/g, '')
@@ -131,7 +135,7 @@ async function buscar() {
         : null
 
       const digits = codigo.replace(/\D/g, '')
-      permitido.value = ['74550', '74630', '74710'].includes(digits)
+      permitido.value = codigosPermitidosDigits.includes(digits)
       checked.value = true
 
       const res = await obterEnvolvidos(data.id)
