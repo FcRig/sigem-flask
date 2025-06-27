@@ -162,7 +162,8 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { updateUser, autoprfLogin, pesquisarAutoInfracao } from '../services/api'
+import { updateUser } from '../services/users'
+import { autoprfLogin, pesquisarAutoInfracao } from '../services/autoprf'
 
 const props = defineProps({
   modelValue: {

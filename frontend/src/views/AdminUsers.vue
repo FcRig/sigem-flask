@@ -116,7 +116,7 @@
 
 <script setup>
   import { ref, onMounted } from 'vue'
-  import { fetchUsers, updateUser, deleteUser, createUser } from '../services/api'
+  import { fetchUsers, updateUser, deleteUser, createUser } from '../services/users'
 
   const users = ref([])
   const editDialog = ref(false)

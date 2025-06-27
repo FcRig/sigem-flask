@@ -101,7 +101,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { registerUser } from '../services/api'
+import { registerUser } from '../services/auth'
 
 const username = ref('')
 const email = ref('')
