@@ -26,8 +26,7 @@
     </v-row>
 
     <v-card v-if="ai1 && ai2" class="pa-4" elevation="2">
-      <v-card-title class="d-flex justify-space-between align-center">
-        Cancelamento por Duplicidade
+      <v-card-title class="pb-6 d-flex justify-space-between align-center">        
         <v-chip :color="iguais ? 'green' : 'red'" dark>
           {{ iguais ? 'Registros compatíveis' : 'Registros divergentes' }}
         </v-chip>
@@ -35,21 +34,21 @@
       <v-card-text>
         <v-row dense>
           <!-- Código/Descrição -->
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field
               :model-value="ai1.infracao?.codigo_descricao"
               label="AI 1 - Código/Descrição da Infração"
               readonly
             />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field
               :model-value="ai2.infracao?.codigo_descricao"
               label="AI 2 - Código/Descrição da Infração"
               readonly
             />
           </v-col>
-          <v-col cols="12" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center">
             <v-chip
               :color="campoColor(ai1.infracao?.codigo_descricao, ai2.infracao?.codigo_descricao)"
               dark
@@ -59,21 +58,21 @@
           </v-col>
 
           <!-- Amparo Legal -->
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field
               :model-value="ai1.infracao?.amparo_legal"
               label="AI 1 - Amparo Legal"
               readonly
             />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field
               :model-value="ai2.infracao?.amparo_legal"
               label="AI 2 - Amparo Legal"
               readonly
             />
           </v-col>
-          <v-col cols="12" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip
               :color="campoColor(ai1.infracao?.amparo_legal, ai2.infracao?.amparo_legal)"
               dark
@@ -83,26 +82,26 @@
           </v-col>
 
           <!-- Placa -->
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.veiculo?.placa" label="AI 1 - Placa" readonly />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.veiculo?.placa" label="AI 2 - Placa" readonly />
           </v-col>
-          <v-col cols="12" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip :color="campoColor(ai1.veiculo?.placa, ai2.veiculo?.placa)" dark>
               {{ campoMsg(ai1.veiculo?.placa, ai2.veiculo?.placa) }}
             </v-chip>
           </v-col>
 
           <!-- Código/Município/UF -->
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.local?.codigo_municipio_uf" label="AI 1 - Código/Município/UF" readonly />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.local?.codigo_municipio_uf" label="AI 2 - Código/Município/UF" readonly />
           </v-col>
-          <v-col cols="12" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip
               :color="campoColor(ai1.local?.codigo_municipio_uf, ai2.local?.codigo_municipio_uf)"
               dark
@@ -112,52 +111,52 @@
           </v-col>
 
           <!-- Rodovia -->
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.local?.rodovia" label="AI 1 - BR" readonly />
           </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.local?.rodovia" label="AI 2 - BR" readonly />
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip :color="campoColor(ai1.local?.rodovia, ai2.local?.rodovia)" dark>
               {{ campoMsg(ai1.local?.rodovia, ai2.local?.rodovia) }}
             </v-chip>
           </v-col>
 
           <!-- Km -->
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.local?.km" label="AI 1 - Km" readonly />
           </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.local?.km" label="AI 2 - Km" readonly />
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip :color="campoColor(ai1.local?.km, ai2.local?.km)" dark>
               {{ campoMsg(ai1.local?.km, ai2.local?.km) }}
             </v-chip>
           </v-col>
 
           <!-- Sentido -->
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.local?.sentido" label="AI 1 - Sentido" readonly />
           </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.local?.sentido" label="AI 2 - Sentido" readonly />
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center mb-2">
+          <v-col cols="12" md="2" class="d-flex justify-center mb-2">
             <v-chip :color="campoColor(ai1.local?.sentido, ai2.local?.sentido)" dark>
               {{ campoMsg(ai1.local?.sentido, ai2.local?.sentido) }}
             </v-chip>
           </v-col>
 
           <!-- Data/Hora -->
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai1.local?.data_hora" label="AI 1 - Data/Hora" readonly />
           </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12" md="5">
             <v-text-field :model-value="ai2.local?.data_hora" label="AI 2 - Data/Hora" readonly />
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center">
+          <v-col cols="12" md="2" class="d-flex justify-center">
             <v-chip :color="campoColor(ai1.local?.data_hora, ai2.local?.data_hora)" dark>
               {{ campoMsg(ai1.local?.data_hora, ai2.local?.data_hora) }}
             </v-chip>

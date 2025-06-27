@@ -5,7 +5,7 @@ import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import AutoInfracao from '../views/AutoInfracao.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
-import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
+import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade2.vue'
 import store from '../store'
 
 const routes = [
