@@ -42,6 +42,11 @@
             prepend-icon="mdi-ambulance"
             to="/cancelamentos/veiculos-emergencia"
           />
+          <v-list-item
+            title="Duplicidade"
+            prepend-icon="mdi-content-duplicate"
+            to="/cancelamentos/duplicidade"
+          />
         </v-list-group>
       </v-list-group>
 
