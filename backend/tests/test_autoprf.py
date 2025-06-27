@@ -1,6 +1,7 @@
 from app.extensions import db
 from app.models import User
 from app.services.autoprf_client import AutoPRFClient
+import requests
 
 from flask_jwt_extended import create_access_token
 
@@ -61,6 +62,7 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
         user = create_user()
         user.autoprf_session = "sessao"
         db.session.commit()
+        user_id = user.id
 
     token = get_token(client)
 
@@ -120,3 +122,37 @@ def test_envolvidos_returns_list(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_autoprf_session_expired(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+        user_id = user.id
+
+    token = get_token(client)
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_pesquisa(self, numero):
+        resp = requests.Response()
+        resp.status_code = 401
+        raise requests.HTTPError(response=resp)
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "pesquisa_auto_infracao", fake_pesquisa)
+
+    response = client.post(
+        "/api/autoprf/pesquisar_ai",
+        json={"auto_infracao": "123"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"msg": "Sessão AutoPRF expirada"}
+    with app.app_context():
+        updated = User.query.get(user_id)
+        assert updated.autoprf_session is None

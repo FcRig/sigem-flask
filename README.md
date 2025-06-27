@@ -26,3 +26,11 @@ This repository contains a Flask backend and a Vue frontend. Database migrations
    ```
 
 The database file will be created under `backend/instance/`.
+
+## AutoPRF Sessions
+
+When the backend detects that an AutoPRF request failed with status `401` or
+`403`, it clears the stored session and responds with status `401` and the
+message `Sessão AutoPRF expirada`. The frontend intercepts this response,
+logs the user out and shows a snackbar saying `Sessão expirada` before
+redirecting to the home page.

@@ -1,8 +1,11 @@
 <template>
-  <component :is="layout">
-    <router-view />
-  </component>
-  <LoadingOverlay v-if="loading" />
+<component :is="layout">
+  <router-view />
+</component>
+<LoadingOverlay v-if="loading" />
+<v-snackbar v-model="snackbar.show" :color="snackbar.color" location="top right" timeout="3000" @update:model-value="val => { if (!val) store.commit('hideSnackbar') }">
+  {{ snackbar.msg }}
+</v-snackbar>
 </template>
 
 <script setup>
@@ -19,4 +22,5 @@ const layout = computed(() =>
   route.meta.layout === 'auth' ? AuthLayout : MainLayout
 )
 const loading = computed(() => store.state.loading)
+const snackbar = computed(() => store.state.snackbar)
 </script>

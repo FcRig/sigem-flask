@@ -6,7 +6,8 @@ export default createStore({
     user: null,
     token: localStorage.getItem('token') || null,
     aiResult: null,
-    loading: false
+    loading: false,
+    snackbar: { show: false, msg: '', color: 'success' }
   },
   mutations: {
     setToken(state, token) {
@@ -26,6 +27,14 @@ export default createStore({
     },
     setLoading(state, value) {
       state.loading = value
+    },
+    showSnackbar(state, { msg, color = 'error' }) {
+      state.snackbar.msg = msg
+      state.snackbar.color = color
+      state.snackbar.show = true
+    },
+    hideSnackbar(state) {
+      state.snackbar.show = false
     },
     logout(state) {
       state.user = null
