@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+import requests
 
 from ..models import User
 from ..extensions import db
@@ -18,7 +19,14 @@ def login():
         return jsonify({'msg': 'Credenciais inválidas'}), 400
 
     client = AutoPRFClient()
-    jwt_token = client.login(user.cpf, password, token)
+    try:
+        jwt_token = client.login(user.cpf, password, token)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
 
     user.autoprf_session = jwt_token
     db.session.commit()
@@ -38,7 +46,14 @@ def pesquisar_auto_infracao():
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
     client = AutoPRFClient(jwt_token=user.autoprf_session)
-    result = client.pesquisa_auto_infracao(auto_infracao)
+    try:
+        result = client.pesquisa_auto_infracao(auto_infracao)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
 
     return jsonify(result)
 
@@ -52,6 +67,13 @@ def obter_envolvidos(auto_id):
         return jsonify({'msg': 'Sessão não iniciada'}), 400
 
     client = AutoPRFClient(jwt_token=user.autoprf_session)
-    result = client.get_envolvidos(auto_id)
+    try:
+        result = client.get_envolvidos(auto_id)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
 
     return jsonify(result)

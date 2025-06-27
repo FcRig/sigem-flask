@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from '../router';
 
 const api = axios.create({
   baseURL: 'http://localhost:5000'
@@ -75,6 +76,14 @@ export function setupLoadingInterceptors(store) {
     },
     error => {
       store.commit('setLoading', false);
+      if (error.response && [401, 422].includes(error.response.status)) {
+        const msg = error.response.data?.msg || error.response.data?.message || '';
+        if (/token has expired/i.test(msg)) {
+          store.commit('logout');
+          store.commit('showSnackbar', { msg: 'Sessão expirada' });
+          router.push('/');
+        }
+      }
       return Promise.reject(error);
     }
   );
