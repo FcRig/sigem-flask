@@ -78,7 +78,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/api'
+import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/autoprf'
 
 const numeroAi = ref('')
 const envolvidos = ref([])

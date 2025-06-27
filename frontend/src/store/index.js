@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
-import { setToken, fetchCurrentUser as apiFetchCurrentUser } from '../services/api'
+import { setToken } from '../services/api'
+import { fetchCurrentUser as apiFetchCurrentUser } from '../services/auth'
 
 export default createStore({
   state: {

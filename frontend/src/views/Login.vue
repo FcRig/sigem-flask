@@ -86,7 +86,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { loginUser } from '../services/api'
+import { loginUser } from '../services/auth'
 
 const email = ref('')
 const senha = ref('')

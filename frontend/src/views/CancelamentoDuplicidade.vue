@@ -90,7 +90,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { pesquisarAutoInfracao } from '../services/api'
+import { pesquisarAutoInfracao } from '../services/autoprf'
 
 const numeroAi1 = ref('')
 const numeroAi2 = ref('')
