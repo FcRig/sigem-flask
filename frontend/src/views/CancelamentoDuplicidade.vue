@@ -35,52 +35,132 @@
       <v-card-text>
         <v-row dense>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai1.infracao?.codigo_descricao" label="AI 1 - Código/Descrição da Infração" readonly />
+            <v-text-field
+              :model-value="ai1.infracao?.codigo_descricao"
+              label="AI 1 - Código/Descrição da Infração"
+              readonly
+              :style="{ color: campoColor(ai1.infracao?.codigo_descricao, ai2.infracao?.codigo_descricao) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai2.infracao?.codigo_descricao" label="AI 2 - Código/Descrição da Infração" readonly />
+            <v-text-field
+              :model-value="ai2.infracao?.codigo_descricao"
+              label="AI 2 - Código/Descrição da Infração"
+              readonly
+              :style="{ color: campoColor(ai2.infracao?.codigo_descricao, ai1.infracao?.codigo_descricao) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai1.infracao?.amparo_legal" label="AI 1 - Amparo Legal" readonly />
+            <v-text-field
+              :model-value="ai1.infracao?.amparo_legal"
+              label="AI 1 - Amparo Legal"
+              readonly
+              :style="{ color: campoColor(ai1.infracao?.amparo_legal, ai2.infracao?.amparo_legal) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai2.infracao?.amparo_legal" label="AI 2 - Amparo Legal" readonly />
+            <v-text-field
+              :model-value="ai2.infracao?.amparo_legal"
+              label="AI 2 - Amparo Legal"
+              readonly
+              :style="{ color: campoColor(ai2.infracao?.amparo_legal, ai1.infracao?.amparo_legal) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai1.veiculo?.placa" label="AI 1 - Placa" readonly />
+            <v-text-field
+              :model-value="ai1.veiculo?.placa"
+              label="AI 1 - Placa"
+              readonly
+              :style="{ color: campoColor(ai1.veiculo?.placa, ai2.veiculo?.placa) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai2.veiculo?.placa" label="AI 2 - Placa" readonly />
+            <v-text-field
+              :model-value="ai2.veiculo?.placa"
+              label="AI 2 - Placa"
+              readonly
+              :style="{ color: campoColor(ai2.veiculo?.placa, ai1.veiculo?.placa) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai1.local?.codigo_municipio_uf" label="AI 1 - Código/Município/UF" readonly />
+            <v-text-field
+              :model-value="ai1.local?.codigo_municipio_uf"
+              label="AI 1 - Código/Município/UF"
+              readonly
+              :style="{ color: campoColor(ai1.local?.codigo_municipio_uf, ai2.local?.codigo_municipio_uf) }"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="ai2.local?.codigo_municipio_uf" label="AI 2 - Código/Município/UF" readonly />
+            <v-text-field
+              :model-value="ai2.local?.codigo_municipio_uf"
+              label="AI 2 - Código/Município/UF"
+              readonly
+              :style="{ color: campoColor(ai2.local?.codigo_municipio_uf, ai1.local?.codigo_municipio_uf) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai1.local?.rodovia" label="AI 1 - BR" readonly />
+            <v-text-field
+              :model-value="ai1.local?.rodovia"
+              label="AI 1 - BR"
+              readonly
+              :style="{ color: campoColor(ai1.local?.rodovia, ai2.local?.rodovia) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai2.local?.rodovia" label="AI 2 - BR" readonly />
+            <v-text-field
+              :model-value="ai2.local?.rodovia"
+              label="AI 2 - BR"
+              readonly
+              :style="{ color: campoColor(ai2.local?.rodovia, ai1.local?.rodovia) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai1.local?.km" label="AI 1 - Km" readonly />
+            <v-text-field
+              :model-value="ai1.local?.km"
+              label="AI 1 - Km"
+              readonly
+              :style="{ color: campoColor(ai1.local?.km, ai2.local?.km) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai2.local?.km" label="AI 2 - Km" readonly />
+            <v-text-field
+              :model-value="ai2.local?.km"
+              label="AI 2 - Km"
+              readonly
+              :style="{ color: campoColor(ai2.local?.km, ai1.local?.km) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai1.local?.sentido" label="AI 1 - Sentido" readonly />
+            <v-text-field
+              :model-value="ai1.local?.sentido"
+              label="AI 1 - Sentido"
+              readonly
+              :style="{ color: campoColor(ai1.local?.sentido, ai2.local?.sentido) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai2.local?.sentido" label="AI 2 - Sentido" readonly />
+            <v-text-field
+              :model-value="ai2.local?.sentido"
+              label="AI 2 - Sentido"
+              readonly
+              :style="{ color: campoColor(ai2.local?.sentido, ai1.local?.sentido) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai1.local?.data_hora" label="AI 1 - Data/Hora" readonly />
+            <v-text-field
+              :model-value="ai1.local?.data_hora"
+              label="AI 1 - Data/Hora"
+              readonly
+              :style="{ color: campoColor(ai1.local?.data_hora, ai2.local?.data_hora) }"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field :model-value="ai2.local?.data_hora" label="AI 2 - Data/Hora" readonly />
+            <v-text-field
+              :model-value="ai2.local?.data_hora"
+              label="AI 2 - Data/Hora"
+              readonly
+              :style="{ color: campoColor(ai2.local?.data_hora, ai1.local?.data_hora) }"
+            />
           </v-col>
         </v-row>
       </v-card-text>
@@ -141,4 +221,8 @@ const iguais = computed(() => {
     f1.local?.data_hora === f2.local?.data_hora
   )
 })
+
+function campoColor(v1, v2) {
+  return v1 === v2 ? 'green' : 'red'
+}
 </script>
