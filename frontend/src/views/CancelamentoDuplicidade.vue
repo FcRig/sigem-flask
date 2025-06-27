@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="4">
         <v-card class="pa-4 mb-4" elevation="2" title="Autos de Infração">
           <v-form ref="formRef" v-model="valid">
             <v-text-field
