@@ -40,6 +40,15 @@
       }}
     </v-chip>
   </v-card>
+
+  <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
+    <v-card-title>Justificativa</v-card-title>
+    <v-card-text>
+      <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
+      <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
+      <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
+    </v-card-text>
+  </v-card>
   
   <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
@@ -77,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/autoprf'
 
 const numeroAi = ref('')
@@ -94,7 +103,43 @@ const instituicoes = {
   '89175541000164': 'Brigada Militar',
   '00058163000125': 'Polícia Civil',
   '28610005000155': 'Corpo de Bombeiros',
-  '02510700000151': 'EPTC'
+  '02510700000151': 'EPTC',
+  '00394429000179': 'PRF',
+  '07963160000130': 'SUSEPE',
+  '09734605000187': 'Polícia Legislativa'
+}
+
+const justificativas = {
+  '00394429000179': {
+    orgao: 'PRF',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Rodoviária Federal). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  },
+  '00058163000125': {
+    orgao: 'Polícia Civil',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Civil do Rio Grande do Sul). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  },
+  '09734605000187': {
+    orgao: 'Polícia Legislativa',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Legislativa). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  },
+  '07963160000130': {
+    orgao: 'SUSEPE',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial da polícia penal (Superintendência dos Serviços Penitenciários do Estado do Rio Grande do Sul). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  },
+  '89175541000164': {
+    orgao: 'Brigada Militar',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Rio Grande do Sul). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  }
 }
 
 // Relação de códigos com enquadramento legal permitido
@@ -115,6 +160,16 @@ function showInstituicao(env) {
   if (!/propriet[aá]rio|possuidor/.test(envolvimento)) return false
   return !!instituicaoNome(env.numeroDocumento)
 }
+
+const justificativa = computed(() => {
+  for (const env of envolvidos.value) {
+    const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
+    if (!/propriet[aá]rio|possuidor/.test(envolvimento)) continue
+    const j = justificativas[sanitize(env.numeroDocumento)]
+    if (j) return j
+  }
+  return null
+})
 
 async function buscar() {
   if (!formRef.value?.validate()) return
