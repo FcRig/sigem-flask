@@ -1,7 +1,7 @@
 from app.extensions import db
 from app.models import User
 from app.routes.siscom import ENDPOINT
-import requests
+from app.services.siscom_client import SiscomClient
 
 
 def create_user():
@@ -44,21 +44,16 @@ def test_pesquisar_ai_returns_filtered_fields(client, app, monkeypatch):
         "extra": "ignored",
     }
 
-    class FakeResponse:
-        status_code = 200
-        content = b"data"
+    def fake_init(self, endpoint=None):
+        assert endpoint == ENDPOINT
+        self.endpoint = endpoint
 
-        def json(self):
-            return payload
+    def fake_pesquisar(self, numero):
+        assert numero == "123"
+        return {k: payload[k] for k in payload if k != "extra"}
 
-        def raise_for_status(self):
-            pass
-
-    def fake_get(url):
-        assert url == f"{ENDPOINT}/123"
-        return FakeResponse()
-
-    monkeypatch.setattr(requests, "get", fake_get)
+    monkeypatch.setattr(SiscomClient, "__init__", fake_init)
+    monkeypatch.setattr(SiscomClient, "pesquisar_ai", fake_pesquisar)
 
     response = client.post(
         "/api/siscom/pesquisar_ai",

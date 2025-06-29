@@ -1,7 +1,8 @@
 import os
-import requests
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
+
+from ..services.siscom_client import SiscomClient
 
 ENDPOINT = os.getenv("SISCOM_ENDPOINT", "http://example.com/siscom")
 
@@ -16,19 +17,6 @@ def pesquisar_ai():
     if not numero:
         return jsonify({"msg": "Número do AI não informado"}), 400
 
-    response = requests.get(f"{ENDPOINT}/{numero}")
-    response.raise_for_status()
-    payload = response.json() if response.content else {}
-
-    fields = [
-        "numeroAuto",
-        "codigoInfracao",
-        "descAbreviadaInfracao",
-        "placa",
-        "renavam",
-        "kmInfracao",
-        "municipioInfracao",
-        "valorInfracao",
-    ]
-    result = {field: payload.get(field) for field in fields}
+    client = SiscomClient(endpoint=ENDPOINT)
+    result = client.pesquisar_ai(numero)
     return jsonify(result)
