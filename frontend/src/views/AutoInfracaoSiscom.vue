@@ -214,52 +214,10 @@ import { useRouter } from 'vue-router'
 const store = useStore()
 const router = useRouter()
 
-const rawAi = computed(() => store.state.siscomAiResult)
-const ai = computed(() => {
-  const data = rawAi.value
-  if (!data) return null
-  return {
-    infracao: {
-      codigo_descricao: data.codigoInfracao ? `${data.codigoInfracao} - ${data.descAbreviadaInfracao}` : null,
-      amparo_legal: data.enquadramentoInfracao,
-      gravidade: data.gravidadeInfracao,
-      tipo_infrator: data.tipoInfrator,
-      tipo_abordagem: data.tipoAbordagem,
-    },
-    veiculo: {
-      emplacamento: data.veiculoEstrangeiro === 'true' ? 'Estrangeiro' : 'Nacional',
-      placa: data.placa,
-      chassi: data.chassi,
-      renavam: data.renavam,
-      pais: data.pais,
-      uf: data.ufPlaca,
-      marca: data.marca,
-      outra_marca: data.outraMarca,
-      modelo: data.modelo,
-      cor: data.cor,
-      especie: data.descEspecie,
-      tipo: data.tipo,
-      categoria: data.categoria,
-      tipo_documento: data.tipoDocumento,
-      numero_documento: data.numeroDocumento,
-      nome_razao_social: data.nomeCondutor || data.nomProprietario,
-      tipo_composicao: data.tipoComposicao,
-    },
-    local: {
-      codigo_municipio_uf: data.municipioInfracao ? `${data.municipioInfracao.codMunicipio} - ${data.municipioInfracao.nome}/${data.municipioInfracao.UF}` : null,
-      rodovia: data.brInfracao,
-      km: data.kmInfracao,
-      sentido: data.sentidoVia,
-      data_hora: data.dataHoraInfracao ? new Date(data.dataHoraInfracao).toLocaleString() : null,
-    },
-    medicoes: null,
-    equipamento: null,
-    observacoes: data.observacoes,
-  }
-})
+const ai = computed(() => store.state.siscomAiResult)
 
 onMounted(() => {
-  if (!rawAi.value) {
+  if (!ai.value) {
     router.push('/')
   }
 })
