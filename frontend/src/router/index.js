@@ -4,6 +4,7 @@ import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import AutoInfracao from '../views/AutoInfracao.vue'
+import AutoInfracaoSiscom from '../views/AutoInfracaoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
 import store from '../store'
@@ -25,6 +26,11 @@ const routes = [
     path: '/resultado-ai',
     component: AutoInfracao,
     meta: { requiresAuth: true, title: 'Pesquisa do Auto de Infração' }
+  },
+  {
+    path: '/resultado-ai-siscom',
+    component: AutoInfracaoSiscom,
+    meta: { requiresAuth: true, title: 'Pesquisa AI SISCOM' }
   },
   {
     path: '/cancelamentos/veiculos-emergencia',

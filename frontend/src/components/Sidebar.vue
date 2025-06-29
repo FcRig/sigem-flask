@@ -63,6 +63,11 @@
           prepend-icon="mdi-lock"
           @click="siscomDialog = true"
         />
+        <v-list-item
+          title="Pesquisar AI"
+          prepend-icon="mdi-magnify"
+          @click="siscomPesquisaDialog = true"
+        />
       </v-list-group>
 
       <v-list-group value="sei">
@@ -110,6 +115,22 @@
             <v-spacer />
             <v-btn text @click="autoprfPesquisaDialog = false">Cancelar</v-btn>
             <v-btn color="primary" :disabled="!autoprfPesquisaValid" @click="pesquisarAI">Pesquisar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="siscomPesquisaDialog" max-width="400">
+        <v-card>
+          <v-card-title>Pesquisar Auto de Infração</v-card-title>
+          <v-card-text>
+            <v-form ref="siscomPesquisaForm" v-model="siscomPesquisaValid">
+              <v-text-field v-model="siscomNumeroAi" label="Número do AI" :rules="[rules.required]" />
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn text @click="siscomPesquisaDialog = false">Cancelar</v-btn>
+            <v-btn color="primary" :disabled="!siscomPesquisaValid" @click="pesquisarSiscomAi">Pesquisar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -164,6 +185,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { updateUser } from '../services/users'
 import { autoprfLogin, pesquisarAutoInfracao } from '../services/autoprf'
+import { pesquisarAi as pesquisarSiscom } from '../services/siscom'
 
 const props = defineProps({
   modelValue: {
@@ -183,6 +205,7 @@ const router = useRouter()
 
 const autoprfDialog = ref(false)
 const autoprfPesquisaDialog = ref(false)
+const siscomPesquisaDialog = ref(false)
 const siscomDialog = ref(false)
 const seiDialog = ref(false)
 
@@ -192,11 +215,14 @@ const siscomSenha = ref('')
 const seiSenha = ref('')
 const seiToken = ref('')
 const autoInfracao = ref('')
+const siscomNumeroAi = ref('')
 
 const autoprfForm = ref(null)
 const autoprfValid = ref(false)
 const autoprfPesquisaForm = ref(null)
 const autoprfPesquisaValid = ref(false)
+const siscomPesquisaForm = ref(null)
+const siscomPesquisaValid = ref(false)
 const siscomForm = ref(null)
 const siscomValid = ref(false)
 const seiForm = ref(null)
@@ -243,6 +269,24 @@ async function pesquisarAI() {
     autoprfPesquisaDialog.value = false
     autoInfracao.value = ''
     router.push('/resultado-ai')
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao pesquisar AI'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
+}
+
+async function pesquisarSiscomAi() {
+  if (!siscomPesquisaForm.value?.validate()) return
+  try {
+    const { data } = await pesquisarSiscom({ numero: siscomNumeroAi.value })
+    store.commit('setSiscomAiResult', data)
+    snackbarMsg.value = 'Pesquisa enviada com sucesso'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    siscomPesquisaDialog.value = false
+    siscomNumeroAi.value = ''
+    router.push('/resultado-ai-siscom')
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao pesquisar AI'
     snackbarColor.value = 'error'
