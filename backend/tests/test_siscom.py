@@ -26,22 +26,19 @@ def get_token(client, email="test@example.com", password="password"):
     return response.get_json()["access_token"]
 
 
-def test_pesquisar_ai_returns_filtered_fields(client, app, monkeypatch):
+def test_pesquisar_ai_returns_structured_data(client, app, monkeypatch):
     with app.app_context():
         create_user()
 
     token = get_token(client)
 
-    payload = {
-        "numeroAuto": "A1",
-        "codigoInfracao": "123",
-        "descAbreviadaInfracao": "desc",
-        "placa": "ABC1234",
-        "renavam": "999",
-        "kmInfracao": "10",
-        "municipioInfracao": {"nome": "Cidade"},
-        "valorInfracao": 100.0,
-        "extra": "ignored",
+    expected = {
+        "infracao": {"codigo_descricao": "123 - desc"},
+        "veiculo": {"placa": "ABC1234"},
+        "local": {"km": "10"},
+        "medicoes": None,
+        "equipamento": None,
+        "observacoes": None,
     }
 
     def fake_init(self, endpoint=None):
@@ -50,7 +47,7 @@ def test_pesquisar_ai_returns_filtered_fields(client, app, monkeypatch):
 
     def fake_pesquisar(self, numero):
         assert numero == "123"
-        return {k: payload[k] for k in payload if k != "extra"}
+        return expected
 
     monkeypatch.setattr(SiscomClient, "__init__", fake_init)
     monkeypatch.setattr(SiscomClient, "pesquisar_ai", fake_pesquisar)
@@ -62,13 +59,4 @@ def test_pesquisar_ai_returns_filtered_fields(client, app, monkeypatch):
     )
 
     assert response.status_code == 200
-    assert response.get_json() == {
-        "numeroAuto": "A1",
-        "codigoInfracao": "123",
-        "descAbreviadaInfracao": "desc",
-        "placa": "ABC1234",
-        "renavam": "999",
-        "kmInfracao": "10",
-        "municipioInfracao": {"nome": "Cidade"},
-        "valorInfracao": 100.0,
-    }
+    assert response.get_json() == expected
