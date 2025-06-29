@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 
 from ..services.siscom_client import SiscomClient
 
-ENDPOINT = os.getenv("SISCOM_ENDPOINT", "http://example.com/siscom")
+ENDPOINT = os.getenv("SISCOM_ENDPOINT")
 
 bp = Blueprint("siscom", __name__, url_prefix="/api/siscom")
 
