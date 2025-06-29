@@ -7,6 +7,7 @@ export default createStore({
     user: null,
     token: localStorage.getItem('token') || null,
     aiResult: null,
+    siscomAiResult: null,
     loading: false,
     snackbar: { show: false, msg: '', color: 'success' }
   },
@@ -25,6 +26,9 @@ export default createStore({
     },
     setAiResult(state, data) {
       state.aiResult = data
+    },
+    setSiscomAiResult(state, data) {
+      state.siscomAiResult = data
     },
     setLoading(state, value) {
       state.loading = value
