@@ -18,5 +18,5 @@ def pesquisar_ai():
         return jsonify({"msg": "Número do AI não informado"}), 400
 
     client = SiscomClient(endpoint=ENDPOINT)
-    result = client.pesquisar_ai(numero)
+    result = client.pesquisar_ai(numero)   
     return jsonify(result)
