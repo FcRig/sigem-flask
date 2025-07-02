@@ -7,6 +7,7 @@
             <v-text-field
               v-model="placa"
               label="Placa"
+              prepend-icon="mdi-car"
               :rules="[rules.required]"
             />
             <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
@@ -165,6 +166,12 @@ const valid = ref(false)
 const result = computed(() => store.state.veiculoResult)
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
+
+function formatLabel(key) {
+  return (key || '')
+    .replace(/_/g, ' ')
+    .replace(/(?:^|\s)\w/g, l => l.toUpperCase())
+}
 
 async function buscar() {
   if (!formRef.value?.validate()) return
