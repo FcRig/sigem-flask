@@ -156,3 +156,69 @@ def test_autoprf_session_expired(client, app, monkeypatch):
     with app.app_context():
         updated = User.query.get(user_id)
         assert updated.autoprf_session is None
+
+
+def test_solicitar_cancelamento_payload(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_cancel(self, numero, payload):
+        captured["numero"] = numero
+        captured["payload"] = payload
+        return {"ok": True}
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "solicitar_cancelamento", fake_cancel)
+
+    response = client.post(
+        "/api/autoprf/solicitacao/cancelamento",
+        json={"numero": "123", "idProcesso": 7},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == {"ok": True}
+    assert captured == {"numero": "123", "payload": {"idProcesso": 7}}
+
+
+def test_cancelamento_session_expired(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+        user_id = user.id
+
+    token = get_token(client)
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_cancel(self, numero, payload):
+        resp = requests.Response()
+        resp.status_code = 401
+        raise requests.HTTPError(response=resp)
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "solicitar_cancelamento", fake_cancel)
+
+    response = client.post(
+        "/api/autoprf/solicitacao/cancelamento",
+        json={"numero": "123", "idProcesso": 7},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"msg": "Sessão AutoPRF expirada"}
+    with app.app_context():
+        updated = User.query.get(user_id)
+        assert updated.autoprf_session is None
