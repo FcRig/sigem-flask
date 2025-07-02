@@ -77,7 +77,7 @@
 
     <v-list-item
       title="Veículo"
-      prepend-icon="mdi-car-search"
+      prepend-icon="mdi-car"
       to="/veiculo"
     />
 
