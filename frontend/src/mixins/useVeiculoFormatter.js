@@ -8,14 +8,14 @@ export function useVeiculoFormatter(result) {
     if (/cpf/i.test(val) || val === 'PF') return 'CPF'
     return val
   })
-
+  
   function formatCpf(cpf) {
     const digits = (cpf || '').replace(/\D/g, '')
     if (digits.length === 11)
       return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
     return cpf
   }
-
+  
   function formatCnpj(cnpj) {
     const digits = (cnpj || '').replace(/\D/g, '')
     if (digits.length === 14)
@@ -38,7 +38,7 @@ export function useVeiculoFormatter(result) {
   })
 
   function formatRestricao(value) {
-    if (value === 'ALIENCAO FIDUCIARIA') return 'ALIENÇÃO FIDUCIÁRIA'
+    if (value === 'ALIENACAO FIDUCIARIA') return 'ALIENAÇÃO FIDUCIÁRIA'
     if (value === 'SEM RESTRICAO') return 'SEM RESTRIÇÃO'
     return value
   }
