@@ -7,6 +7,7 @@
             <v-text-field
               v-model="placa"
               label="Placa"
+              prepend-icon="mdi-car"
               :rules="[rules.required]"
             />
             <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
@@ -20,12 +21,33 @@
       </v-col>
     </v-row>
 
-    <v-card v-if="result" class="pa-4" elevation="2">
-      <v-card-title>Resultado</v-card-title>
-      <v-card-text>
-        <pre>{{ result }}</pre>
-      </v-card-text>
-    </v-card>
+    <template v-if="result">
+      <v-card
+        v-for="(group, name) in result"
+        :key="name"
+        class="pa-4 mb-4"
+        elevation="2"
+      >
+        <h3 class="pa-4">{{ formatLabel(name) }}</h3>
+        <v-row dense>
+          <template v-if="typeof group === 'object' && group !== null && !Array.isArray(group)">
+            <v-col
+              v-for="(value, key) in group"
+              :key="key"
+              cols="12"
+              md="4"
+            >
+              <v-text-field :model-value="value" :label="formatLabel(key)" readonly />
+            </v-col>
+          </template>
+          <template v-else>
+            <v-col cols="12">
+              <v-text-field :model-value="group" :label="formatLabel(name)" readonly />
+            </v-col>
+          </template>
+        </v-row>
+      </v-card>
+    </template>
   </v-container>
 </template>
 
@@ -42,6 +64,12 @@ const valid = ref(false)
 const result = computed(() => store.state.veiculoResult)
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
+
+function formatLabel(key) {
+  return (key || '')
+    .replace(/_/g, ' ')
+    .replace(/(?:^|\s)\w/g, l => l.toUpperCase())
+}
 
 async function buscar() {
   if (!formRef.value?.validate()) return
