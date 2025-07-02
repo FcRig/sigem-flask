@@ -18,5 +18,18 @@ def pesquisar_ai():
         return jsonify({"msg": "Número do AI não informado"}), 400
 
     client = SiscomClient(endpoint=ENDPOINT)
-    result = client.pesquisar_ai(numero)   
+    result = client.pesquisar_ai(numero)
+    return jsonify(result)
+
+
+@bp.route("/historico", methods=["POST"])
+@jwt_required()
+def historico():
+    data = request.get_json() or {}
+    numero = data.get("numero")
+    if not numero:
+        return jsonify({"msg": "Número do AI não informado"}), 400
+
+    client = SiscomClient(endpoint=ENDPOINT)
+    result = client.historico(numero)
     return jsonify(result)

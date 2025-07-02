@@ -88,3 +88,12 @@ class SiscomClient:
             result["local"]["data_hora"] = data_hora
 
         return result
+
+    def historico(self, numero: str) -> list:
+        """Return the historical status list for an Auto de Infracao."""
+        url = (
+            f"{self.endpoint}/historico?numeroAuto%7D=&find=ByNumeroAutoEquals&numeroAuto={numero}"
+        )
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json() if response.content else []
