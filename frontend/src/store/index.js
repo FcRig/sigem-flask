@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import { setToken } from '../services/api'
 import { fetchCurrentUser as apiFetchCurrentUser } from '../services/auth'
+import { consultarPlaca as apiConsultarPlaca } from '../services/veiculo'
 
 export default createStore({
   state: {
@@ -8,6 +9,7 @@ export default createStore({
     token: localStorage.getItem('token') || null,
     aiResult: null,
     siscomAiResult: null,
+    veiculoResult: null,
     loading: false,
     snackbar: { show: false, msg: '', color: 'success' }
   },
@@ -30,6 +32,9 @@ export default createStore({
     setSiscomAiResult(state, data) {
       state.siscomAiResult = data
     },
+    setVeiculoResult(state, data) {
+      state.veiculoResult = data
+    },
     setLoading(state, value) {
       state.loading = value
     },
@@ -44,6 +49,7 @@ export default createStore({
     logout(state) {
       state.user = null
       state.token = null
+      state.veiculoResult = null
       setToken(null)
       localStorage.removeItem('token')
     }
@@ -67,6 +73,10 @@ export default createStore({
       } catch (e) {
         commit('logout')
       }
+    },
+    async consultarPlaca({ commit }, payload) {
+      const { data } = await apiConsultarPlaca(payload)
+      commit('setVeiculoResult', data)
     }
   },
   modules: {}
