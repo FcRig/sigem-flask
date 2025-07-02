@@ -1,16 +1,5 @@
 <template>
-  <v-container>
-    <!-- Cabeçalho -->
-    <v-row>
-      <v-col cols="12">
-        <v-card class="pa-4" elevation="2">
-          <h2>
-            Auto de Infração
-            <v-chip color="blue" text-color="white">SISCOM</v-chip>
-          </h2>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-container>    
     <v-row class="my-2">
       <v-col cols="12" md="4">
         <v-card class="pa-4 mb-4" elevation="2" title="Auto de Infração">
