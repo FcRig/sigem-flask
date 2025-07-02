@@ -8,6 +8,7 @@ import AutoInfracaoSiscom from '../views/AutoInfracaoSiscom.vue'
 import HistoricoSiscom from '../views/HistoricoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
+import Veiculo from '../views/Veiculo.vue'
 import store from '../store'
 
 const routes = [
@@ -37,6 +38,11 @@ const routes = [
     path: '/historico-siscom',
     component: HistoricoSiscom,
     meta: { requiresAuth: true, title: 'Histórico do Auto de Infração' }
+  },
+  {
+    path: '/veiculo',
+    component: Veiculo,
+    meta: { requiresAuth: true, title: 'Consulta de Veículo' }
   },
   {
     path: '/cancelamentos/veiculos-emergencia',

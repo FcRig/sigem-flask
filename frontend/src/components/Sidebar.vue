@@ -68,14 +68,20 @@
           prepend-icon="mdi-magnify"
           to="/resultado-ai-siscom"
         />
-        <v-list-item
-          title="Histórico"
-          prepend-icon="mdi-history"
-          to="/historico-siscom"
-        />
-      </v-list-group>
+      <v-list-item
+        title="Histórico"
+        prepend-icon="mdi-history"
+        to="/historico-siscom"
+      />
+    </v-list-group>
 
-      <v-list-group value="sei">
+    <v-list-item
+      title="Veículo"
+      prepend-icon="mdi-car-search"
+      to="/veiculo"
+    />
+
+    <v-list-group value="sei">
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"
