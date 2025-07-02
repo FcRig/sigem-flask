@@ -12,11 +12,26 @@
       </v-col>
     </v-row>
     <v-row class="my-2">
-      <v-col cols="12" class="text-right">
-        <v-btn color="primary" @click="limparConsulta">Limpar</v-btn>
+      <v-col cols="12" md="4">
+        <v-card class="pa-4 mb-4" elevation="2" title="Auto de Infração">
+          <v-form ref="formRef" v-model="valid">
+            <v-text-field
+              v-model="numeroAi"
+              label="Número do Auto de Infração"
+              :rules="[rules.required]"
+            />
+            <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
+              Pesquisar
+            </v-btn>
+            <v-btn color="secondary" class="mt-2 ml-2" @click="limpar">
+              Limpar
+            </v-btn>
+          </v-form>
+        </v-card>
       </v-col>
     </v-row>
 
+    <template v-if="ai">
     <!-- Identificação da Infração -->
     <v-card class="pa-4 mb-4" elevation="2">
       <h3 class="pa-4">Identificação da Infração</h3>
@@ -202,28 +217,40 @@
         </v-col>
       </v-row>
     </v-card>
+    </template>
 
   </v-container>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { pesquisarAi } from '../services/siscom'
 
 const store = useStore()
-const router = useRouter()
+
+const numeroAi = ref('')
+const formRef = ref(null)
+const valid = ref(false)
 
 const ai = computed(() => store.state.siscomAiResult)
 
-onMounted(() => {
-  if (!ai.value) {
-    router.push('/')
-  }
-})
+const rules = { required: v => !!v || 'Campo obrigatório' }
 
-function limparConsulta() {
+async function buscar() {
+  if (!formRef.value?.validate()) return
+  try {
+    const { data } = await pesquisarAi({ numero: numeroAi.value })
+    store.commit('setSiscomAiResult', data)
+  } catch (err) {
+    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro ao pesquisar AI' })
+    store.commit('setSiscomAiResult', null)
+  }
+}
+
+function limpar() {
+  numeroAi.value = ''
   store.commit('setSiscomAiResult', null)
-  router.push('/')
+  formRef.value?.resetValidation()
 }
 </script>
