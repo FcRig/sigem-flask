@@ -34,3 +34,7 @@ When the backend detects that an AutoPRF request failed with status `401` or
 message `Sessão AutoPRF expirada`. The frontend intercepts this response,
 logs the user out and shows a snackbar saying `Sessão expirada` before
 redirecting to the home page.
+
+## SISCOM
+
+- `POST /api/siscom/historico` – retorna o histórico do Auto de Infração.

@@ -60,3 +60,32 @@ def test_pesquisar_ai_returns_structured_data(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_historico_returns_list(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+
+    token = get_token(client)
+
+    expected = [{"dataHistorico": 1, "status": "foo"}]
+
+    def fake_init(self, endpoint=None):
+        assert endpoint == ENDPOINT
+        self.endpoint = endpoint
+
+    def fake_historico(self, numero):
+        assert numero == "321"
+        return expected
+
+    monkeypatch.setattr(SiscomClient, "__init__", fake_init)
+    monkeypatch.setattr(SiscomClient, "historico", fake_historico)
+
+    response = client.post(
+        "/api/siscom/historico",
+        json={"numero": "321"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == expected

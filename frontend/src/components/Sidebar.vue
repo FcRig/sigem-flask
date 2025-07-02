@@ -68,6 +68,11 @@
           prepend-icon="mdi-magnify"
           @click="siscomPesquisaDialog = true"
         />
+        <v-list-item
+          title="Histórico"
+          prepend-icon="mdi-history"
+          to="/historico-siscom"
+        />
       </v-list-group>
 
       <v-list-group value="sei">

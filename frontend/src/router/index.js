@@ -5,6 +5,7 @@ import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import AutoInfracao from '../views/AutoInfracao.vue'
 import AutoInfracaoSiscom from '../views/AutoInfracaoSiscom.vue'
+import HistoricoSiscom from '../views/HistoricoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
 import store from '../store'
@@ -31,6 +32,11 @@ const routes = [
     path: '/resultado-ai-siscom',
     component: AutoInfracaoSiscom,
     meta: { requiresAuth: true, title: 'Pesquisa AI SISCOM' }
+  },
+  {
+    path: '/historico-siscom',
+    component: HistoricoSiscom,
+    meta: { requiresAuth: true, title: 'Histórico do Auto de Infração' }
   },
   {
     path: '/cancelamentos/veiculos-emergencia',
