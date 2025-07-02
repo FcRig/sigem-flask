@@ -18,68 +18,67 @@
           </v-form>
         </v-card>
       </v-col>
-  </v-row>
+    </v-row>
 
-  <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
-    <v-card-title>Amparo legal</v-card-title>
-    <v-card-text>
-      <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
-      <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
-      <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
-    </v-card-text>
-    <v-chip
-      v-if="checked"
-      class="mb-4"
-      :color="permitido ? 'green' : 'red'"
-      dark
-    >
-      {{
-        permitido
-          ? 'Enquadramento legal permitido'
-          : 'Enquadramento legal não permitido'
-      }}
-    </v-chip>
-  </v-card>
-
-  <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
-    <v-card-title>Justificativa</v-card-title>
-    <v-card-text>
-      <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
-      <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
-      <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
-    </v-card-text>
-  </v-card>
-  
-  <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
+    <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Amparo legal</v-card-title>
+      <v-card-text>
+        <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
+        <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
+        <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
+      </v-card-text>
+      <v-chip
+        v-if="checked"
+        class="mb-4"
+        :color="permitido ? 'green' : 'red'"
+        dark
+      >
+        {{
+          permitido
+            ? 'Enquadramento legal permitido'
+            : 'Enquadramento legal não permitido'
+        }}
+      </v-chip>
+    </v-card>
+    
+    <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
         <v-row dense>
           <v-col cols="12" md="6" v-for="env in envolvidos" :key="env.id">
             <v-card class="mb-2">
               <v-card-text>
-                <div><strong>Nome:</strong> {{ env.nome }}</div>
-                <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
-                <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
-                <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
-                <v-chip
-                  v-if="showInstituicao(env)"
-                  color="green"
-                  class="mt-2"
-                >
-                  Proprietário/possuidor previsto em lei:
-                  {{ instituicaoNome(env.numeroDocumento) }}
-                </v-chip>
-                <v-chip
-                  v-else
-                  color="red"
-                  class="mt-2"
-                >
+                  <div><strong>Nome:</strong> {{ env.nome }}</div>
+                  <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
+                  <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
+                  <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
+                  <v-chip
+                    v-if="showInstituicao(env)"
+                    color="green"
+                    class="mt-2"
+                    >
+                    Proprietário/possuidor previsto em lei:
+                    {{ instituicaoNome(env.numeroDocumento) }}
+                  </v-chip>
+                  <v-chip
+                    v-else
+                    color="red"
+                    class="mt-2"
+                  >
                   Proprietário/possuidor não previsto em lei
-                </v-chip>
+                  </v-chip>
               </v-card-text>
             </v-card>
           </v-col>
         </v-row>
+      </v-card-text>
+    </v-card>
+    <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Justificativa</v-card-title>
+      <v-card-text>
+        <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
+        <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
+        <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
       </v-card-text>
     </v-card>
   </v-container>
