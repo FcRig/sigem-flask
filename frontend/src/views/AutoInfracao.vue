@@ -1,4 +1,5 @@
 <template>
+  <v-container>
     <!-- Cabeçalho -->
     <v-row>
       <v-col cols="12">
