@@ -16,7 +16,7 @@ export function useVeiculoFormatter(result) {
   })
 
   function formatRestricao(value) {
-    if (value === 'ALIENCAO FIDUCIARIA') return 'ALIENÇÃO FIDUCIÁRIA'
+    if (value === 'ALIENACAO FIDUCIARIA') return 'ALIENAÇÃO FIDUCIÁRIA'
     if (value === 'SEM RESTRICAO') return 'SEM RESTRIÇÃO'
     return value
   }
