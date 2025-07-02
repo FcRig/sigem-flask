@@ -69,7 +69,7 @@
           </v-col>          
           <v-col cols="12" md="3">
             <v-text-field
-              :model-value="result.descricaoTipoDocumentoProprietario"
+              :model-value="tipoDocumentoProprietario"
               label="Tipo de Documento do Proprietário"
               readonly
             />
@@ -108,22 +108,22 @@
           </v-col>
           
           <v-col cols="12" md="6">
-            <v-text-field :model-value="result.restricao1" label="Restrição" readonly />
+            <v-text-field :model-value="restricao1" label="Restrição" readonly />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="result.restricao2" label="Restrição" readonly />
+            <v-text-field :model-value="restricao2" label="Restrição" readonly />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="result.restricao3" label="Restrição" readonly />
+            <v-text-field :model-value="restricao3" label="Restrição" readonly />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field :model-value="result.restricao4" label="Restrição" readonly />
+            <v-text-field :model-value="restricao4" label="Restrição" readonly />
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field :model-value="result.renavam" label="Renavam" readonly />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field :model-value="result.situacaoVeiculo" label="Situação do Veículo" readonly />
+            <v-text-field :model-value="situacaoVeiculo" label="Situação do Veículo" readonly />
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field :model-value="result.tipo" label="Tipo" readonly />
@@ -143,6 +143,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useVeiculoFormatter } from '../mixins/useVeiculoFormatter'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -152,6 +153,15 @@ const formRef = ref(null)
 const valid = ref(false)
 
 const result = computed(() => store.state.veiculoResult)
+
+const {
+  tipoDocumentoProprietario,
+  situacaoVeiculo,
+  restricao1,
+  restricao2,
+  restricao3,
+  restricao4,
+} = useVeiculoFormatter(result)
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
