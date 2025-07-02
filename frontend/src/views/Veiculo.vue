@@ -22,29 +22,131 @@
     </v-row>
 
     <template v-if="result">
-      <v-card
-        v-for="(group, name) in result"
-        :key="name"
-        class="pa-4 mb-4"
-        elevation="2"
-      >
-        <h3 class="pa-4">{{ formatLabel(name) }}</h3>
+      <v-card class="pa-4 mb-4" elevation="2">
+        <h3 class="pa-4">Dados do Veículo</h3>
         <v-row dense>
-          <template v-if="typeof group === 'object' && group !== null && !Array.isArray(group)">
-            <v-col
-              v-for="(value, key) in group"
-              :key="key"
-              cols="12"
-              md="4"
-            >
-              <v-text-field :model-value="value" :label="formatLabel(key)" readonly />
-            </v-col>
-          </template>
-          <template v-else>
-            <v-col cols="12">
-              <v-text-field :model-value="group" :label="formatLabel(name)" readonly />
-            </v-col>
-          </template>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.ano_fabricacao"
+              label="Ano de Fabricação"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.ano_modelo"
+              label="Ano do Modelo"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.ano_ultimo_licenciamento"
+              label="Ano do Último Licenciamento"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.capacidade_carga"
+              label="Capacidade de Carga"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.cmt"
+              label="Capacitada Máxima de Tração (CMT)"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.capacidade_maxima_passageiros"
+              label="Capacidade Máxima de Passageiros"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.categoria" label="Categoria" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.chassi" label="Chassi" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.cilindradas" label="Cilindradas" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.cor" label="Cor" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.combustivel" label="Combustível" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.tipo_documento_proprietario"
+              label="Tipo do Documento do Proprietário"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="result.documento_proprietario"
+              label="Documento do Proprietário"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.marca_modelo" label="Marca/Modelo" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="result.municipio_emplacamento"
+              label="Município de Emplacamento"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.proprietario" label="Proprietário(a)" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.pais" label="País" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.pbt" label="Peso Bruto Total (PBT)" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.placa" label="Placa" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.procedencia" label="Procedência" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.quantidade_multas"
+              label="Quantidade de Multas"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field :model-value="result.renavam" label="Renavam" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.restricao" label="Restrição" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.situacao_veiculo" label="Situação do Veículo" readonly />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field :model-value="result.tipo" label="Tipo" readonly />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="result.uf_emplacamento"
+              label="UF de Emplacamento"
+              readonly
+            />
+          </v-col>
         </v-row>
       </v-card>
     </template>
