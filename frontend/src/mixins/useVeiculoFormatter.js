@@ -8,6 +8,28 @@ export function useVeiculoFormatter(result) {
     if (/cpf/i.test(val) || val === 'PF') return 'CPF'
     return val
   })
+  
+  function formatCpf(cpf) {
+    const digits = (cpf || '').replace(/\D/g, '')
+    if (digits.length === 11)
+      return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    return cpf
+  }
+  
+  function formatCnpj(cnpj) {
+    const digits = (cnpj || '').replace(/\D/g, '')
+    if (digits.length === 14)
+      return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+    return cnpj
+  }
+
+  const documentoProprietario = computed(() => {
+    const doc = result.value?.documentoProprietario
+    if (!doc) return doc
+    if (tipoDocumentoProprietario.value === 'CPF') return formatCpf(doc)
+    if (tipoDocumentoProprietario.value === 'CNPJ') return formatCnpj(doc)
+    return doc
+  })
 
   const situacaoVeiculo = computed(() => {
     const val = result.value?.situacaoVeiculo
@@ -28,6 +50,7 @@ export function useVeiculoFormatter(result) {
 
   return {
     tipoDocumentoProprietario,
+    documentoProprietario,
     situacaoVeiculo,
     restricao1,
     restricao2,

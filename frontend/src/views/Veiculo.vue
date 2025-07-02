@@ -76,7 +76,7 @@
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field
-              :model-value="result.documentoProprietario"
+              :model-value="documentoProprietario"
               label="Documento do Proprietário"
               readonly
             />
@@ -156,6 +156,7 @@ const result = computed(() => store.state.veiculoResult)
 
 const {
   tipoDocumentoProprietario,
+  documentoProprietario,
   situacaoVeiculo,
   restricao1,
   restricao2,
