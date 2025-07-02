@@ -77,3 +77,29 @@ def obter_envolvidos(auto_id):
         raise
 
     return jsonify(result)
+
+
+@bp.route('/solicitacao/cancelamento', methods=['POST'])
+@jwt_required()
+def solicitar_cancelamento():
+    user = User.query.get_or_404(get_jwt_identity())
+
+    if not user.autoprf_session:
+        return jsonify({'msg': 'Sessão não iniciada'}), 400
+
+    data = request.get_json() or {}
+    numero = data.pop('numero', None) or data.pop('numero_ai', None)
+    if not numero:
+        return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
+
+    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    try:
+        result = client.solicitar_cancelamento(numero, data)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
+
+    return jsonify(result)

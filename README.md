@@ -38,3 +38,12 @@ redirecting to the home page.
 ## SISCOM
 
 - `POST /api/siscom/historico` – retorna o histórico do Auto de Infração.
+
+## AutoPRF
+
+- `POST /api/autoprf/solicitacao/cancelamento` – envia uma solicitação de
+  cancelamento de Auto de Infração utilizando a sessão autenticada.
+
+O frontend inclui um botão **Solicitação de Cancelamento** na tela de
+Veículos de Emergência que envia a requisição e exibe uma snackbar de sucesso
+quando a API responde `1` ou `true`.

@@ -11,3 +11,7 @@ export function pesquisarAutoInfracao(payload) {
 export function obterEnvolvidos(id) {
   return api.get(`/api/autoprf/envolvidos/${id}`)
 }
+
+export function solicitarCancelamento(payload) {
+  return api.post('/api/autoprf/solicitacao/cancelamento', payload)
+}

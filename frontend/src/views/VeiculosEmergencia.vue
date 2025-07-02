@@ -81,12 +81,25 @@
         <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
       </v-card-text>
     </v-card>
+    <v-btn
+      v-if="justificativa"
+      color="primary"
+      class="mt-4"
+      @click="enviarSolicitacao"
+    >
+      Solicitação de Cancelamento
+    </v-btn>
   </v-container>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/autoprf'
+import { useStore } from 'vuex'
+import {
+  pesquisarAutoInfracao,
+  obterEnvolvidos,
+  solicitarCancelamento
+} from '../services/autoprf'
 
 const numeroAi = ref('')
 const envolvidos = ref([])
@@ -95,6 +108,8 @@ const permitido = ref(false)
 const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
+const autoId = ref(null)
+const store = useStore()
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
@@ -176,6 +191,7 @@ async function buscar() {
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     if (data.id) {
+      autoId.value = data.id
       const cd = data.infracao?.codigo_descricao || ''
       const [codPart, ...descParts] = cd.split(/\s*-\s*/)
       const codigo = codPart?.trim() || ''
@@ -219,5 +235,29 @@ function limpar() {
   permitido.value = false
   checked.value = false
   formRef.value?.resetValidation()
+}
+
+function removeAccents(str) {
+  return (str || '').normalize('NFD').replace(/\p{Diacritic}/gu, '')
+}
+
+async function enviarSolicitacao() {
+  if (!justificativa.value) return
+  const payload = {
+    numero: numeroAi.value,
+    idProcesso: autoId.value,
+    justificativa: justificativa.value.justificativa,
+    motivo: justificativa.value.motivo,
+    cpf: (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11),
+    nome: removeAccents(store.state.user.username || '').toUpperCase()
+  }
+  try {
+    const { data } = await solicitarCancelamento(payload)
+    if (data === 1 || data === true) {
+      store.commit('showSnackbar', { msg: 'Solicitação enviada', color: 'success' })
+    }
+  } catch (err) {
+    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na solicitação' })
+  }
 }
 </script>
