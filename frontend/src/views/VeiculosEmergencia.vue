@@ -40,15 +40,6 @@
       }}
     </v-chip>
   </v-card>
-
-  <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
-    <v-card-title>Justificativa</v-card-title>
-    <v-card-text>
-      <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
-      <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
-      <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
-    </v-card-text>
-  </v-card>
   
   <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
@@ -82,6 +73,16 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+  <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
+    <v-card-title>Justificativa</v-card-title>
+    <v-card-text>
+      <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
+      <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
+      <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
+    </v-card-text>
+  </v-card>
+  
   </v-container>
 </template>
 
