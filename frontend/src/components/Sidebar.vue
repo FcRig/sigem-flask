@@ -102,7 +102,6 @@
           <v-card-title>Autenticação AutoPRF</v-card-title>
           <v-card-text>
             <v-form ref="autoprfForm" v-model="autoprfValid">
-              <v-text-field v-model="autoprfSenha" label="Senha AutoPRF" type="password" :rules="[rules.required]" />
               <v-text-field v-model="autoprfToken" label="Token AutoPRF" />
             </v-form>
           </v-card-text>
@@ -120,9 +119,8 @@
       <v-card>
         <v-card-title>Autenticação SISCOM</v-card-title>
         <v-card-text>
-          <v-form ref="siscomForm" v-model="siscomValid">
-            <v-text-field v-model="siscomSenha" label="Senha SISCOM" type="password" :rules="[rules.required]" />
-          </v-form>
+            <v-form ref="siscomForm" v-model="siscomValid">
+            </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -136,11 +134,10 @@
       <v-card>
         <v-card-title>Autenticação SEI</v-card-title>
         <v-card-text>
-          <v-form ref="seiForm" v-model="seiValid">
-            <v-text-field v-model="seiUsuario" label="Usuário" :rules="[rules.required]" />
-            <v-text-field v-model="seiSenha" label="Senha SEI" type="password" :rules="[rules.required]" />
-            <v-text-field v-model="seiToken" label="Token SEI" />
-          </v-form>
+            <v-form ref="seiForm" v-model="seiValid">
+              <v-text-field v-model="seiUsuario" label="Usuário" :rules="[rules.required]" />
+              <v-text-field v-model="seiToken" label="Token SEI" />
+            </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -188,11 +185,8 @@ const autoprfDialog = ref(false)
 const siscomDialog = ref(false)
 const seiDialog = ref(false)
 
-const autoprfSenha = ref('')
 const autoprfToken = ref('')
-const siscomSenha = ref('')
 const seiUsuario = ref('')
-const seiSenha = ref('')
 const seiToken = ref('')
 
 
@@ -215,11 +209,9 @@ async function saveAutoprf() {
   if (!autoprfForm.value?.validate()) return
   try {
     await updateUser(store.state.user.id, {
-      senha_autoprf: autoprfSenha.value,
       token_autoprf: autoprfToken.value
     })
     await autoprfLogin({
-      senha_autoprf: autoprfSenha.value,
       token_autoprf: autoprfToken.value
     })
     snackbarMsg.value = 'Dados AutoPRF salvos com sucesso'
@@ -238,9 +230,7 @@ async function saveAutoprf() {
 async function saveSiscom() {
   if (!siscomForm.value?.validate()) return
   try {
-    await updateUser(store.state.user.id, {
-      senha_siscom: siscomSenha.value
-    })
+    await updateUser(store.state.user.id, {})
     snackbarMsg.value = 'Dados SISCOM salvos com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
@@ -257,12 +247,10 @@ async function saveSei() {
   try {
     await updateUser(store.state.user.id, {
       usuario_sei: seiUsuario.value,
-      senha_sei: seiSenha.value,
       token_sei: seiToken.value
     })
     await seiLogin({
       usuario: seiUsuario.value,
-      senha_sei: seiSenha.value,
       token_sei: seiToken.value
     })
     snackbarMsg.value = 'Dados SEI salvos com sucesso'
