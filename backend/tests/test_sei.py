@@ -13,7 +13,6 @@ def create_user():
     user.set_password("password")
     user.usuario_sei = "seiuser"
     user.set_senha_sei("senha")
-    user.token_sei = "123"
     db.session.add(user)
     db.session.commit()
     return user
