@@ -2,7 +2,6 @@ from app.extensions import db
 from app.models import User
 from app.services.autoprf_client import AutoPRFClient
 import requests
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_jwt_extended import create_access_token
 
@@ -56,12 +55,12 @@ def test_autoprf_login_stores_session(client, app, monkeypatch):
     assert response.status_code == 200
     with app.app_context():
         updated = User.query.get(user.id)
-        assert check_password_hash(updated.autoprf_session_hash, "jwt-token")
+        assert updated.autoprf_session == "jwt-token"
 
 def test_pesquisar_ai_returns_data(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
-        user.autoprf_session_hash = generate_password_hash("sessao")
+        user.autoprf_session = "sessao"
         db.session.commit()
         user_id = user.id
 
@@ -88,7 +87,7 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
     response = client.post(
         "/api/autoprf/pesquisar_ai",
         json={"auto_infracao": "1234"},
-        headers={"Authorization": f"Bearer {token}", "X-Session-Token": "sessao"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert response.status_code == 200
@@ -98,7 +97,7 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
 def test_envolvidos_returns_list(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
-        user.autoprf_session_hash = generate_password_hash("sessao")
+        user.autoprf_session = "sessao"
         db.session.commit()
 
     token = get_token(client)
@@ -118,7 +117,7 @@ def test_envolvidos_returns_list(client, app, monkeypatch):
 
     response = client.get(
         "/api/autoprf/envolvidos/123",
-        headers={"Authorization": f"Bearer {token}", "X-Session-Token": "sessao"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert response.status_code == 200
@@ -128,7 +127,7 @@ def test_envolvidos_returns_list(client, app, monkeypatch):
 def test_autoprf_session_expired(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
-        user.autoprf_session_hash = generate_password_hash("sessao")
+        user.autoprf_session = "sessao"
         db.session.commit()
         user_id = user.id
 
@@ -149,20 +148,20 @@ def test_autoprf_session_expired(client, app, monkeypatch):
     response = client.post(
         "/api/autoprf/pesquisar_ai",
         json={"auto_infracao": "123"},
-        headers={"Authorization": f"Bearer {token}", "X-Session-Token": "sessao"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert response.status_code == 401
     assert response.get_json() == {"msg": "Sessão AutoPRF expirada"}
     with app.app_context():
         updated = User.query.get(user_id)
-        assert updated.autoprf_session_hash is None
+        assert updated.autoprf_session is None
 
 
 def test_solicitar_cancelamento_payload(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
-        user.autoprf_session_hash = generate_password_hash("sessao")
+        user.autoprf_session = "sessao"
         db.session.commit()
 
     token = get_token(client)
@@ -183,7 +182,7 @@ def test_solicitar_cancelamento_payload(client, app, monkeypatch):
     response = client.post(
         "/api/autoprf/solicitacao/cancelamento",
         json={"numero": "123", "idProcesso": 7},
-        headers={"Authorization": f"Bearer {token}", "X-Session-Token": "sessao"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert response.status_code == 200
@@ -194,7 +193,7 @@ def test_solicitar_cancelamento_payload(client, app, monkeypatch):
 def test_cancelamento_session_expired(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
-        user.autoprf_session_hash = generate_password_hash("sessao")
+        user.autoprf_session = "sessao"
         db.session.commit()
         user_id = user.id
 
@@ -215,11 +214,11 @@ def test_cancelamento_session_expired(client, app, monkeypatch):
     response = client.post(
         "/api/autoprf/solicitacao/cancelamento",
         json={"numero": "123", "idProcesso": 7},
-        headers={"Authorization": f"Bearer {token}", "X-Session-Token": "sessao"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert response.status_code == 401
     assert response.get_json() == {"msg": "Sessão AutoPRF expirada"}
     with app.app_context():
         updated = User.query.get(user_id)
-        assert updated.autoprf_session_hash is None
+        assert updated.autoprf_session is None

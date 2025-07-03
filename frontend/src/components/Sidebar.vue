@@ -165,6 +165,7 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
+import { updateUser } from '../services/users'
 import { autoprfLogin } from '../services/autoprf'
 import { seiLogin } from '../services/sei'
 
@@ -213,6 +214,10 @@ const rules = {
 async function saveAutoprf() {
   if (!autoprfForm.value?.validate()) return
   try {
+    await updateUser(store.state.user.id, {
+      senha_autoprf: autoprfSenha.value,
+      token_autoprf: autoprfToken.value
+    })
     await autoprfLogin({
       senha_autoprf: autoprfSenha.value,
       token_autoprf: autoprfToken.value
@@ -233,6 +238,9 @@ async function saveAutoprf() {
 async function saveSiscom() {
   if (!siscomForm.value?.validate()) return
   try {
+    await updateUser(store.state.user.id, {
+      senha_siscom: siscomSenha.value
+    })
     snackbarMsg.value = 'Dados SISCOM salvos com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
@@ -247,6 +255,11 @@ async function saveSiscom() {
 async function saveSei() {
   if (!seiForm.value?.validate()) return
   try {
+    await updateUser(store.state.user.id, {
+      usuario_sei: seiUsuario.value,
+      senha_sei: seiSenha.value,
+      token_sei: seiToken.value
+    })
     await seiLogin({
       usuario: seiUsuario.value,
       senha_sei: seiSenha.value,
