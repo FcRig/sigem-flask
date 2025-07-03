@@ -9,11 +9,9 @@ class User(db.Model):
     administrador = db.Column(db.Boolean, default=False)
     cpf = db.Column(db.String(14), unique=True)
     senha_autoprf_hash = db.Column('senha_autoprf', db.String(120))
-    token_autoprf = db.Column(db.String(120))
     autoprf_session = db.Column(db.Text)
     senha_siscom_hash = db.Column('senha_siscom', db.String(120))
     senha_sei_hash = db.Column('senha_sei', db.String(120))
-    token_sei = db.Column(db.String(120))
     usuario_sei = db.Column(db.String(120))
 
     def set_password(self, password):
