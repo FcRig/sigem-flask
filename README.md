@@ -27,6 +27,9 @@ This repository contains a Flask backend and a Vue frontend. Database migrations
 
 The database file will be created under `backend/instance/`.
 
+Only the SIGEM login password hash is persisted. Session tokens returned from
+AutoPRF (and other systems) are stored as hashed values.
+
 ## AutoPRF Sessions
 
 When the backend detects that an AutoPRF request failed with status `401` or

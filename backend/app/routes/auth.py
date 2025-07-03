@@ -27,14 +27,8 @@ def register():
         cpf=cpf
     )
     user.set_password(data['password'])
-    if data.get('senha_autoprf'):
-        user.set_senha_autoprf(data['senha_autoprf'])
     if data.get('token_autoprf'):
         user.token_autoprf = data['token_autoprf']
-    if data.get('senha_siscom'):
-        user.set_senha_siscom(data['senha_siscom'])
-    if data.get('senha_sei'):
-        user.set_senha_sei(data['senha_sei'])
     if data.get('token_sei'):
         user.token_sei = data['token_sei']
     if data.get('usuario_sei'):
@@ -113,14 +107,8 @@ def create_user():
 
     user = User(username=username, email=email, administrador=administrador, cpf=cpf)
     user.set_password(password)
-    if senha_autoprf:
-        user.set_senha_autoprf(senha_autoprf)
     if token_autoprf:
         user.token_autoprf = token_autoprf
-    if senha_siscom:
-        user.set_senha_siscom(senha_siscom)
-    if senha_sei:
-        user.set_senha_sei(senha_sei)
     if token_sei:
         user.token_sei = token_sei
     if usuario_sei:
@@ -161,14 +149,8 @@ def update_user(user_id):
         user.cpf = data['cpf']
     if data.get('password'):
         user.set_password(data['password'])
-    if data.get('senha_autoprf'):
-        user.set_senha_autoprf(data['senha_autoprf'])
     if data.get('token_autoprf'):
         user.token_autoprf = data['token_autoprf']
-    if data.get('senha_siscom'):
-        user.set_senha_siscom(data['senha_siscom'])
-    if data.get('senha_sei'):
-        user.set_senha_sei(data['senha_sei'])
     if data.get('token_sei'):
         user.token_sei = data['token_sei']
     if data.get('usuario_sei'):

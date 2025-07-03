@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 
 from ..models import User
@@ -7,6 +8,14 @@ from ..extensions import db
 from ..services.autoprf_client import AutoPRFClient
 
 bp = Blueprint('autoprf', __name__, url_prefix='/api/autoprf')
+
+
+def _get_session_token():
+    token = request.headers.get('X-Session-Token')
+    if not token:
+        data = request.get_json(silent=True) or {}
+        token = data.get('session_token') or data.get('jwt')
+    return token
 
 @bp.route('/login', methods=['POST'])
 @jwt_required()
@@ -23,12 +32,12 @@ def login():
         jwt_token = client.login(user.cpf, password, token)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
-            user.autoprf_session = None
+            user.autoprf_session_hash = None
             db.session.commit()
             return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
         raise
 
-    user.autoprf_session = jwt_token
+    user.autoprf_session_hash = generate_password_hash(jwt_token)
     db.session.commit()
     return jsonify({'jwt': jwt_token}), 200
 
@@ -37,20 +46,23 @@ def login():
 def pesquisar_auto_infracao():
     user = User.query.get_or_404(get_jwt_identity())
     
-    if not user.autoprf_session:
+    session_token = _get_session_token()
+    if not session_token:
         return jsonify({'msg': 'Sessão não iniciada'}), 400
+    if not user.autoprf_session_hash or not check_password_hash(user.autoprf_session_hash, session_token):
+        return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
 
     data = request.get_json() or {}
     auto_infracao = data.get('auto_infracao')
     if not auto_infracao:
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
-    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    client = AutoPRFClient(jwt_token=session_token)
     try:
         result = client.pesquisa_auto_infracao(auto_infracao)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
-            user.autoprf_session = None
+            user.autoprf_session_hash = None
             db.session.commit()
             return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
         raise
@@ -63,15 +75,18 @@ def pesquisar_auto_infracao():
 def obter_envolvidos(auto_id):
     user = User.query.get_or_404(get_jwt_identity())
 
-    if not user.autoprf_session:
+    session_token = _get_session_token()
+    if not session_token:
         return jsonify({'msg': 'Sessão não iniciada'}), 400
+    if not user.autoprf_session_hash or not check_password_hash(user.autoprf_session_hash, session_token):
+        return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
 
-    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    client = AutoPRFClient(jwt_token=session_token)
     try:
         result = client.get_envolvidos(auto_id)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
-            user.autoprf_session = None
+            user.autoprf_session_hash = None
             db.session.commit()
             return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
         raise
@@ -84,20 +99,23 @@ def obter_envolvidos(auto_id):
 def solicitar_cancelamento():
     user = User.query.get_or_404(get_jwt_identity())
 
-    if not user.autoprf_session:
+    session_token = _get_session_token()
+    if not session_token:
         return jsonify({'msg': 'Sessão não iniciada'}), 400
+    if not user.autoprf_session_hash or not check_password_hash(user.autoprf_session_hash, session_token):
+        return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
 
     data = request.get_json() or {}
     numero = data.pop('numero', None) or data.pop('numero_ai', None)
     if not numero:
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
-    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    client = AutoPRFClient(jwt_token=session_token)
     try:
         result = client.solicitar_cancelamento(numero, data)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
-            user.autoprf_session = None
+            user.autoprf_session_hash = None
             db.session.commit()
             return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
         raise
