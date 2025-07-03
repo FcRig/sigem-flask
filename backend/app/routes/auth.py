@@ -27,12 +27,6 @@ def register():
         cpf=cpf
     )
     user.set_password(data['password'])
-    if data.get('senha_autoprf'):
-        user.set_senha_autoprf(data['senha_autoprf'])
-    if data.get('senha_siscom'):
-        user.set_senha_siscom(data['senha_siscom'])
-    if data.get('senha_sei'):
-        user.set_senha_sei(data['senha_sei'])
     if data.get('usuario_sei'):
         user.usuario_sei = data['usuario_sei']
     db.session.add(user)
@@ -94,9 +88,6 @@ def create_user():
     password = data.get('password')
     administrador = data.get('administrador', False)
     cpf = data.get('cpf')
-    senha_autoprf = data.get('senha_autoprf')
-    senha_siscom = data.get('senha_siscom')
-    senha_sei = data.get('senha_sei')
     usuario_sei = data.get('usuario_sei')
 
     if not username or not email or not password or not cpf:
@@ -107,12 +98,6 @@ def create_user():
 
     user = User(username=username, email=email, administrador=administrador, cpf=cpf)
     user.set_password(password)
-    if senha_autoprf:
-        user.set_senha_autoprf(senha_autoprf)
-    if senha_siscom:
-        user.set_senha_siscom(senha_siscom)
-    if senha_sei:
-        user.set_senha_sei(senha_sei)
     if usuario_sei:
         user.usuario_sei = usuario_sei
     db.session.add(user)
@@ -151,12 +136,6 @@ def update_user(user_id):
         user.cpf = data['cpf']
     if data.get('password'):
         user.set_password(data['password'])
-    if data.get('senha_autoprf'):
-        user.set_senha_autoprf(data['senha_autoprf'])
-    if data.get('senha_siscom'):
-        user.set_senha_siscom(data['senha_siscom'])
-    if data.get('senha_sei'):
-        user.set_senha_sei(data['senha_sei'])
     if data.get('usuario_sei'):
         user.usuario_sei = data['usuario_sei']
     db.session.commit()
