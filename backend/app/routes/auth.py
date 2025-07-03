@@ -37,6 +37,8 @@ def register():
         user.set_senha_sei(data['senha_sei'])
     if data.get('token_sei'):
         user.token_sei = data['token_sei']
+    if data.get('usuario_sei'):
+        user.usuario_sei = data['usuario_sei']
     db.session.add(user)
     db.session.commit()
     return jsonify({'msg': 'Usuário registrado com sucesso.'}), 201
@@ -101,6 +103,7 @@ def create_user():
     senha_siscom = data.get('senha_siscom')
     senha_sei = data.get('senha_sei')
     token_sei = data.get('token_sei')
+    usuario_sei = data.get('usuario_sei')
 
     if not username or not email or not password or not cpf:
         return jsonify({'msg': 'Dados inválidos'}), 400
@@ -120,6 +123,8 @@ def create_user():
         user.set_senha_sei(senha_sei)
     if token_sei:
         user.token_sei = token_sei
+    if usuario_sei:
+        user.usuario_sei = usuario_sei
     db.session.add(user)
     db.session.commit()
     return jsonify({'msg': 'Usuário criado com sucesso.'}), 201
@@ -166,6 +171,8 @@ def update_user(user_id):
         user.set_senha_sei(data['senha_sei'])
     if data.get('token_sei'):
         user.token_sei = data['token_sei']
+    if data.get('usuario_sei'):
+        user.usuario_sei = data['usuario_sei']
     db.session.commit()
     return jsonify({'msg': 'Usuário atualizado com sucesso.'}), 200
 
