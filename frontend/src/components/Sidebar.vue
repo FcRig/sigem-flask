@@ -137,6 +137,7 @@
         <v-card-title>Autenticação SEI</v-card-title>
         <v-card-text>
           <v-form ref="seiForm" v-model="seiValid">
+            <v-text-field v-model="seiUsuario" label="Usuário" :rules="[rules.required]" />
             <v-text-field v-model="seiSenha" label="Senha SEI" type="password" :rules="[rules.required]" />
             <v-text-field v-model="seiToken" label="Token SEI" />
           </v-form>
@@ -166,6 +167,7 @@ import { useStore } from 'vuex'
 
 import { updateUser } from '../services/users'
 import { autoprfLogin } from '../services/autoprf'
+import { seiLogin } from '../services/sei'
 
 const props = defineProps({
   modelValue: {
@@ -189,6 +191,7 @@ const seiDialog = ref(false)
 const autoprfSenha = ref('')
 const autoprfToken = ref('')
 const siscomSenha = ref('')
+const seiUsuario = ref('')
 const seiSenha = ref('')
 const seiToken = ref('')
 
@@ -253,6 +256,12 @@ async function saveSei() {
   if (!seiForm.value?.validate()) return
   try {
     await updateUser(store.state.user.id, {
+      usuario_sei: seiUsuario.value,
+      senha_sei: seiSenha.value,
+      token_sei: seiToken.value
+    })
+    await seiLogin({
+      usuario: seiUsuario.value,
       senha_sei: seiSenha.value,
       token_sei: seiToken.value
     })

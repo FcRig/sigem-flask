@@ -14,6 +14,7 @@ class User(db.Model):
     senha_siscom_hash = db.Column('senha_siscom', db.String(120))
     senha_sei_hash = db.Column('senha_sei', db.String(120))
     token_sei = db.Column(db.String(120))
+    usuario_sei = db.Column(db.String(120))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
