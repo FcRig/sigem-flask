@@ -28,7 +28,7 @@
     <v-card v-if="ai1 && ai2" class="pa-4" elevation="2">
       <v-card-title class="pb-6 d-flex justify-space-between align-center">        
         <v-chip :color="iguais ? 'green' : 'red'" dark>
-          {{ iguais ? 'Registros compatíveis' : 'Registros divergentes' }}
+          {{ iguais ? 'Emissão em duplicidade' : 'Registros divergentes. Sem duplicidade' }}
         </v-chip>
       </v-card-title>
       <v-card-text>

@@ -18,77 +18,88 @@
           </v-form>
         </v-card>
       </v-col>
-  </v-row>
+    </v-row>
 
-  <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
-    <v-card-title>Amparo legal</v-card-title>
-    <v-card-text>
-      <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
-      <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
-      <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
-    </v-card-text>
-    <v-chip
-      v-if="checked"
-      class="mb-4"
-      :color="permitido ? 'green' : 'red'"
-      dark
-    >
-      {{
-        permitido
-          ? 'Enquadramento legal permitido'
-          : 'Enquadramento legal não permitido'
-      }}
-    </v-chip>
-  </v-card>
-  
-  <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
+    <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Amparo legal</v-card-title>
+      <v-card-text>
+        <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
+        <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
+        <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
+      </v-card-text>
+      <v-chip
+        v-if="checked"
+        class="mb-4"
+        :color="permitido ? 'green' : 'red'"
+        dark
+      >
+        {{
+          permitido
+            ? 'Enquadramento legal permitido'
+            : 'Enquadramento legal não permitido'
+        }}
+      </v-chip>
+    </v-card>
+    
+    <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
         <v-row dense>
           <v-col cols="12" md="6" v-for="env in envolvidos" :key="env.id">
             <v-card class="mb-2">
               <v-card-text>
-                <div><strong>Nome:</strong> {{ env.nome }}</div>
-                <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
-                <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
-                <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
-                <v-chip
-                  v-if="showInstituicao(env)"
-                  color="green"
-                  class="mt-2"
-                >
-                  Proprietário/possuidor previsto em lei:
-                  {{ instituicaoNome(env.numeroDocumento) }}
-                </v-chip>
-                <v-chip
-                  v-else
-                  color="red"
-                  class="mt-2"
-                >
+                  <div><strong>Nome:</strong> {{ env.nome }}</div>
+                  <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
+                  <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
+                  <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
+                  <v-chip
+                    v-if="showInstituicao(env)"
+                    color="green"
+                    class="mt-2"
+                    >
+                    Proprietário/possuidor previsto em lei:
+                    {{ instituicaoNome(env.numeroDocumento) }}
+                  </v-chip>
+                  <v-chip
+                    v-else
+                    color="red"
+                    class="mt-2"
+                  >
                   Proprietário/possuidor não previsto em lei
-                </v-chip>
+                  </v-chip>
               </v-card-text>
             </v-card>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
-
-  <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
-    <v-card-title>Justificativa</v-card-title>
-    <v-card-text>
-      <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
-      <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
-      <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
-    </v-card-text>
-  </v-card>
-  
+    <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Justificativa</v-card-title>
+      <v-card-text>
+        <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
+        <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
+        <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
+      </v-card-text>
+    </v-card>
+    <v-btn
+      v-if="justificativa"
+      color="primary"
+      class="mt-4"
+      @click="enviarSolicitacao"
+    >
+      Solicitação de Cancelamento
+    </v-btn>
   </v-container>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { pesquisarAutoInfracao, obterEnvolvidos } from '../services/autoprf'
+import { useStore } from 'vuex'
+import {
+  pesquisarAutoInfracao,
+  obterEnvolvidos,
+  solicitarCancelamento
+} from '../services/autoprf'
 
 const numeroAi = ref('')
 const envolvidos = ref([])
@@ -97,6 +108,8 @@ const permitido = ref(false)
 const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
+const autoId = ref(null)
+const store = useStore()
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
@@ -178,6 +191,7 @@ async function buscar() {
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     if (data.id) {
+      autoId.value = data.id
       const cd = data.infracao?.codigo_descricao || ''
       const [codPart, ...descParts] = cd.split(/\s*-\s*/)
       const codigo = codPart?.trim() || ''
@@ -221,5 +235,29 @@ function limpar() {
   permitido.value = false
   checked.value = false
   formRef.value?.resetValidation()
+}
+
+function removeAccents(str) {
+  return (str || '').normalize('NFD').replace(/\p{Diacritic}/gu, '')
+}
+
+async function enviarSolicitacao() {
+  if (!justificativa.value) return
+  const payload = {
+    numero: numeroAi.value,
+    idProcesso: autoId.value,
+    justificativa: justificativa.value.justificativa,
+    motivo: justificativa.value.motivo,
+    cpf: (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11),
+    nome: removeAccents(store.state.user.username || '').toUpperCase()
+  }
+  try {
+    const { data } = await solicitarCancelamento(payload)
+    if (data === 1 || data === true) {
+      store.commit('showSnackbar', { msg: 'Solicitação enviada', color: 'success' })
+    }
+  } catch (err) {
+    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na solicitação' })
+  }
 }
 </script>

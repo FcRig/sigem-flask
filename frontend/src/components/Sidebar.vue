@@ -27,7 +27,7 @@
         <v-list-item
           title="Pesquisar AI"
           prepend-icon="mdi-magnify"
-          @click="autoprfPesquisaDialog = true"
+          to="/resultado-ai"
         />
         <v-list-group value="autoprf-cancel">
           <template #activator="{ props }">
@@ -63,9 +63,25 @@
           prepend-icon="mdi-lock"
           @click="siscomDialog = true"
         />
-      </v-list-group>
+        <v-list-item
+          title="Pesquisar AI"
+          prepend-icon="mdi-magnify"
+          to="/resultado-ai-siscom"
+        />
+      <v-list-item
+        title="Histórico"
+        prepend-icon="mdi-history"
+        to="/historico-siscom"
+      />
+    </v-list-group>
 
-      <v-list-group value="sei">
+    <v-list-item
+      title="Veículo"
+      prepend-icon="mdi-car"
+      to="/veiculo"
+    />
+
+    <v-list-group value="sei">
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -98,21 +114,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="autoprfPesquisaDialog" max-width="400">
-        <v-card>
-          <v-card-title>Pesquisar Auto de Infração</v-card-title>
-          <v-card-text>
-            <v-form ref="autoprfPesquisaForm" v-model="autoprfPesquisaValid">
-              <v-text-field v-model="autoInfracao" label="Número do AI" :rules="[rules.required]" />
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn text @click="autoprfPesquisaDialog = false">Cancelar</v-btn>
-            <v-btn color="primary" :disabled="!autoprfPesquisaValid" @click="pesquisarAI">Pesquisar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+
 
     <v-dialog v-model="siscomDialog" max-width="400">
       <v-card>
@@ -161,9 +163,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+
 import { updateUser } from '../services/users'
-import { autoprfLogin, pesquisarAutoInfracao } from '../services/autoprf'
+import { autoprfLogin } from '../services/autoprf'
 
 const props = defineProps({
   modelValue: {
@@ -179,10 +181,8 @@ const drawer = computed({
 })
 
 const store = useStore()
-const router = useRouter()
 
 const autoprfDialog = ref(false)
-const autoprfPesquisaDialog = ref(false)
 const siscomDialog = ref(false)
 const seiDialog = ref(false)
 
@@ -191,12 +191,10 @@ const autoprfToken = ref('')
 const siscomSenha = ref('')
 const seiSenha = ref('')
 const seiToken = ref('')
-const autoInfracao = ref('')
+
 
 const autoprfForm = ref(null)
 const autoprfValid = ref(false)
-const autoprfPesquisaForm = ref(null)
-const autoprfPesquisaValid = ref(false)
 const siscomForm = ref(null)
 const siscomValid = ref(false)
 const seiForm = ref(null)
@@ -232,23 +230,7 @@ async function saveAutoprf() {
   }
 }
 
-async function pesquisarAI() {
-  if (!autoprfPesquisaForm.value?.validate()) return
-  try {
-    const { data } = await pesquisarAutoInfracao({ auto_infracao: autoInfracao.value })
-    store.commit('setAiResult', data)
-    snackbarMsg.value = 'Pesquisa enviada com sucesso'
-    snackbarColor.value = 'success'
-    snackbar.value = true
-    autoprfPesquisaDialog.value = false
-    autoInfracao.value = ''
-    router.push('/resultado-ai')
-  } catch (err) {
-    snackbarMsg.value = err.response?.data?.msg || 'Erro ao pesquisar AI'
-    snackbarColor.value = 'error'
-    snackbar.value = true
-  }
-}
+
 
 async function saveSiscom() {
   if (!siscomForm.value?.validate()) return

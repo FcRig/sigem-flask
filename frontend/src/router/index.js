@@ -4,8 +4,11 @@ import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import AutoInfracao from '../views/AutoInfracao.vue'
+import AutoInfracaoSiscom from '../views/AutoInfracaoSiscom.vue'
+import HistoricoSiscom from '../views/HistoricoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
+import Veiculo from '../views/Veiculo.vue'
 import store from '../store'
 
 const routes = [
@@ -25,6 +28,21 @@ const routes = [
     path: '/resultado-ai',
     component: AutoInfracao,
     meta: { requiresAuth: true, title: 'Pesquisa do Auto de Infração' }
+  },
+  {
+    path: '/resultado-ai-siscom',
+    component: AutoInfracaoSiscom,
+    meta: { requiresAuth: true, title: 'Pesquisa AI SISCOM' }
+  },
+  {
+    path: '/historico-siscom',
+    component: HistoricoSiscom,
+    meta: { requiresAuth: true, title: 'Histórico do Auto de Infração' }
+  },
+  {
+    path: '/veiculo',
+    component: Veiculo,
+    meta: { requiresAuth: true, title: 'Consulta de Veículo' }
   },
   {
     path: '/cancelamentos/veiculos-emergencia',

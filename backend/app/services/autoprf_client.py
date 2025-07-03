@@ -183,3 +183,25 @@ class AutoPRFClient:
         )
         response.raise_for_status()
         return response.json() if response.content else []
+
+    def solicitar_cancelamento(self, numero_auto: str, payload: dict) -> dict:
+        """Submit a cancelamento request for a given Auto de Infracao."""
+        headers = {}
+        if self.jwt_token:
+            headers["Authorization"] = f"Bearer {self.jwt_token}"
+
+        # Access the auto page so the service can locate the process
+        resp = requests.get(
+            f"{self.BASE_URL}/auto-infracao/page",
+            params={"numero": numero_auto},
+            headers=headers,
+        )
+        resp.raise_for_status()
+
+        resp = requests.post(
+            f"{self.BASE_URL}/solicitacao/CANCELAMENTO/lote",
+            json=payload,
+            headers=headers,
+        )
+        resp.raise_for_status()
+        return resp.json() if resp.content else {}
