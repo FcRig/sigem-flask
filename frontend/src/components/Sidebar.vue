@@ -147,12 +147,18 @@
         <v-card-text>
             <v-form ref="seiForm" v-model="seiValid">
               <v-text-field v-model="seiUsuario" label="Usuário" :rules="[rules.required]" />
-              <v-text-field v-model="seiToken" label="Token SEI" />
+              <v-text-field v-model="seiToken" label="Token SEI" :rules="[rules.required]" />
+              <v-text-field
+                v-model="seiPassword"
+                label="Senha SEI"
+                type="password"
+                :rules="[rules.required]"
+              />
             </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="seiDialog = false">Cancelar</v-btn>
+          <v-btn text @click="seiDialog = false; seiPassword = ''">Cancelar</v-btn>
           <v-btn color="primary" :disabled="!seiValid" @click="saveSei">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -202,6 +208,7 @@ const autoprfPassword = ref('')
 const siscomPassword = ref('')
 const seiUsuario = ref('')
 const seiToken = ref('')
+const seiPassword = ref('')
 
 
 const autoprfForm = ref(null)
@@ -268,8 +275,10 @@ async function saveSei() {
     })
     await seiLogin({
       usuario: seiUsuario.value,
+      senha_sei: seiPassword.value,
       token_sei: seiToken.value
     })
+    seiPassword.value = ''
     snackbarMsg.value = 'Dados SEI salvos com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
