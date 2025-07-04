@@ -73,6 +73,23 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <v-form
+      v-if="requireManualJustificativa && !justificativa"
+      ref="manualFormRef"
+      v-model="manualValid"
+      class="mt-4"
+    >
+      <v-textarea
+        v-model="motivoManual"
+        label="Motivo"
+        :rules="[rules.required]"
+      />
+      <v-text-field
+        v-model="justificativaManual"
+        label="Justificativa"
+        :rules="[rules.required]"
+      />
+    </v-form>
     <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
       <v-card-title>Justificativa</v-card-title>
       <v-card-text>
@@ -82,9 +99,10 @@
       </v-card-text>
     </v-card>
     <v-btn
-      v-if="justificativa"
+      v-if="justificativa || requireManualJustificativa"
       color="primary"
       class="mt-4"
+      :disabled="!justificativa && !manualValid"
       @click="enviarSolicitacao"
     >
       Solicitar Cancelamento
@@ -112,6 +130,10 @@ const formRef = ref(null)
 const valid = ref(false)
 const autoId = ref(null)
 const idProcesso = ref(null)
+const motivoManual = ref('')
+const justificativaManual = ref('')
+const manualValid = ref(false)
+const manualFormRef = ref(null)
 const store = useStore()
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
@@ -195,6 +217,16 @@ const justificativa = computed(() => {
   return null
 })
 
+const requireManualJustificativa = computed(() => {
+  for (const env of envolvidos.value) {
+    const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
+    if (!/propriet[aá]rio|possuidor/.test(envolvimento)) continue
+    const cnpj = sanitize(env.numeroDocumento)
+    if (!instituicoes[cnpj]) return true
+  }
+  return false
+})
+
 async function buscar() {
   if (!formRef.value?.validate()) return
   checked.value = false
@@ -251,7 +283,11 @@ function limpar() {
   amparoInfo.value = null
   permitido.value = false
   checked.value = false
+  motivoManual.value = ''
+  justificativaManual.value = ''
+  manualValid.value = false
   formRef.value?.resetValidation()
+  manualFormRef.value?.resetValidation()
 }
 
 onBeforeRouteLeave(() => {
@@ -263,7 +299,7 @@ function removeAccents(str) {
 }
 
 async function enviarSolicitacao() {
-  if (!justificativa.value) return
+  if (!justificativa.value && !manualFormRef.value?.validate()) return
 
   const cpf = (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11)
 
@@ -289,8 +325,10 @@ async function enviarSolicitacao() {
     estado: "Protocolada",
     estadoDescricao: null,
     tipoSolicitacao: "Cancelamento",
-    justificativa: justificativa.value.justificativa,
-    texto: justificativa.value.motivo,
+    justificativa: justificativa.value
+      ? justificativa.value.justificativa
+      : justificativaManual.value,
+    texto: justificativa.value ? justificativa.value.motivo : motivoManual.value,
     autoSubstituto: null,
     numeroAutoSubstituto: null,
     requerente: {
