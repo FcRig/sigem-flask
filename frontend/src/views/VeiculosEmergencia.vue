@@ -109,7 +109,7 @@
     <v-card v-if="justificativa && !editJustificativa" class="pa-4 mb-2" elevation="2">
       <v-card-title class="d-flex justify-space-between align-center">
         Justificativa
-        <v-btn size="small" variant="text" @click="enableManualEdit">Alterar</v-btn>
+        <v-btn size="small" @click="enableManualEdit" color="primary">Alterar</v-btn>
       </v-card-title>
       <v-card-text>
         <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
