@@ -130,11 +130,12 @@
         <v-card-title>Autenticação SISCOM</v-card-title>
         <v-card-text>
             <v-form ref="siscomForm" v-model="siscomValid">
+              <v-text-field v-model="siscomPassword" label="Senha SISCOM" type="password" :rules="[rules.required]" />
             </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="siscomDialog = false">Cancelar</v-btn>
+          <v-btn text @click="siscomDialog = false; siscomPassword = ''">Cancelar</v-btn>
           <v-btn color="primary" :disabled="!siscomValid" @click="saveSiscom">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -174,6 +175,7 @@ import { useStore } from 'vuex'
 
 import { updateUser } from '../services/users'
 import { autoprfLogin } from '../services/autoprf'
+import { siscomLogin } from '../services/siscom'
 import { seiLogin } from '../services/sei'
 
 const props = defineProps({
@@ -197,6 +199,7 @@ const seiDialog = ref(false)
 
 const autoprfToken = ref('')
 const autoprfPassword = ref('')
+const siscomPassword = ref('')
 const seiUsuario = ref('')
 const seiToken = ref('')
 
@@ -243,7 +246,8 @@ async function saveAutoprf() {
 async function saveSiscom() {
   if (!siscomForm.value?.validate()) return
   try {
-    await updateUser(store.state.user.id, {})
+    await siscomLogin({ senha_siscom: siscomPassword.value })
+    siscomPassword.value = ''
     snackbarMsg.value = 'Dados SISCOM salvos com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true

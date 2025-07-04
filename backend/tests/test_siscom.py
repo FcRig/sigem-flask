@@ -89,3 +89,47 @@ def test_historico_returns_list(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_siscom_login_calls_client(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        cpf = user.cpf
+
+    token = get_token(client)
+
+    captured = {}
+
+    def fake_init(self, endpoint=None, session=None):
+        pass
+
+    def fake_login(self, cpf_arg, senha):
+        captured["cpf"] = cpf_arg
+        captured["senha"] = senha
+
+    monkeypatch.setattr(SiscomClient, "__init__", fake_init)
+    monkeypatch.setattr(SiscomClient, "login", fake_login)
+
+    response = client.post(
+        "/api/siscom/login",
+        json={"senha_siscom": "abc"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured == {"cpf": cpf, "senha": "abc"}
+
+
+def test_siscom_login_missing_password(client, app):
+    with app.app_context():
+        create_user()
+
+    token = get_token(client)
+
+    response = client.post(
+        "/api/siscom/login",
+        json={},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 400

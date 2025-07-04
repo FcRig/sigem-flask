@@ -1,12 +1,31 @@
 import os
+import requests
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from ..models import User
 from ..services.siscom_client import SiscomClient
 
 ENDPOINT = os.getenv("SISCOM_ENDPOINT")
 
 bp = Blueprint("siscom", __name__, url_prefix="/api/siscom")
+
+
+@bp.route("/login", methods=["POST"])
+@jwt_required()
+def login():
+    user = User.query.get_or_404(get_jwt_identity())
+    data = request.get_json() or {}
+    password = data.get("senha_siscom") or data.get("password")
+    if not password:
+        return jsonify({"msg": "Credenciais inválidas"}), 400
+
+    client = SiscomClient()
+    try:
+        client.login(user.cpf, password)
+    except requests.HTTPError:
+        return jsonify({"msg": "Erro de autenticação no SISCOM"}), 401
+    return jsonify({"msg": "Autenticação SISCOM realizada com sucesso"}), 200
 
 
 @bp.route("/pesquisar_ai", methods=["POST"])
