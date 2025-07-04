@@ -57,6 +57,36 @@ def test_autoprf_login_stores_session(client, app, monkeypatch):
         updated = User.query.get(user.id)
         assert updated.autoprf_session == "jwt-token"
 
+
+def test_autoprf_login_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        cpf_value = user.cpf
+
+    captured = {}
+
+    def fake_login(self, cpf, password, token):
+        captured["cpf"] = cpf
+        captured["password"] = password
+        captured["token"] = token
+        return "jwt-token"
+
+    def fake_init(self, jwt_token=None):
+        self.driver = None
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "login", fake_login)
+
+    token = get_token(client)
+    response = client.post(
+        "/api/autoprf/login",
+        json={"password": " autoprf-pass ", "token": " 123456 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured == {"cpf": cpf_value, "password": "autoprf-pass", "token": "123456"}
+
 def test_pesquisar_ai_returns_data(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
@@ -92,6 +122,36 @@ def test_pesquisar_ai_returns_data(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_pesquisar_ai_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_pesquisa(self, numero):
+        captured["numero"] = numero
+        return {}
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "pesquisa_auto_infracao", fake_pesquisa)
+
+    response = client.post(
+        "/api/autoprf/pesquisar_ai",
+        json={"auto_infracao": " 1234 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured.get("numero") == "1234"
 
 
 def test_envolvidos_returns_list(client, app, monkeypatch):

@@ -62,6 +62,33 @@ def test_pesquisar_ai_returns_structured_data(client, app, monkeypatch):
     assert response.get_json() == expected
 
 
+def test_pesquisar_ai_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_init(self, endpoint=None):
+        self.endpoint = endpoint
+
+    def fake_pesquisar(self, numero):
+        captured["numero"] = numero
+        return {}
+
+    monkeypatch.setattr(SiscomClient, "__init__", fake_init)
+    monkeypatch.setattr(SiscomClient, "pesquisar_ai", fake_pesquisar)
+
+    response = client.post(
+        "/api/siscom/pesquisar_ai",
+        json={"numero": " 123 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured.get("numero") == "123"
+
+
 def test_historico_returns_list(client, app, monkeypatch):
     with app.app_context():
         create_user()
@@ -89,6 +116,33 @@ def test_historico_returns_list(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_historico_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_init(self, endpoint=None):
+        self.endpoint = endpoint
+
+    def fake_historico(self, numero):
+        captured["numero"] = numero
+        return []
+
+    monkeypatch.setattr(SiscomClient, "__init__", fake_init)
+    monkeypatch.setattr(SiscomClient, "historico", fake_historico)
+
+    response = client.post(
+        "/api/siscom/historico",
+        json={"numero": " 321 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured.get("numero") == "321"
 
 
 def test_siscom_login_calls_client(client, app, monkeypatch):

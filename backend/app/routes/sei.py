@@ -4,6 +4,7 @@ import requests
 
 from ..models import User
 from ..services.sei_client import SEIClient
+from ..utils import strip_strings
 
 bp = Blueprint("sei", __name__, url_prefix="/api/sei")
 
@@ -12,7 +13,7 @@ bp = Blueprint("sei", __name__, url_prefix="/api/sei")
 @jwt_required()
 def login():
     user = User.query.get_or_404(get_jwt_identity())
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     usuario = data.get("usuario") or data.get("usuario_sei") or user.usuario_sei
     senha = data.get("senha_sei") or data.get("password")
     token = data.get("token_sei") or data.get("token")

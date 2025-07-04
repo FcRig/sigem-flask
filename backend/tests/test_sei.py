@@ -54,6 +54,34 @@ def test_sei_login_calls_client(client, app, monkeypatch):
     assert captured == {"u": "seiuser", "s": "senha", "t": "123"}
 
 
+def test_sei_login_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+    token = get_token(client)
+
+    captured = {}
+
+    def fake_init(self, session=None):
+        pass
+
+    def fake_login(self, usuario, senha, tok):
+        captured["u"] = usuario
+        captured["s"] = senha
+        captured["t"] = tok
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "login", fake_login)
+
+    response = client.post(
+        "/api/sei/login",
+        json={"usuario": " seiuser ", "senha_sei": " senha ", "token_sei": " 123 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured == {"u": "seiuser", "s": "senha", "t": "123"}
+
+
 def test_sei_login_missing_fields(client, app):
     with app.app_context():
         create_user()
