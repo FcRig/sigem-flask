@@ -87,7 +87,7 @@
       class="mt-4"
       @click="enviarSolicitacao"
     >
-      Solicitação de Cancelamento
+      Solicitar Cancelamento
     </v-btn>
 
   </v-container>
