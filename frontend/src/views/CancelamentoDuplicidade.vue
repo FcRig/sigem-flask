@@ -189,8 +189,8 @@ async function buscar() {
   if (!formRef.value?.validate()) return
   try {
     const [res1, res2] = await Promise.all([
-      pesquisarAutoInfracao({ auto_infracao: numeroAi1.value }),
-      pesquisarAutoInfracao({ auto_infracao: numeroAi2.value })
+      pesquisarAutoInfracao({ auto_infracao: numeroAi1.value.trim() }),
+      pesquisarAutoInfracao({ auto_infracao: numeroAi2.value.trim() })
     ])
     ai1.value = res1.data
     ai2.value = res2.data

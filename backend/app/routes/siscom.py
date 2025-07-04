@@ -16,7 +16,7 @@ bp = Blueprint("siscom", __name__, url_prefix="/api/siscom")
 def login():
     user = User.query.get_or_404(get_jwt_identity())
     data = request.get_json() or {}
-    password = data.get("senha_siscom") or data.get("password")
+    password = (data.get("senha_siscom") or data.get("password") or "").strip()
     if not password:
         return jsonify({"msg": "Credenciais inválidas"}), 400
 
@@ -32,7 +32,7 @@ def login():
 @jwt_required()
 def pesquisar_ai():
     data = request.get_json() or {}
-    numero = data.get("numero") or data.get("auto_infracao")
+    numero = (data.get("numero") or data.get("auto_infracao") or "").strip()
     if not numero:
         return jsonify({"msg": "Número do AI não informado"}), 400
 
@@ -45,7 +45,7 @@ def pesquisar_ai():
 @jwt_required()
 def historico():
     data = request.get_json() or {}
-    numero = data.get("numero")
+    numero = (data.get("numero") or "").strip()
     if not numero:
         return jsonify({"msg": "Número do AI não informado"}), 400
 

@@ -231,7 +231,7 @@ async function buscar() {
   if (!formRef.value?.validate()) return
   checked.value = false
   try {
-    const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
+    const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value.trim() })
     
     if (data.id) {
       autoId.value = data.id
@@ -352,9 +352,9 @@ async function enviarSolicitacao() {
   }
 
   const payload = {
-    numero: numeroAi.value,
+    numero: numeroAi.value.trim(),
     list: [listItem]
-  }  
+  }
 
   try {
     const { data } = await solicitarCancelamento(payload)

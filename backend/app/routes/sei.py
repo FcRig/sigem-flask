@@ -13,9 +13,9 @@ bp = Blueprint("sei", __name__, url_prefix="/api/sei")
 def login():
     user = User.query.get_or_404(get_jwt_identity())
     data = request.get_json() or {}
-    usuario = data.get("usuario") or data.get("usuario_sei") or user.usuario_sei
-    senha = data.get("senha_sei") or data.get("password")
-    token = data.get("token_sei") or data.get("token")
+    usuario = (data.get("usuario") or data.get("usuario_sei") or user.usuario_sei or "").strip()
+    senha = (data.get("senha_sei") or data.get("password") or "").strip()
+    token = (data.get("token_sei") or data.get("token") or "").strip()
     if not usuario or not senha or not token:
         return jsonify({"msg": "Credenciais inválidas"}), 400
 

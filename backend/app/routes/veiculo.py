@@ -10,7 +10,7 @@ bp = Blueprint("veiculo", __name__, url_prefix="/api/veiculo")
 @jwt_required()
 def consultar_por_placa():
     data = request.get_json() or {}
-    placa = data.get("placa")
+    placa = (data.get("placa") or "").strip()
     if not placa:
         return jsonify({"msg": "Placa não informada"}), 400
 
