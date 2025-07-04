@@ -49,6 +49,29 @@ def test_consultar_placa_returns_data(client, app, monkeypatch):
     assert response.get_json() == expected
 
 
+def test_consultar_placa_strips_whitespace(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_consultar(self, placa):
+        captured["placa"] = placa
+        return {}
+
+    monkeypatch.setattr(VeiculoClient, "consultar_placa", fake_consultar)
+
+    response = client.post(
+        "/api/veiculo/placa",
+        json={"placa": " ABC1234 "},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert captured.get("placa") == "ABC1234"
+
+
 def test_consultar_placa_requires_jwt(client, app, monkeypatch):
     with app.app_context():
         create_user()

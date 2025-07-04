@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import User
 from ..services.siscom_client import SiscomClient
+from ..utils import strip_strings
 
 ENDPOINT = os.getenv("SISCOM_ENDPOINT")
 
@@ -15,7 +16,7 @@ bp = Blueprint("siscom", __name__, url_prefix="/api/siscom")
 @jwt_required()
 def login():
     user = User.query.get_or_404(get_jwt_identity())
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     password = data.get("senha_siscom") or data.get("password")
     if not password:
         return jsonify({"msg": "Credenciais inválidas"}), 400
@@ -31,7 +32,7 @@ def login():
 @bp.route("/pesquisar_ai", methods=["POST"])
 @jwt_required()
 def pesquisar_ai():
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     numero = data.get("numero") or data.get("auto_infracao")
     if not numero:
         return jsonify({"msg": "Número do AI não informado"}), 400
@@ -44,7 +45,7 @@ def pesquisar_ai():
 @bp.route("/historico", methods=["POST"])
 @jwt_required()
 def historico():
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     numero = data.get("numero")
     if not numero:
         return jsonify({"msg": "Número do AI não informado"}), 400

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from ..models import User
 from ..extensions import db
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from ..utils import strip_strings
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -11,7 +12,7 @@ def teste():
 
 @bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
+    data = strip_strings(request.get_json())
     if not data.get('cpf'):
         return jsonify({'msg': 'CPF é obrigatório'}), 400
     username = data.get('username')
@@ -35,7 +36,7 @@ def register():
 
 @bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
+    data = strip_strings(request.get_json())
     user = User.query.filter_by(email=data['email']).first()
     if user and user.check_password(data['password']):
         access_token = create_access_token(identity=str(user.id))
@@ -82,7 +83,7 @@ def create_user():
     if not current_user or not current_user.administrador:
         return jsonify({'msg': 'Acesso não autorizado'}), 403
 
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
@@ -125,7 +126,7 @@ def get_user(user_id):
 @jwt_required()
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
-    data = request.get_json() or {}
+    data = strip_strings(request.get_json() or {})
     if 'username' in data:
         user.username = data['username']
     if 'email' in data:
