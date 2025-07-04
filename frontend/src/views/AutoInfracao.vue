@@ -356,7 +356,10 @@ async function buscar() {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
     store.commit('setAiResult', data)
   } catch (err) {
-    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro ao pesquisar AI' })
+    const msg = err.response?.data?.msg
+    if (!(/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg))) {
+      store.commit('showSnackbar', { msg: msg || 'Erro ao pesquisar AI' })
+    }
     store.commit('setAiResult', null)
   }
 }

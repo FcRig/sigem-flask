@@ -232,7 +232,12 @@ async function buscar() {
       checked.value = true
     }
   } catch (err) {
-    console.error(err)
+    const msg = err.response?.data?.msg
+    if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
+      store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' })
+    } else {
+      console.error(err)
+    }
     envolvidos.value = []
     amparoInfo.value = null
     permitido.value = false
@@ -323,7 +328,12 @@ async function enviarSolicitacao() {
     }
     limpar()
   } catch (err) {
-    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na solicitação' })
+    const msg = err.response?.data?.msg
+    if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
+      store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' })
+    } else {
+      store.commit('showSnackbar', { msg: msg || 'Erro na solicitação' })
+    }
     limpar()
   }
 }

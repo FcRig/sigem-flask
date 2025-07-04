@@ -33,12 +33,19 @@ export function setupLoadingInterceptors(store) {
     },
     error => {
       store.commit('setLoading', false);
-      if (error.response && [401, 422].includes(error.response.status)) {
+      if (error.response) {
+        const status = error.response.status;
         const msg = error.response.data?.msg || error.response.data?.message || '';
-        if (/token has expired/i.test(msg)) {
+
+        if ([401, 422].includes(status) && /token has expired/i.test(msg)) {
           store.commit('logout');
           store.commit('showSnackbar', { msg: 'Sessão expirada' });
           router.push('/');
+        }
+
+        if ((status === 401 || status === 400) &&
+            (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg))) {
+          store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' });
         }
       }
       return Promise.reject(error);
