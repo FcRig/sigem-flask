@@ -179,15 +179,25 @@ def test_solicitar_cancelamento_payload(client, app, monkeypatch):
     monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
     monkeypatch.setattr(AutoPRFClient, "solicitar_cancelamento", fake_cancel)
 
+    list_item = {
+        "processo": {"id": 7},
+        "tipoSolicitacao": "CANCELAMENTO",
+        "justificativa": "just",
+        "texto": "motivo",
+        "requerente": {"nome": "TEST", "documentos": [{"numero": "123"}]},
+    }
+
     response = client.post(
         "/api/autoprf/solicitacao/cancelamento",
-        json={"numero": "123", "idProcesso": 7},
+        json={"numero": "123", "list": [list_item]},
         headers={"Authorization": f"Bearer {token}"},
     )
 
+    expected_payload = {"list": [list_item]}
+
     assert response.status_code == 200
     assert response.get_json() == {"ok": True}
-    assert captured == {"numero": "123", "payload": {"idProcesso": 7}}
+    assert captured == {"numero": "123", "payload": expected_payload}
 
 
 def test_cancelamento_session_expired(client, app, monkeypatch):
