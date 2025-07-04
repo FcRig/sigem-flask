@@ -5,8 +5,17 @@ import requests
 class SiscomClient:
     """Simple client to interact with the SISCOM service."""
 
-    def __init__(self, endpoint: str | None = None):
+    LOGIN_URL = "https://multa.prf.gov.br/multa2/"
+
+    def __init__(self, endpoint: str | None = None, session: requests.Session | None = None):
         self.endpoint = endpoint or os.getenv("SISCOM_ENDPOINT")
+        self.session = session or requests.Session()
+
+    def login(self, cpf: str, password: str) -> None:
+        """Authenticate against SISCOM using CPF and password."""
+        payload = {"username": cpf, "J_usemame": cpf, "j_password": password}
+        resp = self.session.post(self.LOGIN_URL, data=payload)
+        resp.raise_for_status()
 
     def pesquisar_ai(self, numero: str) -> dict:
         """Search for an Auto de Infracao and return a structured result."""
