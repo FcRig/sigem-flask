@@ -102,12 +102,22 @@
           <v-card-title>Autenticação AutoPRF</v-card-title>
           <v-card-text>
             <v-form ref="autoprfForm" v-model="autoprfValid">
-              <v-text-field v-model="autoprfToken" label="Token AutoPRF" />
+              <v-text-field
+                v-model="autoprfToken"
+                label="Token AutoPRF"
+                :rules="[rules.required]"
+              />
+              <v-text-field
+                v-model="autoprfPassword"
+                label="Senha AutoPRF"
+                type="password"
+                :rules="[rules.required]"
+              />
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn text @click="autoprfDialog = false">Cancelar</v-btn>
+            <v-btn text @click="autoprfDialog = false; autoprfPassword = ''">Cancelar</v-btn>
             <v-btn color="primary" :disabled="!autoprfValid" @click="saveAutoprf">Salvar</v-btn>
           </v-card-actions>
         </v-card>
@@ -186,6 +196,7 @@ const siscomDialog = ref(false)
 const seiDialog = ref(false)
 
 const autoprfToken = ref('')
+const autoprfPassword = ref('')
 const seiUsuario = ref('')
 const seiToken = ref('')
 
@@ -212,8 +223,10 @@ async function saveAutoprf() {
       token_autoprf: autoprfToken.value
     })
     await autoprfLogin({
-      token_autoprf: autoprfToken.value
+      token_autoprf: autoprfToken.value,
+      senha_autoprf: autoprfPassword.value
     })
+    autoprfPassword.value = ''
     snackbarMsg.value = 'Dados AutoPRF salvos com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
