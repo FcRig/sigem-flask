@@ -74,13 +74,24 @@
       </v-card-text>
     </v-card>
     <v-form
-      v-if="requireManualJustificativa && !justificativa"
+      v-if="(requireManualJustificativa && !justificativa) || editJustificativa"
       ref="manualFormRef"
       v-model="manualValid"
       class="mt-4"
     >
       <v-card class="pa-4" elevation="2">
-        <v-card-title>Justificativa</v-card-title>
+        <v-card-title class="d-flex justify-space-between align-center">
+          Justificativa
+          <v-btn
+            v-if="editJustificativa"
+            size="small"
+            variant="text"
+            color="secondary"
+            @click="editJustificativa = false"
+          >
+            Cancelar
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <v-textarea
             v-model="motivoManual"
@@ -95,8 +106,11 @@
         </v-card-text>
       </v-card>
     </v-form>
-    <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
-      <v-card-title>Justificativa</v-card-title>
+    <v-card v-if="justificativa && !editJustificativa" class="pa-4 mb-2" elevation="2">
+      <v-card-title class="d-flex justify-space-between align-center">
+        Justificativa
+        <v-btn size="small" variant="text" @click="enableManualEdit">Alterar</v-btn>
+      </v-card-title>
       <v-card-text>
         <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
         <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
@@ -139,6 +153,7 @@ const motivoManual = ref('')
 const justificativaManual = ref('')
 const manualValid = ref(false)
 const manualFormRef = ref(null)
+const editJustificativa = ref(false)
 const store = useStore()
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
@@ -282,6 +297,14 @@ async function buscar() {
   }
 }
 
+function enableManualEdit() {
+  if (justificativa.value) {
+    motivoManual.value = justificativa.value.motivo
+    justificativaManual.value = justificativa.value.justificativa
+  }
+  editJustificativa.value = true
+}
+
 function limpar() {
   numeroAi.value = ''
   envolvidos.value = []
@@ -291,6 +314,7 @@ function limpar() {
   motivoManual.value = ''
   justificativaManual.value = ''
   manualValid.value = false
+  editJustificativa.value = false
   formRef.value?.resetValidation()
   manualFormRef.value?.resetValidation()
 }
@@ -304,7 +328,8 @@ function removeAccents(str) {
 }
 
 async function enviarSolicitacao() {
-  if (!justificativa.value && !manualFormRef.value?.validate()) return
+  const useManual = editJustificativa.value || !justificativa.value
+  if (useManual && !manualFormRef.value?.validate()) return
 
   const cpf = (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11)
 
@@ -330,10 +355,10 @@ async function enviarSolicitacao() {
     estado: "Protocolada",
     estadoDescricao: null,
     tipoSolicitacao: "Cancelamento",
-    justificativa: justificativa.value
-      ? justificativa.value.justificativa
-      : justificativaManual.value,
-    texto: justificativa.value ? justificativa.value.motivo : motivoManual.value,
+    justificativa: useManual
+      ? justificativaManual.value
+      : justificativa.value.justificativa,
+    texto: useManual ? motivoManual.value : justificativa.value.motivo,
     autoSubstituto: null,
     numeroAutoSubstituto: null,
     requerente: {
