@@ -170,6 +170,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
+import { useStore } from 'vuex'
 import { pesquisarAutoInfracao } from '../services/autoprf'
 
 const numeroAi1 = ref('')
@@ -182,6 +183,8 @@ const valid = ref(false)
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
+const store = useStore()
+
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
@@ -192,7 +195,12 @@ async function buscar() {
     ai1.value = res1.data
     ai2.value = res2.data
   } catch (err) {
-    console.error(err)
+    const msg = err.response?.data?.msg
+    if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
+      store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' })
+    } else {
+      console.error(err)
+    }
     ai1.value = null
     ai2.value = null
   }
