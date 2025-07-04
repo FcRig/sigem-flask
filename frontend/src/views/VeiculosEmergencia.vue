@@ -79,16 +79,21 @@
       v-model="manualValid"
       class="mt-4"
     >
-      <v-textarea
-        v-model="motivoManual"
-        label="Motivo"
-        :rules="[rules.required]"
-      />
-      <v-text-field
-        v-model="justificativaManual"
-        label="Justificativa"
-        :rules="[rules.required]"
-      />
+      <v-card class="pa-4" elevation="2">
+        <v-card-title>Justificativa</v-card-title>
+        <v-card-text>
+          <v-textarea
+            v-model="motivoManual"
+            label="Motivo"
+            :rules="[rules.required]"
+          />
+          <v-text-field
+            v-model="justificativaManual"
+            label="Justificativa por não ter substituto"
+            :rules="[rules.required]"
+          />
+        </v-card-text>
+      </v-card>
     </v-form>
     <v-card v-if="justificativa" class="pa-4 mb-2" elevation="2">
       <v-card-title>Justificativa</v-card-title>
