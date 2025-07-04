@@ -89,6 +89,7 @@
     >
       Solicitação de Cancelamento
     </v-btn>
+
   </v-container>
 </template>
 
@@ -318,9 +319,13 @@ async function enviarSolicitacao() {
     const { data } = await solicitarCancelamento(payload)
     if (data === 1 || data === true) {
       store.commit('showSnackbar', { msg: 'Solicitação enviada', color: 'success' })
+    } else {
+      store.commit('showSnackbar', { msg: 'Erro na solicitação' })
     }
+    limpar()
   } catch (err) {
     store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na solicitação' })
+    limpar()
   }
 }
 
