@@ -33,6 +33,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { buscarHistorico } from '../services/siscom'
 
 const numeroAi = ref('')
@@ -63,6 +64,10 @@ function limpar() {
   historico.value = []
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 
 function formatDate(ms) {
   const d = new Date(Number(ms))

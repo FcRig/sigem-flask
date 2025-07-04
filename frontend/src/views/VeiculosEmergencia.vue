@@ -95,6 +95,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
+import { onBeforeRouteLeave } from 'vue-router'
 import {
   pesquisarAutoInfracao,
   obterEnvolvidos,
@@ -236,6 +237,10 @@ function limpar() {
   checked.value = false
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 
 function removeAccents(str) {
   return (str || '').normalize('NFD').replace(/\p{Diacritic}/gu, '')

@@ -169,6 +169,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { pesquisarAutoInfracao } from '../services/autoprf'
 
 const numeroAi1 = ref('')
@@ -204,6 +205,10 @@ function limpar() {
   ai2.value = null
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 
 const iguais = computed(() => {
   if (!ai1.value || !ai2.value) return false
