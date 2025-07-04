@@ -199,7 +199,7 @@ async function buscar() {
   checked.value = false
   try {
     const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
-    console.log(data)
+    
     if (data.id) {
       autoId.value = data.id
       idProcesso.value = data.idProcesso
@@ -310,9 +310,7 @@ async function enviarSolicitacao() {
   const payload = {
     numero: numeroAi.value,
     list: [listItem]
-  }
-
-  console.log(JSON.stringify(payload, null, 2)) // facilita análise e debug
+  }  
 
   try {
     const { data } = await solicitarCancelamento(payload)

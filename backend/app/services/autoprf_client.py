@@ -189,9 +189,7 @@ class AutoPRFClient:
         return response.json() if response.content else []
 
     def solicitar_cancelamento(self, numero_auto: str, payload: dict) -> dict:
-        """Submit a cancelamento request for a given Auto de Infracao."""
-
-        print(payload)
+        """Submit a cancelamento request for a given Auto de Infracao."""        
         
         headers = {}
         if self.jwt_token:
