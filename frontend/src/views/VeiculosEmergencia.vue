@@ -315,7 +315,8 @@ async function enviarSolicitacao() {
 
   try {
     const { data } = await solicitarCancelamento(payload)
-    if (data === 1 || data === true) {
+    console.log(data)
+    if (data === true) {
       store.commit('showSnackbar', { msg: 'Solicitação enviada', color: 'success' })
     } else {
       store.commit('showSnackbar', { msg: 'Erro na solicitação' })

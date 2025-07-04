@@ -54,8 +54,7 @@ class AutoPRFClient:
             headers=headers,
         )
         response.raise_for_status()
-        data = response.json() if response.content else {}
-        print(data)
+        data = response.json() if response.content else {}        
         
         item = (data.get("items") or [{}])[0]
 
@@ -208,5 +207,6 @@ class AutoPRFClient:
             json=payload,
             headers=headers,
         )
+        print(resp)
         resp.raise_for_status()
-        return resp.json() if resp.content else {}
+        return resp.json() if resp.content else True
