@@ -176,7 +176,7 @@ function formatLabel(key) {
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
-    await store.dispatch('consultarPlaca', { placa: placa.value })
+    await store.dispatch('consultarPlaca', { placa: placa.value.trim() })
   } catch (err) {
     store.commit('showSnackbar', {
       msg: err.response?.data?.msg || 'Erro ao consultar placa'

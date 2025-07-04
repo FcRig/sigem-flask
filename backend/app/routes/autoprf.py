@@ -13,8 +13,8 @@ bp = Blueprint('autoprf', __name__, url_prefix='/api/autoprf')
 def login():
     user = User.query.get_or_404(get_jwt_identity())
     data = request.get_json() or {}
-    password = data.get('senha_autoprf') or data.get('password')
-    token = data.get('token_autoprf') or data.get('token')
+    password = (data.get('senha_autoprf') or data.get('password') or '').strip()
+    token = (data.get('token_autoprf') or data.get('token') or '').strip()
     if not password or not token:
         return jsonify({'msg': 'Credenciais inválidas'}), 400
 
@@ -41,7 +41,7 @@ def pesquisar_auto_infracao():
         return jsonify({'msg': 'Sessão não iniciada'}), 400
 
     data = request.get_json() or {}
-    auto_infracao = data.get('auto_infracao')
+    auto_infracao = (data.get('auto_infracao') or '').strip()
     if not auto_infracao:
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 
@@ -88,7 +88,7 @@ def solicitar_cancelamento():
         return jsonify({'msg': 'Sessão não iniciada'}), 400
 
     data = request.get_json() or {}
-    numero = data.pop('numero', None) or data.pop('numero_ai', None)
+    numero = (data.pop('numero', None) or data.pop('numero_ai', None) or '').strip()
     if not numero:
         return jsonify({'msg': 'Número de Auto de Infração não informado'}), 400
 

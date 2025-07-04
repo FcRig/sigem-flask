@@ -51,7 +51,7 @@ const rules = { required: v => !!v || 'Campo obrigatório' }
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
-    const { data } = await buscarHistorico({ numero: numeroAi.value })
+    const { data } = await buscarHistorico({ numero: numeroAi.value.trim() })
     historico.value = data
   } catch (err) {
     console.error(err)

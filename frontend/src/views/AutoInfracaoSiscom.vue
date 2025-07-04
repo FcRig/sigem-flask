@@ -230,7 +230,7 @@ const rules = { required: v => !!v || 'Campo obrigatório' }
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
-    const { data } = await pesquisarAi({ numero: numeroAi.value })
+    const { data } = await pesquisarAi({ numero: numeroAi.value.trim() })
     store.commit('setSiscomAiResult', data)
   } catch (err) {
     store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro ao pesquisar AI' })

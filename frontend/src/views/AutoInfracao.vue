@@ -353,7 +353,7 @@ const rules = { required: v => !!v || 'Campo obrigatório' }
 async function buscar() {
   if (!formRef.value?.validate()) return
   try {
-    const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
+    const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value.trim() })
     store.commit('setAiResult', data)
   } catch (err) {
     const msg = err.response?.data?.msg
