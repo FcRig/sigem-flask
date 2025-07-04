@@ -145,6 +145,7 @@
 import { ref, computed } from 'vue'
 import { useVeiculoFormatter } from '../mixins/useVeiculoFormatter'
 import { useStore } from 'vuex'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const store = useStore()
 
@@ -189,5 +190,9 @@ function limpar() {
   store.commit('setVeiculoResult', null)
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 </script>
 

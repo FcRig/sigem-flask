@@ -336,6 +336,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useStore } from 'vuex'
 import { pesquisarAutoInfracao } from '../services/autoprf'
 
@@ -365,4 +366,8 @@ function limpar() {
   store.commit('setAiResult', null)
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 </script>
