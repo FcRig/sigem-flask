@@ -103,22 +103,22 @@
           <v-card-text>
             <v-form ref="autoprfForm" v-model="autoprfValid">
               <v-text-field
-                v-model="autoprfToken"
-                label="Token AutoPRF"
-                :rules="[rules.required]"
-              />
-              <v-text-field
                 v-model="autoprfPassword"
                 label="Senha AutoPRF"
                 type="password"
+                :rules="[rules.required]"
+              />
+              <v-text-field
+                v-model="autoprfToken"
+                label="Token AutoPRF"
                 :rules="[rules.required]"
               />
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn text @click="autoprfDialog = false; autoprfPassword = ''">Cancelar</v-btn>
             <v-btn color="primary" :disabled="!autoprfValid" @click="saveAutoprf">Salvar</v-btn>
+            <v-btn text @click="autoprfDialog = false; autoprfPassword = ''">Cancelar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -135,8 +135,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="siscomDialog = false; siscomPassword = ''">Cancelar</v-btn>
           <v-btn color="primary" :disabled="!siscomValid" @click="saveSiscom">Salvar</v-btn>
+          <v-btn text @click="siscomDialog = false; siscomPassword = ''">Cancelar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -147,19 +147,19 @@
         <v-card-text>
             <v-form ref="seiForm" v-model="seiValid">
               <v-text-field v-model="seiUsuario" label="Usuário" :rules="[rules.required]" />
-              <v-text-field v-model="seiToken" label="Token SEI" :rules="[rules.required]" />
               <v-text-field
-                v-model="seiPassword"
-                label="Senha SEI"
-                type="password"
-                :rules="[rules.required]"
+              v-model="seiPassword"
+              label="Senha SEI"
+              type="password"
+              :rules="[rules.required]"
               />
+              <v-text-field v-model="seiToken" label="Token SEI" :rules="[rules.required]" />
             </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="seiDialog = false; seiPassword = ''">Cancelar</v-btn>
           <v-btn color="primary" :disabled="!seiValid" @click="saveSei">Salvar</v-btn>
+          <v-btn text @click="seiDialog = false; seiPassword = ''">Cancelar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
