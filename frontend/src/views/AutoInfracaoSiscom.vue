@@ -214,6 +214,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
+import { onBeforeRouteLeave } from 'vue-router'
 import { pesquisarAi } from '../services/siscom'
 
 const store = useStore()
@@ -242,4 +243,8 @@ function limpar() {
   store.commit('setSiscomAiResult', null)
   formRef.value?.resetValidation()
 }
+
+onBeforeRouteLeave(() => {
+  limpar()
+})
 </script>
