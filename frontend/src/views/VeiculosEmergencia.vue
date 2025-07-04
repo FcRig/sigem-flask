@@ -248,14 +248,26 @@ function removeAccents(str) {
 
 async function enviarSolicitacao() {
   if (!justificativa.value) return
-  const payload = {
-    numero: numeroAi.value,
-    idProcesso: autoId.value,
+
+  const cpf = (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11)
+
+  const listItem = {
+    processo: { id: autoId.value },
+    tipoSolicitacao: 'CANCELAMENTO',
     justificativa: justificativa.value.justificativa,
-    motivo: justificativa.value.motivo,
-    cpf: (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11),
-    nome: removeAccents(store.state.user.username || '').toUpperCase()
+    texto: justificativa.value.motivo,
+    requerente: {
+      nome: removeAccents(store.state.user.username || '').toUpperCase(),
+      documentos: [
+        {
+          numero: cpf
+        }
+      ]
+    }
   }
+
+  const payload = { numero: numeroAi.value, list: [listItem] }
+
   try {
     const { data } = await solicitarCancelamento(payload)
     if (data === 1 || data === true) {
