@@ -55,12 +55,16 @@ class AutoPRFClient:
         )
         response.raise_for_status()
         data = response.json() if response.content else {}
+        print(data)
+        
         item = (data.get("items") or [{}])[0]
 
         auto_id = item.get("id")
+        id_processo = item.get("idProcesso")
 
         result = {
             "id": auto_id,
+            "idProcesso": id_processo,
             "infracao": {},
             "veiculo": {},
             "local": {},
@@ -186,6 +190,9 @@ class AutoPRFClient:
 
     def solicitar_cancelamento(self, numero_auto: str, payload: dict) -> dict:
         """Submit a cancelamento request for a given Auto de Infracao."""
+
+        print(payload)
+        
         headers = {}
         if self.jwt_token:
             headers["Authorization"] = f"Bearer {self.jwt_token}"

@@ -262,31 +262,10 @@ async function enviarSolicitacao() {
   const cpf = (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11)
 
   const listItem = {
-    id: null,
-    processo: {
-      id: idProcesso.value,
-      estado: "Criado",
-      eventos: [],
-      eventosExternos: [],
-      notificacoes: [],
-      nup: "",
-      seqDocumentos: 0,
-      separadoParaEnvio: null,
-      bloqueio: null,
-      pago: false,
-      solicitacoes: [],
-      solicitacao: null,
-      boletos: [],
-      arquivos: []
-    },
-    dataProtocolo: null,
-    estado: "Protocolada",
-    estadoDescricao: null,
-    tipoSolicitacao: "Cancelamento",
+    processo: { id: idProcesso.value },
+    tipoSolicitacao: 'CANCELAMENTO',
     justificativa: justificativa.value.justificativa,
     texto: justificativa.value.motivo,
-    autoSubstituto: null,
-    numeroAutoSubstituto: null,
     requerente: {
       nome: removeAccents(store.state.user.username || '').toUpperCase(),
       documentos: [
@@ -294,25 +273,12 @@ async function enviarSolicitacao() {
           tipoDocumento: "CPF",
           numero: cpf
         }
-      ],
-      tiposEnvolvimento: []
-    },
-    numeroProtocolo: null,
-    origem: "PRF",
-    documentos: [],
-    eventos: [],
-    bloqueioTemporario: null,
-    bloqueioPermanente: false,
-    usuarioDiligencia: null,
-    condutorIndicado: null
+      ]
+    }
   }
 
-  const payload = {
-    numero: numeroAi.value,
-    list: [listItem]
-  }
-
-  console.log(JSON.stringify(payload, null, 2)) // facilita análise e debug
+  const payload = { numero: numeroAi.value, list: [listItem] } 
+  console.log(payload) 
 
   try {
     const { data } = await solicitarCancelamento(payload)
@@ -323,5 +289,4 @@ async function enviarSolicitacao() {
     store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na solicitação' })
   }
 }
-
 </script>
