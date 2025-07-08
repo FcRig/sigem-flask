@@ -69,9 +69,29 @@
     <v-card v-if="amparoInfo && !foraCircunscricao" class="pa-4 mb-2" elevation="2">
       <v-card-title>Amparo legal</v-card-title>
       <v-card-text>
-        <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
-        <div><strong>Descrição:</strong> {{ amparoInfo.descricao }}</div>
-        <div><strong>Amparo legal:</strong> {{ amparoInfo.amparo }}</div>
+        <v-row dense>
+          <v-col cols="12" md="3">
+            <v-text-field
+              :model-value="amparoInfo.codigo"
+              label="Código"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="5">
+            <v-text-field
+              :model-value="amparoInfo.descricao"
+              label="Descrição"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="amparoInfo.amparo"
+              label="Amparo legal"
+              readonly
+            />
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-chip
         v-if="checked"
@@ -94,25 +114,51 @@
           <v-col cols="12" md="6" v-for="env in envolvidos" :key="env.id">
             <v-card class="mb-2">
               <v-card-text>
-                  <div><strong>Nome:</strong> {{ env.nome }}</div>
-                  <div><strong>Envolvimento:</strong> {{ env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento }}</div>
-                  <div><strong>Tipo Documento:</strong> {{ env.tipoDocumento }}</div>
-                  <div><strong>Número Documento:</strong> {{ env.numeroDocumento }}</div>
-                  <v-chip
-                    v-if="showInstituicao(env)"
-                    color="green"
-                    class="mt-2"
-                    >
-                    Proprietário/possuidor previsto em lei:
-                    {{ instituicaoNome(env.numeroDocumento) }}
-                  </v-chip>
-                  <v-chip
-                    v-else
-                    color="red"
-                    class="mt-2"
-                  >
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-text-field
+                      :model-value="env.nome"
+                      label="Nome"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      :model-value="env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento"
+                      label="Envolvimento"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      :model-value="env.tipoDocumento"
+                      label="Tipo Documento"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      :model-value="env.numeroDocumento"
+                      label="Número Documento"
+                      readonly
+                    />
+                  </v-col>
+                </v-row>
+                <v-chip
+                  v-if="showInstituicao(env)"
+                  color="green"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor previsto em lei:
+                  {{ instituicaoNome(env.numeroDocumento) }}
+                </v-chip>
+                <v-chip
+                  v-else
+                  color="red"
+                  class="mt-2"
+                >
                   Proprietário/possuidor não previsto em lei
-                  </v-chip>
+                </v-chip>
               </v-card-text>
             </v-card>
           </v-col>
@@ -158,9 +204,29 @@
         <v-btn size="small" @click="enableManualEdit" color="primary">Alterar</v-btn>
       </v-card-title>
       <v-card-text>
-        <div><strong>Órgão:</strong> {{ justificativa.orgao }}</div>
-        <div><strong>Motivo:</strong> {{ justificativa.motivo }}</div>
-        <div><strong>Justificativa:</strong> {{ justificativa.justificativa }}</div>
+        <v-row dense>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="justificativa.orgao"
+              label="Órgão"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="8">
+            <v-text-field
+              :model-value="justificativa.motivo"
+              label="Motivo"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              :model-value="justificativa.justificativa"
+              label="Justificativa"
+              readonly
+            />
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
     <v-btn
