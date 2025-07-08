@@ -5,7 +5,7 @@ from datetime import datetime
 class AutoPRFClient:
     """Simple client to interact with the AutoPRF HTTP API."""
 
-    BASE_URL = "https://auto-hmg.prf.gov.br/api"
+    BASE_URL = "https://auto.prf.gov.br/api"
 
     def __init__(self, jwt_token: str | None = None):
         self.jwt_token = jwt_token or ""

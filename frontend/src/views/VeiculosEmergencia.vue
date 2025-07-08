@@ -179,7 +179,7 @@ const justificativas = {
   '00058163000125': {
     orgao: 'Polícia Civil',
     motivo:
-      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Civil do Rio Grande do Sul). Requerimento em anexo',
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Civil do Estado do Rio Grande do Sul). Requerimento em anexo',
     justificativa: 'Viatura policial.'
   },
   '09734605000187': {
@@ -197,13 +197,19 @@ const justificativas = {
   '89175541000164': {
     orgao: 'Brigada Militar',
     motivo:
-      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Rio Grande do Sul). Requerimento em anexo',
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
     justificativa: 'Viatura policial.'
   },
   '87934675000196': {
     orgao: 'Estado do Rio Grande do Sul',
     motivo:
-      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Rio Grande do Sul). Requerimento em anexo',
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
+    justificativa: 'Viatura policial.'
+  },
+  '28610005000155': {
+    orgao: 'Corpo de Bombeiros Militar do Estado do Rio Grande do Sul',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão destinados a socorro de incêndio e salvamento (Corpo de Bombeiros Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
     justificativa: 'Viatura policial.'
   }
 }
