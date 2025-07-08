@@ -20,7 +20,53 @@
       </v-col>
     </v-row>
 
-    <v-card v-if="amparoInfo" class="pa-4 mb-2" elevation="2">
+    <v-card v-if="localInfo" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Local da Infração</v-card-title>
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="localInfo.codigo_municipio_uf"
+              label="Código/Município/UF"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.rodovia"
+              label="BR"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.km"
+              label="Km"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.sentido"
+              label="Sentido"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.data_hora"
+              label="Data/Hora"
+              readonly
+            />
+          </v-col>
+        </v-row>
+        <v-chip v-if="foraCircunscricao" color="red" class="mt-2" dark>
+          Fora da Circunscrição
+        </v-chip>
+      </v-card-text>
+    </v-card>
+
+    <v-card v-if="amparoInfo && !foraCircunscricao" class="pa-4 mb-2" elevation="2">
       <v-card-title>Amparo legal</v-card-title>
       <v-card-text>
         <div><strong>Código:</strong> {{ amparoInfo.codigo }}</div>
@@ -41,7 +87,7 @@
       </v-chip>
     </v-card>
     
-    <v-card v-if="envolvidos.length" class="pa-4" elevation="2">
+    <v-card v-if="envolvidos.length && !foraCircunscricao" class="pa-4" elevation="2">
       <v-card-title>Envolvidos</v-card-title>
       <v-card-text>
         <v-row dense>
@@ -74,7 +120,7 @@
       </v-card-text>
     </v-card>
     <v-form
-      v-if="(requireManualJustificativa && !justificativa) || editJustificativa"
+      v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
       ref="manualFormRef"
       v-model="manualValid"
       class="mt-4"
@@ -106,7 +152,7 @@
         </v-card-text>
       </v-card>
     </v-form>
-    <v-card v-if="justificativa && !editJustificativa" class="pa-4 mb-2" elevation="2">
+    <v-card v-if="justificativa && !editJustificativa && !foraCircunscricao" class="pa-4 mb-2" elevation="2">
       <v-card-title class="d-flex justify-space-between align-center">
         Justificativa
         <v-btn size="small" @click="enableManualEdit" color="primary">Alterar</v-btn>
@@ -118,7 +164,7 @@
       </v-card-text>
     </v-card>
     <v-btn
-      v-if="justificativa || requireManualJustificativa"
+      v-if="!foraCircunscricao && (justificativa || requireManualJustificativa)"
       color="primary"
       class="mt-4"
       :disabled="!justificativa && !manualValid"
@@ -143,6 +189,7 @@ import {
 const numeroAi = ref('')
 const envolvidos = ref([])
 const amparoInfo = ref(null)
+const localInfo = ref(null)
 const permitido = ref(false)
 const checked = ref(false)
 const formRef = ref(null)
@@ -155,6 +202,13 @@ const manualValid = ref(false)
 const manualFormRef = ref(null)
 const editJustificativa = ref(false)
 const store = useStore()
+
+const foraCircunscricao = computed(() => {
+  const str = localInfo.value?.codigo_municipio_uf || ''
+  const match = str.match(/\/([A-Za-z]{2})$/)
+  if (!match) return false
+  return match[1].toUpperCase() !== 'RS'
+})
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
 
@@ -262,6 +316,7 @@ async function buscar() {
     if (data.id) {
       autoId.value = data.id
       idProcesso.value = data.idProcesso
+      localInfo.value = data.local || null
       const cd = data.infracao?.codigo_descricao || ''
       const [codPart, ...descParts] = cd.split(/\s*-\s*/)
       const codigo = codPart?.trim() || ''
@@ -286,6 +341,7 @@ async function buscar() {
     } else {
       envolvidos.value = []
       amparoInfo.value = null
+      localInfo.value = null
       permitido.value = false
       checked.value = true
     }
@@ -298,6 +354,7 @@ async function buscar() {
     }
     envolvidos.value = []
     amparoInfo.value = null
+    localInfo.value = null
     permitido.value = false
     checked.value = true
   }
@@ -315,6 +372,7 @@ function limpar() {
   numeroAi.value = ''
   envolvidos.value = []
   amparoInfo.value = null
+  localInfo.value = null
   permitido.value = false
   checked.value = false
   motivoManual.value = ''
