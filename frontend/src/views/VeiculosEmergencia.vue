@@ -63,6 +63,9 @@
         <v-chip v-if="foraCircunscricao" color="red" class="mt-2" dark>
           Fora da Circunscrição
         </v-chip>
+        <v-chip v-else color="green" class="mt-2" dark>
+          Circunscrição do Rio Grande do Sul
+        </v-chip>
       </v-card-text>
     </v-card>
 
@@ -294,43 +297,43 @@ const justificativas = {
     orgao: 'PRF',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Rodoviária Federal). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '00058163000125': {
     orgao: 'Polícia Civil',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Civil do Estado do Rio Grande do Sul). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '09734605000187': {
     orgao: 'Polícia Legislativa',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Legislativa). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '07963160000130': {
     orgao: 'SUSEPE',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial da polícia penal (Superintendência dos Serviços Penitenciários do Estado do Rio Grande do Sul). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '89175541000164': {
     orgao: 'Brigada Militar',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '87934675000196': {
     orgao: 'Estado do Rio Grande do Sul',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Brigada Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   },
   '28610005000155': {
     orgao: 'Corpo de Bombeiros Militar do Estado do Rio Grande do Sul',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão destinados a socorro de incêndio e salvamento (Corpo de Bombeiros Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
-    justificativa: 'Viatura policial.'
+    justificativa: 'Viatura policial'
   }
 }
 
