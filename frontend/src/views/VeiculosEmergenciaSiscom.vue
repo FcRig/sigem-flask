@@ -251,6 +251,11 @@ import { onBeforeRouteLeave } from 'vue-router'
 import { solicitarCancelamento } from '../services/autoprf'
 import { pesquisarAi } from '../services/siscom'
 import { consultarPlaca } from '../services/veiculo'
+import {
+  instituicoes,
+  justificativas,
+  codigosPermitidosDigits
+} from '../constants/veiculosEmergencia'
 
 const numeroAi = ref('')
 const envolvidos = ref([])
@@ -275,10 +280,6 @@ const foraCircunscricao = computed(() => {
 })
 
 const rules = { required: v => !!v || 'Campo obrigatório' }
-
-// Instituições e justificativas conforme já configurado
-// codigosPermitidos e codigosPermitidosDigits conforme seu código
-// instituicoes, justificativas definidos previamente no seu arquivo
 
 function sanitize(cnpj) {
   return (cnpj || '').replace(/\D/g, '')
