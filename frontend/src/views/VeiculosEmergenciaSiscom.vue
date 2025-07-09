@@ -1,10 +1,249 @@
 <template>
   <v-container>
-    <!-- MANTIDO: Seu template completo, sem alterações -->
-    <!-- Caso queira, posso enviar também em Markdown limpo -->
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-card class="pa-4 mb-4" elevation="2" title="Auto de Infração">
+          <v-form ref="formRef" v-model="valid">
+            <v-text-field
+              v-model="numeroAi"
+              label="Número do Auto de Infração"
+              :rules="[rules.required]"
+            />
+            <v-btn color="primary" class="mt-2" @click="buscar" :disabled="!valid">
+              Pesquisar
+            </v-btn>
+            <v-btn color="secondary" class="mt-2 ml-2" @click="limpar">
+              Limpar
+            </v-btn>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-card v-if="localInfo" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Local da Infração</v-card-title>
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="localInfo.codigo_municipio_uf"
+              label="Código/Município/UF"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.rodovia"
+              label="BR"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.km"
+              label="Km"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.sentido"
+              label="Sentido"
+              readonly
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field
+              :model-value="localInfo.data_hora"
+              label="Data/Hora"
+              readonly
+            />
+          </v-col>
+        </v-row>
+        <v-chip v-if="foraCircunscricao" color="red" class="mt-2" dark>
+          Fora da Circunscrição
+        </v-chip>
+        <v-chip v-else color="green" class="mt-2" dark>
+          Circunscrição do Rio Grande do Sul
+        </v-chip>
+      </v-card-text>
+    </v-card>
+
+    <v-card v-if="amparoInfo && !foraCircunscricao" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Amparo legal</v-card-title>
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" md="3">
+            <v-text-field
+              :model-value="amparoInfo.codigo"
+              label="Código"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="5">
+            <v-text-field
+              :model-value="amparoInfo.descricao"
+              label="Descrição"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="amparoInfo.amparo"
+              label="Amparo legal"
+              readonly
+            />
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-chip
+        v-if="checked"
+        class="mb-4"
+        :color="permitido ? 'green' : 'red'"
+        dark
+      >
+        {{
+          permitido
+            ? 'Enquadramento legal permitido'
+            : 'Enquadramento legal não permitido'
+        }}
+      </v-chip>
+    </v-card>
+    
+    <v-card v-if="envolvidos.length && !foraCircunscricao" class="pa-4" elevation="2">
+      <v-card-title>Envolvidos</v-card-title>
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" md="6" v-for="env in envolvidos" :key="env.id">
+            <v-card class="mb-2">
+              <v-card-text>
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-text-field
+                      :model-value="env.nome"
+                      label="Nome"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      :model-value="env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento"
+                      label="Envolvimento"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      :model-value="env.tipoDocumento"
+                      label="Tipo Documento"
+                      readonly
+                    />
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      :model-value="env.numeroDocumento"
+                      label="Número Documento"
+                      readonly
+                    />
+                  </v-col>
+                </v-row>
+                <v-chip
+                  v-if="showInstituicao(env)"
+                  color="green"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor previsto em lei:
+                  {{ instituicaoNome(env.numeroDocumento) }}
+                </v-chip>
+                <v-chip
+                  v-else
+                  color="red"
+                  class="mt-2"
+                >
+                  Proprietário/possuidor não previsto em lei
+                </v-chip>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <v-form
+      v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
+      ref="manualFormRef"
+      v-model="manualValid"
+      class="mt-4"
+    >
+      <v-card class="pa-4" elevation="2">
+        <v-card-title class="d-flex justify-space-between align-center">
+          Justificativa
+          <v-btn
+            v-if="editJustificativa"
+            size="small"
+            variant="text"
+            color="secondary"
+            @click="editJustificativa = false"
+          >
+            Cancelar
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-textarea
+            v-model="motivoManual"
+            label="Motivo"
+            :rules="[rules.required]"
+          />
+          <v-text-field
+            v-model="justificativaManual"
+            label="Justificativa por não ter substituto"
+            :rules="[rules.required]"
+          />
+        </v-card-text>
+      </v-card>
+    </v-form>
+    <v-card v-if="justificativa && !editJustificativa && !foraCircunscricao" class="pa-4 mb-2" elevation="2">
+      <v-card-title class="d-flex justify-space-between align-center">
+        Justificativa
+        <v-btn size="small" @click="enableManualEdit" color="primary">Alterar</v-btn>
+      </v-card-title>
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" md="4">
+            <v-text-field
+              :model-value="justificativa.orgao"
+              label="Órgão"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12" md="8">
+            <v-text-field
+              :model-value="justificativa.motivo"
+              label="Motivo"
+              readonly
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              :model-value="justificativa.justificativa"
+              label="Justificativa"
+              readonly
+            />
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <v-btn
+      v-if="!foraCircunscricao && (justificativa || requireManualJustificativa)"
+      color="primary"
+      class="mt-4"
+      :disabled="!justificativa && !manualValid"
+      @click="enviarSolicitacao"
+    >
+      Solicitar Cancelamento
+    </v-btn>
+
   </v-container>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
