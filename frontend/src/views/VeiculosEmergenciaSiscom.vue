@@ -319,6 +319,7 @@ async function buscar() {
 
   try {
     const { data } = await pesquisarAi({ numero: numeroAi.value })
+    console.log('Dados do AI:', data)
 
     if (!data) {
       limparCampos()
