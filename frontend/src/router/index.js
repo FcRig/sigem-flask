@@ -7,6 +7,7 @@ import AutoInfracao from '../views/AutoInfracao.vue'
 import AutoInfracaoSiscom from '../views/AutoInfracaoSiscom.vue'
 import HistoricoSiscom from '../views/HistoricoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
+import VeiculosEmergenciaSiscom from '../views/VeiculosEmergenciaSiscom.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
 import Veiculo from '../views/Veiculo.vue'
 import store from '../store'
@@ -38,6 +39,11 @@ const routes = [
     path: '/historico-siscom',
     component: HistoricoSiscom,
     meta: { requiresAuth: true, title: 'Histórico do Auto de Infração' }
+  },
+  {
+    path: '/siscom/cancelamentos/veiculos-emergencia',
+    component: VeiculosEmergenciaSiscom,
+    meta: { requiresAuth: true, title: 'Veículos de Emergência SISCOM' }
   },
   {
     path: '/veiculo',
