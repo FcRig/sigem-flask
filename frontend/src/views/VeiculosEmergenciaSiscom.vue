@@ -249,6 +249,12 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { onBeforeRouteLeave } from 'vue-router'
+import {
+  pesquisarAutoInfracao,
+  obterEnvolvidos,
+  solicitarCancelamento
+} from '../services/autoprf'
+=======
 import { pesquisarAi } from '../services/siscom'
 import { consultarPlaca } from '../services/veiculo'
 
@@ -338,7 +344,6 @@ const justificativas = {
 const codigosPermitidos = ['745-50', '746-30', '747-10']
 const codigosPermitidosDigits = codigosPermitidos.map(c => c.replace(/\D/g, ''))
 
-
 function sanitize(cnpj) {
   return (cnpj || '').replace(/\D/g, '')
 }
@@ -377,6 +382,11 @@ async function buscar() {
   if (!formRef.value?.validate()) return
   checked.value = false
   try {
+    const { data } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
+    
+    if (data.id) {
+      autoId.value = data.id
+      idProcesso.value = data.idProcesso
     const { data } = await pesquisarAi({ numero: numeroAi.value })
 
     if (data) {
@@ -396,6 +406,12 @@ async function buscar() {
       const digits = codigo.replace(/\D/g, '')
       permitido.value = codigosPermitidosDigits.includes(digits)
       checked.value = true
+
+      const res = await obterEnvolvidos(data.id)
+      envolvidos.value = res.data.filter(env => {
+        const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
+        return !/condutor/.test(envolvimento)
+      })
 
       envolvidos.value = []
       if (data.veiculo?.placa) {
@@ -425,8 +441,16 @@ async function buscar() {
       checked.value = true
     }
   } catch (err) {
+    const msg = err.response?.data?.msg
+    if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
+      store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' })
+    } else {
+      console.error(err)
+    }
+
     store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na pesquisa' })
     console.error(err)
+
     envolvidos.value = []
     amparoInfo.value = null
     localInfo.value = null
@@ -467,7 +491,84 @@ function removeAccents(str) {
 }
 
 async function enviarSolicitacao() {
+
+  const useManual = editJustificativa.value || !justificativa.value
+  if (useManual && !manualFormRef.value?.validate()) return
+
+  const cpf = (store.state.user.cpf || '').replace(/\D/g, '').slice(0, 11)
+
+  const listItem = {
+    id: null,
+    processo: {
+      id: idProcesso.value,
+      estado: "Criado",
+      eventos: [],
+      eventosExternos: [],
+      notificacoes: [],
+      nup: "",
+      seqDocumentos: 0,
+      separadoParaEnvio: null,
+      bloqueio: null,
+      pago: false,
+      solicitacoes: [],
+      solicitacao: null,
+      boletos: [],
+      arquivos: []
+    },
+    dataProtocolo: null,
+    estado: "Protocolada",
+    estadoDescricao: null,
+    tipoSolicitacao: "Cancelamento",
+    justificativa: useManual
+      ? justificativaManual.value
+      : justificativa.value.justificativa,
+    texto: useManual ? motivoManual.value : justificativa.value.motivo,
+    autoSubstituto: null,
+    numeroAutoSubstituto: null,
+    requerente: {
+      nome: removeAccents(store.state.user.username || '').toUpperCase(),
+      documentos: [
+        {
+          tipoDocumento: "CPF",
+          numero: cpf
+        }
+      ],
+      tiposEnvolvimento: []
+    },
+    numeroProtocolo: null,
+    origem: "PRF",
+    documentos: [],
+    eventos: [],
+    bloqueioTemporario: null,
+    bloqueioPermanente: false,
+    usuarioDiligencia: null,
+    condutorIndicado: null
+  }
+
+  const payload = {
+    numero: numeroAi.value,
+    list: [listItem]
+  }  
+
+  try {
+    const { data } = await solicitarCancelamento(payload)
+    console.log(data)
+    if (data === true) {
+      store.commit('showSnackbar', { msg: 'Solicitação enviada', color: 'success' })
+    } else {
+      store.commit('showSnackbar', { msg: 'Erro na solicitação' })
+    }
+    limpar()
+  } catch (err) {
+    const msg = err.response?.data?.msg
+    if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
+      store.commit('showSnackbar', { msg: 'Faça login no AutoPRF' })
+    } else {
+      store.commit('showSnackbar', { msg: msg || 'Erro na solicitação' })
+    }
+    limpar()
+  }
+=======
   store.commit('showSnackbar', { msg: 'Funcionalidade indisponível' })
 }
-
 </script>

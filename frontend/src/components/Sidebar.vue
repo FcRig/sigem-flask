@@ -68,6 +68,20 @@
           prepend-icon="mdi-magnify"
           to="/resultado-ai-siscom"
         />
+        <v-list-group value="siscom-cancel">
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="mdi-cancel"
+              title="Cancelamentos"
+            />
+          </template>
+          <v-list-item
+            title="Veículos de Emergência"
+            prepend-icon="mdi-ambulance"
+            to="/siscom/cancelamentos/veiculos-emergencia"
+          />
+        </v-list-group>
       <v-list-item
         title="Histórico"
         prepend-icon="mdi-history"
