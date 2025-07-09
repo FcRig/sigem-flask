@@ -9,11 +9,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { onBeforeRouteLeave } from 'vue-router'
-import {
-  pesquisarAutoInfracao,
-  obterEnvolvidos,
-  solicitarCancelamento
-} from '../services/autoprf'
+import { solicitarCancelamento } from '../services/autoprf'
 import { pesquisarAi } from '../services/siscom'
 import { consultarPlaca } from '../services/veiculo'
 
@@ -25,7 +21,6 @@ const permitido = ref(false)
 const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
-const autoId = ref(null)
 const idProcesso = ref(null)
 const motivoManual = ref('')
 const justificativaManual = ref('')
@@ -84,59 +79,47 @@ async function buscar() {
   checked.value = false
 
   try {
-    const { data: autoData } = await pesquisarAutoInfracao({ auto_infracao: numeroAi.value })
+    const { data } = await pesquisarAi({ numero: numeroAi.value })
 
-    if (autoData?.id) {
-      autoId.value = autoData.id
-      idProcesso.value = autoData.idProcesso
-
-      const { data } = await pesquisarAi({ numero: numeroAi.value })
-
-      if (data) {
-        localInfo.value = data.local || null
-
-        const cd = data.infracao?.codigo_descricao || ''
-        const [codPart, ...descParts] = cd.split(/\s*-\s*/)
-        const codigo = codPart?.trim() || ''
-        const descricao = descParts.join(' - ').trim()
-
-        amparoInfo.value = cd ? {
-          codigo,
-          descricao,
-          amparo: data.infracao?.amparo_legal || ''
-        } : null
-
-        const digits = codigo.replace(/\D/g, '')
-        permitido.value = codigosPermitidosDigits.includes(digits)
-        checked.value = true
-
-        const res = await obterEnvolvidos(autoData.id)
-        envolvidos.value = res.data.filter(env => {
-          const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
-          return !/condutor/.test(envolvimento)
-        })
-
-        if (!envolvidos.value.length && data.veiculo?.placa) {
-          try {
-            const { data: veiculoData } = await consultarPlaca({ placa: data.veiculo.placa })
-            if (veiculoData?.nomeProprietario || veiculoData?.documentoProprietario) {
-              envolvidos.value = [{
-                id: 1,
-                nome: veiculoData.nomeProprietario,
-                envolvimento: 'Proprietário',
-                tipoDocumento: veiculoData.descricaoTipoDocumentoProprietario || veiculoData.tipo_documento,
-                numeroDocumento: veiculoData.documentoProprietario
-              }]
-            }
-          } catch (e) {
-            console.error(e)
-          }
-        }
-      } else {
-        limparCampos()
-      }
-    } else {
+    if (!data) {
       limparCampos()
+      return
+    }
+
+    localInfo.value = data.local || null
+    idProcesso.value = null
+
+    const cd = data.infracao?.codigo_descricao || ''
+    const [codPart, ...descParts] = cd.split(/\s*-\s*/)
+    const codigo = codPart?.trim() || ''
+    const descricao = descParts.join(' - ').trim()
+
+    amparoInfo.value = cd ? {
+      codigo,
+      descricao,
+      amparo: data.infracao?.amparo_legal || ''
+    } : null
+
+    const digits = codigo.replace(/\D/g, '')
+    permitido.value = codigosPermitidosDigits.includes(digits)
+    checked.value = true
+
+    envolvidos.value = []
+    if (data.veiculo?.placa) {
+      try {
+        const { data: veiculoData } = await consultarPlaca({ placa: data.veiculo.placa })
+        if (veiculoData?.nomeProprietario || veiculoData?.documentoProprietario) {
+          envolvidos.value = [{
+            id: 1,
+            nome: veiculoData.nomeProprietario,
+            envolvimento: 'Proprietário',
+            tipoDocumento: veiculoData.descricaoTipoDocumentoProprietario || veiculoData.tipo_documento,
+            numeroDocumento: veiculoData.documentoProprietario
+          }]
+        }
+      } catch (e) {
+        console.error(e)
+      }
     }
   } catch (err) {
     const msg = err.response?.data?.msg || 'Erro na pesquisa'
