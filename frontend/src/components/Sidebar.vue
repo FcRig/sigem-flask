@@ -81,6 +81,11 @@
             prepend-icon="mdi-ambulance"
             to="/siscom/cancelamentos/veiculos-emergencia"
           />
+          <v-list-item
+            title="Duplicidade"
+            prepend-icon="mdi-content-duplicate"
+            to="/siscom/cancelamentos/duplicidade"
+          />
         </v-list-group>
       <v-list-item
         title="Histórico"

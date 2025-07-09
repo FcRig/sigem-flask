@@ -9,6 +9,7 @@ import HistoricoSiscom from '../views/HistoricoSiscom.vue'
 import VeiculosEmergencia from '../views/VeiculosEmergencia.vue'
 import VeiculosEmergenciaSiscom from '../views/VeiculosEmergenciaSiscom.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
+import CancelamentoDuplicidadeSiscom from '../views/CancelamentoDuplicidadeSiscom.vue'
 import Veiculo from '../views/Veiculo.vue'
 import store from '../store'
 
@@ -44,6 +45,11 @@ const routes = [
     path: '/siscom/cancelamentos/veiculos-emergencia',
     component: VeiculosEmergenciaSiscom,
     meta: { requiresAuth: true, title: 'Veículos de Emergência SISCOM' }
+  },
+  {
+    path: '/siscom/cancelamentos/duplicidade',
+    component: CancelamentoDuplicidadeSiscom,
+    meta: { requiresAuth: true, title: 'Duplicidade SISCOM' }
   },
   {
     path: '/veiculo',
