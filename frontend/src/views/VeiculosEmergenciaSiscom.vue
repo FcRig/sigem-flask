@@ -319,8 +319,7 @@ async function buscar() {
   checked.value = false
 
   try {
-    const { data } = await pesquisarAi({ numero: numeroAi.value })
-    console.log('Dados do AI:', data)
+    const { data } = await pesquisarAi({ numero: numeroAi.value })    
 
     if (!data) {
       limparCampos()
@@ -349,6 +348,7 @@ async function buscar() {
     if (data.veiculo?.placa) {
       try {
         const { data: veiculoData } = await consultarPlaca({ placa: data.veiculo.placa })
+        
         if (veiculoData?.nomeProprietario || veiculoData?.documentoProprietario) {
           envolvidos.value = [{
             id: 1,
