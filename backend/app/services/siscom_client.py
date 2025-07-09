@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import requests
 
 
@@ -94,7 +95,12 @@ class SiscomClient:
         result["local"]["sentido"] = payload.get("sentidoVia")
         data_hora = payload.get("dataHoraInfracao")
         if data_hora:
-            result["local"]["data_hora"] = data_hora
+            try:
+                ts = int(data_hora) / 1000
+                dt = datetime.fromtimestamp(ts)
+                result["local"]["data_hora"] = dt.strftime("%d/%m/%Y %H:%M:%S")
+            except (ValueError, OSError, TypeError):
+                result["local"]["data_hora"] = data_hora
 
         return result
 
