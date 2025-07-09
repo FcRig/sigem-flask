@@ -254,6 +254,9 @@ import {
   obterEnvolvidos,
   solicitarCancelamento
 } from '../services/autoprf'
+=======
+import { pesquisarAi } from '../services/siscom'
+import { consultarPlaca } from '../services/veiculo'
 
 const numeroAi = ref('')
 const envolvidos = ref([])
@@ -341,7 +344,6 @@ const justificativas = {
 const codigosPermitidos = ['745-50', '746-30', '747-10']
 const codigosPermitidosDigits = codigosPermitidos.map(c => c.replace(/\D/g, ''))
 
-
 function sanitize(cnpj) {
   return (cnpj || '').replace(/\D/g, '')
 }
@@ -385,6 +387,9 @@ async function buscar() {
     if (data.id) {
       autoId.value = data.id
       idProcesso.value = data.idProcesso
+    const { data } = await pesquisarAi({ numero: numeroAi.value })
+
+    if (data) {
       localInfo.value = data.local || null
       const cd = data.infracao?.codigo_descricao || ''
       const [codPart, ...descParts] = cd.split(/\s*-\s*/)
@@ -407,6 +412,27 @@ async function buscar() {
         const envolvimento = (env.envolvimentoAuto || env.envolvimentoProcesso || env.envolvimento || '').toLowerCase()
         return !/condutor/.test(envolvimento)
       })
+
+      envolvidos.value = []
+      if (data.veiculo?.placa) {
+        try {
+          const res = await consultarPlaca({ placa: data.veiculo.placa })
+          const v = res.data || {}
+          if (v.nomeProprietario || v.documentoProprietario) {
+            envolvidos.value = [
+              {
+                id: 1,
+                nome: v.nomeProprietario,
+                envolvimento: 'Proprietário',
+                tipoDocumento: v.descricaoTipoDocumentoProprietario || v.tipo_documento,
+                numeroDocumento: v.documentoProprietario
+              }
+            ]
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
     } else {
       envolvidos.value = []
       amparoInfo.value = null
@@ -421,6 +447,10 @@ async function buscar() {
     } else {
       console.error(err)
     }
+
+    store.commit('showSnackbar', { msg: err.response?.data?.msg || 'Erro na pesquisa' })
+    console.error(err)
+
     envolvidos.value = []
     amparoInfo.value = null
     localInfo.value = null
@@ -461,6 +491,7 @@ function removeAccents(str) {
 }
 
 async function enviarSolicitacao() {
+
   const useManual = editJustificativa.value || !justificativa.value
   if (useManual && !manualFormRef.value?.validate()) return
 
@@ -537,6 +568,7 @@ async function enviarSolicitacao() {
     }
     limpar()
   }
+=======
+  store.commit('showSnackbar', { msg: 'Funcionalidade indisponível' })
 }
-
 </script>
