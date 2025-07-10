@@ -7,7 +7,7 @@ export const instituicoes = {
   '07963160000130': 'SUSEPE',
   '09734605000187': 'Polícia Legislativa',
   '87934675000196': 'Estado do Rio Grande do Sul',
-  '89175541003937': 'DAER',
+  '92883834000100': 'DAER',
 }
 
 export const justificativas = {
@@ -53,7 +53,7 @@ export const justificativas = {
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão destinados a socorro de incêndio e salvamento (Corpo de Bombeiros Militar do Estado do Rio Grande do Sul). Requerimento em anexo',
     justificativa: 'Viatura policial'
   },
-  '89175541003937': {
+  '92883834000100': {
     orgao: 'Departamento Autônomo de Estradas de Rodagem do Rio Grande do Sul',
     motivo:
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão ligado à fiscalização de trânsito (Departamento Autônomo de Estradas de Rodagem do Rio Grande do Sul - DAER). Requerimento em anexo',
