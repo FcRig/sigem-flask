@@ -242,23 +242,35 @@
       Solicitar Cancelamento
     </v-btn>
 
-    <v-card
-      v-if="cancelamentoInfo && typeof cancelamentoInfo === 'object'"
-      class="mt-4 pa-4"
-      elevation="2"
-    >
-      <div class="mb-2"><strong>Número do Protocolo:</strong> {{ cancelamentoInfo.numeroProtocolo }}</div>
-      <v-data-table
-        :headers="historicoHeaders"
-        :items="cancelamentoInfo.eventos"
-        :items-per-page="-1"
-        hide-default-footer
-      >
-        <template #item.dataHora="{ item }">
-          {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
-        </template>
-      </v-data-table>
-    </v-card>
+    <v-dialog v-model="cancelamentoDialog" max-width="600">
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          Solicitação de Cancelamento
+          <v-btn icon="mdi-close" size="small" @click="fecharCancelamento" />
+        </v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12" md="4">
+              <v-text-field
+                :model-value="cancelamentoInfo?.numeroProtocolo"
+                label="Número do Protocolo"
+                readonly
+              />
+            </v-col>
+          </v-row>
+          <v-data-table
+            :headers="historicoHeaders"
+            :items="cancelamentoInfo?.eventos"
+            :items-per-page="-1"
+            hide-default-footer
+          >
+            <template #item.dataHora="{ item }">
+              {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-alert v-else-if="cancelamentoInfo === false" type="warning" class="mt-4">
       Não há registro de protocolo da solicitação
     </v-alert>
@@ -299,6 +311,7 @@ const manualFormRef = ref(null)
 const editJustificativa = ref(false)
 const store = useStore()
 const cancelamentoInfo = ref(null)
+const cancelamentoDialog = ref(false)
 const historicoHeaders = [{ title: 'Data e Hora', key: 'dataHora' }]
 
 const foraCircunscricao = computed(() => {
@@ -417,13 +430,20 @@ function limpar() {
   manualValid.value = false
   editJustificativa.value = false
   cancelamentoInfo.value = null
+  cancelamentoDialog.value = false
   formRef.value?.resetValidation()
   manualFormRef.value?.resetValidation()
+}
+
+function fecharCancelamento() {
+  cancelamentoDialog.value = false
+  cancelamentoInfo.value = null
 }
 
 onBeforeRouteLeave(() => {
   limpar()
   cancelamentoInfo.value = null
+  cancelamentoDialog.value = false
 })
 
 function removeAccents(str) {
@@ -508,6 +528,7 @@ async function enviarSolicitacao() {
           numeroProtocolo: item.numeroProtocolo,
           eventos: item.eventos || []
         }
+        cancelamentoDialog.value = true
       } else {
         cancelamentoInfo.value = false
       }
