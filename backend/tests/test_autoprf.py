@@ -292,3 +292,66 @@ def test_cancelamento_session_expired(client, app, monkeypatch):
     with app.app_context():
         updated = User.query.get(user_id)
         assert updated.autoprf_session is None
+
+
+def test_historico_returns_data(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+
+    token = get_token(client)
+
+    expected = [{"status": "ok"}]
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_hist(self, pid):
+        assert pid == 11
+        return expected
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "historico", fake_hist)
+
+    response = client.get(
+        "/api/autoprf/historico/11",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == expected
+
+
+def test_historico_session_expired(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sessao"
+        db.session.commit()
+        uid = user.id
+
+    token = get_token(client)
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sessao"
+        self.jwt_token = jwt_token
+
+    def fake_hist(self, pid):
+        resp = requests.Response()
+        resp.status_code = 401
+        raise requests.HTTPError(response=resp)
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "historico", fake_hist)
+
+    response = client.get(
+        "/api/autoprf/historico/11",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"msg": "Sessão AutoPRF expirada"}
+    with app.app_context():
+        updated = User.query.get(uid)
+        assert updated.autoprf_session is None

@@ -210,3 +210,17 @@ class AutoPRFClient:
         print(resp)
         resp.raise_for_status()
         return resp.json() if resp.content else True
+
+    def historico(self, id_processo: int | str) -> list:
+        """Return the list of status updates for a given processo."""
+
+        headers = {}
+        if self.jwt_token:
+            headers["Authorization"] = f"Bearer {self.jwt_token}"
+
+        resp = requests.get(
+            f"{self.BASE_URL}/auto-infracao/{id_processo}/historico",
+            headers=headers,
+        )
+        resp.raise_for_status()
+        return resp.json() if resp.content else []
