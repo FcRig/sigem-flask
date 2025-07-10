@@ -302,21 +302,21 @@ def test_historico_returns_data(client, app, monkeypatch):
 
     token = get_token(client)
 
-    expected = [{"status": "ok"}]
+    expected = {"status": "ok"}
 
     def fake_init(self, jwt_token=None):
         assert jwt_token == "sessao"
         self.jwt_token = jwt_token
 
     def fake_hist(self, pid):
-        assert pid == 11
+        assert pid == 123
         return expected
 
     monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
     monkeypatch.setattr(AutoPRFClient, "historico", fake_hist)
 
     response = client.get(
-        "/api/autoprf/historico/11",
+        "/api/autoprf/historico/123",
         headers={"Authorization": f"Bearer {token}"},
     )
 
@@ -346,7 +346,7 @@ def test_historico_session_expired(client, app, monkeypatch):
     monkeypatch.setattr(AutoPRFClient, "historico", fake_hist)
 
     response = client.get(
-        "/api/autoprf/historico/11",
+        "/api/autoprf/historico/123",
         headers={"Authorization": f"Bearer {token}"},
     )
 
