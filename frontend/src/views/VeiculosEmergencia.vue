@@ -242,6 +242,27 @@
       Solicitar Cancelamento
     </v-btn>
 
+    <v-card
+      v-if="cancelamentoInfo && typeof cancelamentoInfo === 'object'"
+      class="mt-4 pa-4"
+      elevation="2"
+    >
+      <div class="mb-2"><strong>Número do Protocolo:</strong> {{ cancelamentoInfo.numeroProtocolo }}</div>
+      <v-data-table
+        :headers="historicoHeaders"
+        :items="cancelamentoInfo.eventos"
+        :items-per-page="-1"
+        hide-default-footer
+      >
+        <template #item.dataHora="{ item }">
+          {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
+        </template>
+      </v-data-table>
+    </v-card>
+    <v-alert v-else-if="cancelamentoInfo === false" type="warning" class="mt-4">
+      Não há registro de protocolo da solicitação
+    </v-alert>
+
   </v-container>
 </template>
 
@@ -252,7 +273,8 @@ import { onBeforeRouteLeave } from 'vue-router'
 import {
   pesquisarAutoInfracao,
   obterEnvolvidos,
-  solicitarCancelamento
+  solicitarCancelamento,
+  obterHistorico
 } from '../services/autoprf'
 import {
   instituicoes,
@@ -276,6 +298,8 @@ const manualValid = ref(false)
 const manualFormRef = ref(null)
 const editJustificativa = ref(false)
 const store = useStore()
+const cancelamentoInfo = ref(null)
+const historicoHeaders = [{ title: 'Data e Hora', key: 'dataHora' }]
 
 const foraCircunscricao = computed(() => {
   const str = localInfo.value?.codigo_municipio_uf || ''
@@ -392,12 +416,14 @@ function limpar() {
   justificativaManual.value = ''
   manualValid.value = false
   editJustificativa.value = false
+  cancelamentoInfo.value = null
   formRef.value?.resetValidation()
   manualFormRef.value?.resetValidation()
 }
 
 onBeforeRouteLeave(() => {
   limpar()
+  cancelamentoInfo.value = null
 })
 
 function removeAccents(str) {
@@ -472,6 +498,23 @@ async function enviarSolicitacao() {
       store.commit('showSnackbar', { msg: 'Erro na solicitação' })
     }
     limpar()
+    try {
+      const { data: hist } = await obterHistorico(idProcesso.value)
+      const item = (hist.solicitacoes || []).find(s =>
+        /cancelamento/i.test(s.tipoSolicitacao)
+      )
+      if (item) {
+        cancelamentoInfo.value = {
+          numeroProtocolo: item.numeroProtocolo,
+          eventos: item.eventos || []
+        }
+      } else {
+        cancelamentoInfo.value = false
+      }
+    } catch (e) {
+      console.error(e)
+      cancelamentoInfo.value = false
+    }
   } catch (err) {
     const msg = err.response?.data?.msg
     if (/Sessão AutoPRF expirada/i.test(msg) || /Sessão não iniciada/i.test(msg)) {
