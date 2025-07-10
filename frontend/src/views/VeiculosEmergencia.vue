@@ -242,38 +242,41 @@
       Solicitar Cancelamento
     </v-btn>
 
-    <v-card
-      v-if="cancelamentoInfo && typeof cancelamentoInfo === 'object'"
-      class="mt-4 pa-4"
-      elevation="2"
-    >
-      <v-card-title>Solicitação de Cancelamento</v-card-title>
-      <v-card-text>
-        <v-row dense>
-          <v-col cols="12" md="4">
-            <v-text-field
-              :model-value="cancelamentoInfo.numeroProtocolo"
-              label="Número do Protocolo"
-              readonly
-            />
-          </v-col>
-        </v-row>
-        <v-data-table
-          :headers="historicoHeaders"
-          :items="cancelamentoInfo.eventos"
-          :items-per-page="-1"
-          hide-default-footer
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-card
+          v-if="cancelamentoInfo && typeof cancelamentoInfo === 'object'"
+          class="mt-4 pa-4"
+          elevation="2"
         >
-          <template #item.dataHora="{ item }">
-            {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
-    <v-alert v-else-if="cancelamentoInfo === false" type="warning" class="mt-4">
-      Não há registro de protocolo da solicitação
-    </v-alert>
-
+          <v-card-title>Solicitação de Cancelamento</v-card-title>
+          <v-card-text>
+            <v-row dense>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  :model-value="cancelamentoInfo.numeroProtocolo"
+                  label="Número do Protocolo"
+                  readonly
+                />
+              </v-col>
+            </v-row>
+            <v-data-table
+              :headers="historicoHeaders"
+              :items="cancelamentoInfo.eventos"
+              :items-per-page="-1"
+              hide-default-footer
+            >
+              <template #item.dataHora="{ item }">
+                {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+        <v-alert v-else-if="cancelamentoInfo === false" type="warning" class="mt-4">
+          Não há registro de protocolo da solicitação
+        </v-alert>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
