@@ -271,7 +271,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-alert v-else-if="cancelamentoInfo === false" type="warning" class="mt-4">
+    <v-alert v-if="cancelamentoInfo === false" type="warning" class="mt-4">
       Não há registro de protocolo da solicitação
     </v-alert>
 
