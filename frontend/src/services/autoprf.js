@@ -15,3 +15,7 @@ export function obterEnvolvidos(id) {
 export function solicitarCancelamento(payload) {
   return api.post('/api/autoprf/solicitacao/cancelamento', payload)
 }
+
+export function obterHistorico(idProcesso) {
+  return api.get(`/api/autoprf/historico/${idProcesso}`)
+}
