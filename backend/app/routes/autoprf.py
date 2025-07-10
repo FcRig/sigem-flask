@@ -104,3 +104,24 @@ def solicitar_cancelamento():
         raise
 
     return jsonify(result)
+
+
+@bp.route('/historico/<int:id_processo>', methods=['GET'])
+@jwt_required()
+def historico(id_processo):
+    user = User.query.get_or_404(get_jwt_identity())
+
+    if not user.autoprf_session:
+        return jsonify({'msg': 'Sessão não iniciada'}), 400
+
+    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    try:
+        result = client.historico(id_processo)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
+
+    return jsonify(result)
