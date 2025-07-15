@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import re
 
 
 class AutoPRFClient:
@@ -185,7 +186,15 @@ class AutoPRFClient:
             headers=headers,
         )
         response.raise_for_status()
-        return response.json() if response.content else []
+        data = response.json() if response.content else []
+        for env in data:
+            numero = env.get("numeroDocumento")
+            tipo = (env.get("tipoDocumento") or "").upper()
+            if numero and "CNPJ" in tipo:
+                digits = re.sub(r"\D", "", str(numero))
+                if len(digits) < 14:
+                    env["numeroDocumento"] = digits.zfill(14)
+        return data
 
     def solicitar_cancelamento(self, numero_auto: str, payload: dict) -> dict:
         """Submit a cancelamento request for a given Auto de Infracao."""        

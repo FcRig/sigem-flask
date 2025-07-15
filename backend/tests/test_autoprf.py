@@ -355,3 +355,31 @@ def test_historico_session_expired(client, app, monkeypatch):
     with app.app_context():
         updated = User.query.get(uid)
         assert updated.autoprf_session is None
+
+
+def test_get_envolvidos_pads_cnpj(monkeypatch):
+    expected_id = 77
+    raw_data = [{"id": 1, "tipoDocumento": "CNPJ", "numeroDocumento": "1234567890123"}]
+
+    class FakeResponse:
+        def __init__(self, data):
+            self._data = data
+            self.status_code = 200
+            self.content = b"1"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return self._data
+
+    def fake_get(url, headers=None):
+        assert str(expected_id) in url
+        return FakeResponse(raw_data)
+
+    monkeypatch.setattr(requests, "get", fake_get)
+
+    client = AutoPRFClient(jwt_token="token")
+    result = client.get_envolvidos(expected_id)
+
+    assert result[0]["numeroDocumento"] == "01234567890123"
