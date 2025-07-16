@@ -47,7 +47,6 @@ to authenticate in AutoPRF.
   solicitação de cancelamento.
 - `GET /api/autoprf/historico/<id_processo>` – obtém o histórico do processo
   de Auto de Infração utilizando a sessão autenticada.
-- `GET /api/autoprf/historico/<idProcesso>` – retorna o histórico do processo do AutoPRF.
 
 O frontend inclui um botão **Solicitação de Cancelamento** na tela de
 Veículos de Emergência que envia a requisição e exibe uma snackbar de sucesso
