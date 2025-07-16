@@ -176,6 +176,23 @@
         label="Arquivo PDF"
       />
     </v-card>
+    <v-card v-if="checked" class="pa-4 mb-2" elevation="2">
+      <v-card-title>Anexar Arquivo</v-card-title>
+      <v-card-text>
+        <v-file-input
+          accept="application/pdf"
+          v-model="arquivoPdf"
+          label="Arquivo PDF"
+        />
+        <v-alert
+          v-if="uploadStatus !== null"
+          :type="uploadStatus ? 'success' : 'error'"
+          class="mt-2"
+        >
+          {{ uploadStatus ? 'Arquivo enviado com sucesso' : 'Erro ao enviar arquivo' }}
+        </v-alert>
+      </v-card-text>
+    </v-card>
     <v-form
       v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
       ref="manualFormRef"
@@ -536,9 +553,14 @@ async function enviarSolicitacao() {
       try {
         await anexarArquivo(idProcesso.value, arquivoPdf.value)
         uploadStatus.value = true
+        store.commit('showSnackbar', {
+          msg: 'Arquivo enviado com sucesso',
+          color: 'success'
+        })
       } catch (e) {
         console.error(e)
         uploadStatus.value = false
+        store.commit('showSnackbar', { msg: 'Erro ao enviar arquivo' })
       }
     } else {
       uploadStatus.value = null
