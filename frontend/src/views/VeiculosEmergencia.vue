@@ -168,14 +168,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-card class="pa-4 my-2" elevation="2">
-      <v-card-title>Requerimento</v-card-title>
-      <v-file-input
-        accept="application/pdf"
-        v-model="arquivoPdf"
-        label="Arquivo PDF"
-      />
-    </v-card>
     <v-card v-if="checked" class="pa-4 mb-2" elevation="2">
       <v-card-title>Anexar Arquivo</v-card-title>
       <v-card-text>
