@@ -4,6 +4,7 @@ export const instituicoes = {
   '28610005000155': 'Corpo de Bombeiros',
   '02510700000151': 'EPTC',
   '00394429000179': 'PRF',
+  '00394494011413': 'Ministério da Justiça e Segurança Pública',
   '07963160000130': 'SUSEPE',
   '09734605000187': 'Polícia Legislativa',
   '87934675000196': 'Estado do Rio Grande do Sul',
@@ -17,6 +18,12 @@ export const justificativas = {
       'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Rodoviária Federal). Requerimento em anexo',
     justificativa: 'Viatura policial'
   },
+  '00394494011413': {
+    orgao: 'Ministério da Justiça e Segurança Pública',
+    motivo:
+      'Enquadramento no art. 280, § 6º do CTB, por se tratar de viatura oficial de órgão policial (Polícia Rodoviária Federal). Requerimento em anexo',
+    justificativa: 'Viatura policial'
+  }, 
   '00058163000125': {
     orgao: 'Polícia Civil',
     motivo:
