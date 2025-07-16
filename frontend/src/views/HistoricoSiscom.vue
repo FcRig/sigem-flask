@@ -34,12 +34,14 @@
 <script setup>
 import { ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
+import { useStore } from 'vuex'
 import { buscarHistorico } from '../services/siscom'
 
 const numeroAi = ref('')
 const historico = ref([])
 const formRef = ref(null)
 const valid = ref(false)
+const store = useStore()
 
 const headers = [
   { title: 'Data', key: 'dataHistorico' },
@@ -53,9 +55,12 @@ async function buscar() {
   try {
     const { data } = await buscarHistorico({ numero: numeroAi.value })
     historico.value = data
+    store.commit('showSnackbar', { msg: 'Hist\u00f3rico obtido com sucesso', color: 'success' })
   } catch (err) {
     console.error(err)
     historico.value = []
+    const msg = err.response?.data?.msg || 'Erro ao consultar hist\u00f3rico'
+    store.commit('showSnackbar', { msg })
   }
 }
 
