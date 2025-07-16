@@ -168,11 +168,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-file-input
-      accept="application/pdf"
-      v-model="arquivoPdf"
-      label="Arquivo PDF"
-    />
     <v-form
       v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
       ref="manualFormRef"
@@ -253,7 +248,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { onBeforeRouteLeave } from 'vue-router'
-import { solicitarCancelamento, anexarArquivo } from '../services/autoprf'
+import { solicitarCancelamento } from '../services/autoprf'
 import { pesquisarAi } from '../services/siscom'
 import { consultarPlaca } from '../services/veiculo'
 import {
@@ -271,7 +266,6 @@ const checked = ref(false)
 const formRef = ref(null)
 const valid = ref(false)
 const idProcesso = ref(null)
-const arquivoPdf = ref(null)
 const motivoManual = ref('')
 const justificativaManual = ref('')
 const manualValid = ref(false)
@@ -399,7 +393,6 @@ function limpar() {
   justificativaManual.value = ''
   manualValid.value = false
   editJustificativa.value = false
-  arquivoPdf.value = null
   formRef.value?.resetValidation()
   manualFormRef.value?.resetValidation()
 }
@@ -462,18 +455,6 @@ async function enviarSolicitacao() {
   const payload = { numero: numeroAi.value, list: [listItem] }
 
   try {
-    if (arquivoPdf.value) {
-      try {
-        await anexarArquivo(idProcesso.value, arquivoPdf.value)
-        store.commit('showSnackbar', {
-          msg: 'Arquivo enviado com sucesso',
-          color: 'success'
-        })
-      } catch (e) {
-        store.commit('showSnackbar', { msg: 'Erro ao enviar arquivo' })
-        console.error(e)
-      }
-    }
 
     const { data } = await solicitarCancelamento(payload)
     const success = data === true
