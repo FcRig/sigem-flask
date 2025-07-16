@@ -168,11 +168,14 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-file-input
-      accept="application/pdf"
-      v-model="arquivoPdf"
-      label="Arquivo PDF"
-    />
+    <v-card class="pa-4 my-2" elevation="2">
+      <v-card-title>Requerimento</v-card-title>
+      <v-file-input
+        accept="application/pdf"
+        v-model="arquivoPdf"
+        label="Arquivo PDF"
+      />
+    </v-card>
     <v-form
       v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
       ref="manualFormRef"
