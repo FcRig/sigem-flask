@@ -125,3 +125,30 @@ def historico(id_processo):
         raise
 
     return jsonify(result)
+
+
+@bp.route('/anexar/<int:id_processo>', methods=['POST'])
+@jwt_required()
+def anexar(id_processo):
+    user = User.query.get_or_404(get_jwt_identity())
+
+    if not user.autoprf_session:
+        return jsonify({'msg': 'Sessão não iniciada'}), 400
+
+    file = request.files.get('file')
+    if not file:
+        return jsonify({'msg': 'Arquivo não enviado'}), 400
+
+    client = AutoPRFClient(jwt_token=user.autoprf_session)
+    try:
+        result = client.anexar_documento_processo(
+            id_processo, file.read(), file.filename
+        )
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.autoprf_session = None
+            db.session.commit()
+            return jsonify({'msg': 'Sessão AutoPRF expirada'}), 401
+        raise
+
+    return jsonify({'ok': bool(result)})

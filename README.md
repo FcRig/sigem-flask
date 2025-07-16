@@ -43,6 +43,8 @@ to authenticate in AutoPRF.
 
 - `POST /api/autoprf/solicitacao/cancelamento` – envia uma solicitação de
   cancelamento de Auto de Infração utilizando a sessão autenticada.
+- `POST /api/autoprf/anexar/<id_processo>` – anexa um PDF ao processo antes da
+  solicitação de cancelamento.
 - `GET /api/autoprf/historico/<id_processo>` – obtém o histórico do processo
   de Auto de Infração utilizando a sessão autenticada.
 - `GET /api/autoprf/historico/<idProcesso>` – retorna o histórico do processo do AutoPRF.

@@ -168,6 +168,11 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <v-file-input
+      accept="application/pdf"
+      v-model="arquivoPdf"
+      label="Arquivo PDF"
+    />
     <v-form
       v-if="!foraCircunscricao && ((requireManualJustificativa && !justificativa) || editJustificativa)"
       ref="manualFormRef"
@@ -268,6 +273,13 @@
               {{ new Date(item.dataHora).toLocaleString('pt-BR') }}
             </template>
           </v-data-table>
+          <v-alert
+            v-if="uploadStatus !== null"
+            :type="uploadStatus ? 'success' : 'error'"
+            class="mt-2"
+          >
+            {{ uploadStatus ? 'Arquivo enviado com sucesso' : 'Erro ao enviar arquivo' }}
+          </v-alert>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -287,7 +299,8 @@ import {
   pesquisarAutoInfracao,
   obterEnvolvidos,
   solicitarCancelamento,
-  obterHistorico
+  obterHistorico,
+  anexarArquivo
 } from '../services/autoprf'
 import {
   instituicoes,
@@ -313,6 +326,8 @@ const editJustificativa = ref(false)
 const store = useStore()
 const cancelamentoInfo = ref(null)
 const cancelamentoDialog = ref(false)
+const arquivoPdf = ref(null)
+const uploadStatus = ref(null)
 const historicoHeaders = [{ title: 'Data e Hora', key: 'dataHora' }]
 
 const foraCircunscricao = computed(() => {
@@ -432,6 +447,8 @@ function limpar() {
   editJustificativa.value = false
   cancelamentoInfo.value = null
   cancelamentoDialog.value = false
+  arquivoPdf.value = null
+  uploadStatus.value = null
   formRef.value?.resetValidation()
   manualFormRef.value?.resetValidation()
 }
@@ -439,6 +456,7 @@ function limpar() {
 function fecharCancelamento() {
   cancelamentoDialog.value = false
   cancelamentoInfo.value = null
+  uploadStatus.value = null
 }
 
 onBeforeRouteLeave(() => {
@@ -508,9 +526,21 @@ async function enviarSolicitacao() {
   const payload = {
     numero: numeroAi.value,
     list: [listItem]
-  }  
+  }
 
   try {
+    if (arquivoPdf.value) {
+      try {
+        await anexarArquivo(idProcesso.value, arquivoPdf.value)
+        uploadStatus.value = true
+      } catch (e) {
+        console.error(e)
+        uploadStatus.value = false
+      }
+    } else {
+      uploadStatus.value = null
+    }
+
     const { data } = await solicitarCancelamento(payload)
     console.log(data)
     if (data === true) {
