@@ -2,6 +2,7 @@ from app.extensions import db
 from app.models import User
 from app.services.autoprf_client import AutoPRFClient
 import requests
+import io
 
 from flask_jwt_extended import create_access_token
 
@@ -383,3 +384,74 @@ def test_get_envolvidos_pads_cnpj(monkeypatch):
     result = client.get_envolvidos(expected_id)
 
     assert result[0]["numeroDocumento"] == "01234567890123"
+
+
+def test_anexar_documento_process_route(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sess"
+        db.session.commit()
+
+    token = get_token(client)
+    captured = {}
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sess"
+        self.jwt_token = jwt_token
+
+    def fake_anexar(self, pid, data_bytes, filename):
+        captured["pid"] = pid
+        captured["bytes"] = data_bytes
+        captured["filename"] = filename
+        return True
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "anexar_documento_processo", fake_anexar)
+
+    data = {"file": (io.BytesIO(b"abc"), "doc.pdf")}
+    resp = client.post(
+        "/api/autoprf/anexar/5",
+        headers={"Authorization": f"Bearer {token}"},
+        content_type="multipart/form-data",
+        data=data,
+    )
+
+    assert resp.status_code == 200
+    assert resp.get_json() == {"ok": True}
+    assert captured == {"pid": 5, "bytes": b"abc", "filename": "doc.pdf"}
+
+
+def test_anexar_documento_session_expired(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.autoprf_session = "sess"
+        db.session.commit()
+        uid = user.id
+
+    token = get_token(client)
+
+    def fake_init(self, jwt_token=None):
+        assert jwt_token == "sess"
+        self.jwt_token = jwt_token
+
+    def fake_anexar(self, pid, data_bytes, filename):
+        resp = requests.Response()
+        resp.status_code = 401
+        raise requests.HTTPError(response=resp)
+
+    monkeypatch.setattr(AutoPRFClient, "__init__", fake_init)
+    monkeypatch.setattr(AutoPRFClient, "anexar_documento_processo", fake_anexar)
+
+    data = {"file": (io.BytesIO(b"abc"), "doc.pdf")}
+    resp = client.post(
+        "/api/autoprf/anexar/5",
+        headers={"Authorization": f"Bearer {token}"},
+        content_type="multipart/form-data",
+        data=data,
+    )
+
+    assert resp.status_code == 401
+    assert resp.get_json() == {"msg": "Sessão AutoPRF expirada"}
+    with app.app_context():
+        updated = User.query.get(uid)
+        assert updated.autoprf_session is None

@@ -19,3 +19,9 @@ export function solicitarCancelamento(payload) {
 export function obterHistorico(idProcesso) {
   return api.get(`/api/autoprf/historico/${idProcesso}`)
 }
+
+export function anexarArquivo(idProcesso, file) {
+  const form = new FormData()
+  form.append('file', file)
+  return api.post(`/api/autoprf/anexar/${idProcesso}`, form)
+}

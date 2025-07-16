@@ -233,3 +233,69 @@ class AutoPRFClient:
         )
         resp.raise_for_status()
         return resp.json() if resp.content else []
+
+    def anexar_documento_processo(
+        self, id_processo: int | str, file_bytes: bytes, filename: str
+    ) -> bool:
+        """Envia um PDF e o anexa ao processo informado."""
+
+        headers = {}
+        if self.jwt_token:
+            headers["Authorization"] = f"Bearer {self.jwt_token}"
+
+        # Recupera dados atuais do processo (e anexos existentes)
+        resp = requests.get(
+            f"{self.BASE_URL}/anexar-documento-processo/{id_processo}",
+            headers=headers,
+        )
+        resp.raise_for_status()
+        data = resp.json() if resp.content else {}
+
+        arquivos = data.get("arquivos") or []
+
+        # Envia o arquivo para criação do temporário
+        upload_headers = {
+            "Content-Type": "application/pdf",
+            "Referer": "https://auto.prf.gov.br/",
+        }
+        if self.jwt_token:
+            upload_headers["Authorization"] = f"Bearer {self.jwt_token}"
+
+        resp = requests.post(
+            f"{self.BASE_URL}/arquivo/temp",
+            data=file_bytes,
+            headers=upload_headers,
+        )
+        resp.raise_for_status()
+        nome_temp = resp.text.strip()
+
+        arquivos.append(
+            {
+                "tipo": "OFICIO",
+                "extensao": "PDF",
+                "dataHora": datetime.utcnow().isoformat(),
+                "tamanhoArquivo": len(file_bytes),
+                "nomeArquivoTemp": nome_temp,
+                "file": {},
+            }
+        )
+
+        payload = data
+        payload["arquivos"] = arquivos
+
+        resp = requests.put(
+            f"{self.BASE_URL}/anexar-documento-processo/{id_processo}",
+            json=payload,
+            headers=headers,
+        )
+        resp.raise_for_status()
+
+        if resp.content:
+            try:
+                result = resp.json()
+                if isinstance(result, bool):
+                    return result
+                return bool(result.get("ok", True))
+            except Exception:
+                pass
+        return True
