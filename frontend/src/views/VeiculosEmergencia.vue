@@ -168,7 +168,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-card v-if="checked" class="pa-4 mb-2" elevation="2">
+    <v-card v-if="checked" class="pa-4 my-2" elevation="2">
       <v-card-title>Anexar Arquivo</v-card-title>
       <v-card-text>
         <v-file-input
