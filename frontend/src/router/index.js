@@ -11,6 +11,7 @@ import VeiculosEmergenciaSiscom from '../views/VeiculosEmergenciaSiscom.vue'
 import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
 import CancelamentoDuplicidadeSiscom from '../views/CancelamentoDuplicidadeSiscom.vue'
 import Veiculo from '../views/Veiculo.vue'
+import CriarProcesso from '../views/CriarProcesso.vue'
 import store from '../store'
 
 const routes = [
@@ -65,6 +66,11 @@ const routes = [
     path: '/cancelamentos/duplicidade',
     component: CancelamentoDuplicidade,
     meta: { requiresAuth: true, title: 'Cancelamento por Duplicidade' }
+  },
+  {
+    path: '/sei/criar-processo',
+    component: CriarProcesso,
+    meta: { requiresAuth: true, title: 'Criação de Processos SEI' }
   },
   { path: '/:pathMatch(.*)*', redirect: '/login?error=not_found' }
 ]

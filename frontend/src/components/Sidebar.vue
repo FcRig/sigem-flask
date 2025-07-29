@@ -113,6 +113,11 @@
           prepend-icon="mdi-lock"
           @click="seiDialog = true"
         />
+        <v-list-item
+          title="Criar Processo"
+          prepend-icon="mdi-plus-box"
+          to="/sei/criar-processo"
+        />
       </v-list-group>
     </v-list>
 
