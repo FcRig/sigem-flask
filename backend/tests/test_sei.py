@@ -1,6 +1,7 @@
 from app.models import User
 from app.extensions import db
 from app.services.sei_client import SEIClient
+import requests
 
 
 def create_user():
@@ -93,3 +94,89 @@ def test_sei_login_missing_fields(client, app):
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 400
+
+
+def test_list_process_types_calls_client(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+    token = get_token(client)
+
+    captured = {}
+
+    def fake_init(self, session=None):
+        pass
+
+    def fake_login(self, usuario, senha, tok):
+        captured["u"] = usuario
+        captured["s"] = senha
+        captured["t"] = tok
+
+    def fake_list(self):
+        return [{"id": "1", "text": "Proc"}]
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "login", fake_login)
+    monkeypatch.setattr(SEIClient, "list_process_types", fake_list)
+
+    response = client.post(
+        "/api/sei/tipos",
+        json={"usuario": "seiuser", "senha_sei": "senha", "token_sei": "123"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == [{"id": "1", "text": "Proc"}]
+    assert captured == {"u": "seiuser", "s": "senha", "t": "123"}
+
+
+def test_create_process_calls_client(client, app, monkeypatch):
+    with app.app_context():
+        create_user()
+    token = get_token(client)
+
+    captured = {}
+
+    def fake_init(self, session=None):
+        pass
+
+    def fake_login(self, usuario, senha, tok):
+        captured["u"] = usuario
+        captured["s"] = senha
+        captured["t"] = tok
+
+    def fake_create(self, tipo_id, tipo_nome, desc):
+        captured["id"] = tipo_id
+        captured["nome"] = tipo_nome
+        captured["desc"] = desc
+        resp = requests.Response()
+        resp.status_code = 200
+        return resp
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "login", fake_login)
+    monkeypatch.setattr(SEIClient, "create_process", fake_create)
+
+    payload = {
+        "usuario": "seiuser",
+        "senha_sei": "senha",
+        "token_sei": "123",
+        "tipo_id": "7",
+        "tipo_nome": "Teste",
+        "descricao": "desc",
+    }
+    response = client.post(
+        "/api/sei/processos",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == {"msg": "Processo criado com sucesso"}
+    assert captured == {
+        "u": "seiuser",
+        "s": "senha",
+        "t": "123",
+        "id": "7",
+        "nome": "Teste",
+        "desc": "desc",
+    }
