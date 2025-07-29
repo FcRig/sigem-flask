@@ -32,7 +32,7 @@ class SEIClient:
         payload2 = {"txtCodigoAcesso": token, "hdnAcao": "3"}
         resp = self.session.post(self.LOGIN_URL, data=payload2)
         resp.raise_for_status()
-        self.home_html = resp.text
+        self.home_html = resp.text        
 
     def _normalize(self, text: str) -> str:
         return (
@@ -46,7 +46,7 @@ class SEIClient:
     def get_link_by_action(self, html: str, action: str) -> str | None:
         soup = BeautifulSoup(html, "html.parser")
         for link in soup.find_all("a", href=True):
-            if link.get("link") == action:
+            if link.get("link") == action:                
                 return urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
         return None
 
@@ -62,16 +62,18 @@ class SEIClient:
         return None
 
     def list_process_types(self) -> list[dict[str, str]]:
+        print("Listing process types...")
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")
+        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo") # O problema está aqui
+        print(f"Action URL: {url}")
         if not url:
             raise RuntimeError("Action link not found")
 
         resp = self.session.get(url)
         resp.encoding = "iso-8859-1"
-        html = resp.text
+        html = resp.text        
         soup = BeautifulSoup(html, "html.parser")
         table = soup.select_one("#tblTipoProcedimento")
         if not table:
