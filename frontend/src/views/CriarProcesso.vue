@@ -4,22 +4,6 @@
       <v-col cols="12" md="6">
         <v-card class="pa-4 mb-4" elevation="2" title="Criação de Processos SEI">
           <v-form ref="formRef" v-model="valid">
-            <v-text-field
-              v-model="usuario"
-              label="Usuário SEI"
-              :rules="[rules.required]"
-            />
-            <v-text-field
-              v-model="senha"
-              label="Senha SEI"
-              type="password"
-              :rules="[rules.required]"
-            />
-            <v-text-field
-              v-model="token"
-              label="Token SEI"
-              :rules="[rules.required]"
-            />
             <v-select
               v-model="tipo"
               :items="tipos"
@@ -57,14 +41,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useStore } from 'vuex'
 import { obterTipos, criarProcesso } from '../services/sei'
 
-const store = useStore()
-
-const usuario = ref(store.state.user?.usuario_sei || '')
-const senha = ref('')
-const token = ref(store.state.user?.token_sei || '')
 const tipo = ref('')
 const tipos = ref([])
 const descricao = ref('')
@@ -80,11 +58,7 @@ const rules = {
 
 async function carregarTipos() {
   try {
-    const { data } = await obterTipos({
-      usuario: usuario.value,
-      senha_sei: senha.value,
-      token_sei: token.value
-    })
+    const { data } = await obterTipos()
     tipos.value = data
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao carregar tipos'
@@ -97,9 +71,6 @@ async function submeter() {
   if (!formRef.value?.validate()) return
   try {
     await criarProcesso({
-      usuario: usuario.value,
-      senha_sei: senha.value,
-      token_sei: token.value,
       tipo_id: tipo.value,
       tipo_nome: tipos.value.find(t => t.id === tipo.value)?.text || '',
       descricao: descricao.value
@@ -122,8 +93,6 @@ function limpar(resetValidation = true) {
 }
 
 onMounted(() => {
-  if (usuario.value && token.value) {
-    carregarTipos()
-  }
+  carregarTipos()
 })
 </script>
