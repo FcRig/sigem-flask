@@ -2,6 +2,7 @@ from app.models import User
 from app.extensions import db
 from app.services.sei_client import SEIClient
 import requests
+from unittest.mock import MagicMock
 
 
 def create_user():
@@ -180,3 +181,67 @@ def test_create_process_calls_client(client, app, monkeypatch):
         "nome": "Teste",
         "desc": "desc",
     }
+
+
+def test_tipos_invokes_login_and_list(client, app, monkeypatch):
+    """Ensure list endpoint calls SEIClient methods."""
+    with app.app_context():
+        create_user()
+    token = get_token(client)
+
+    def fake_init(self, session=None):
+        pass
+
+    login_mock = MagicMock()
+    list_mock = MagicMock(return_value=[{"id": "1", "text": "Proc"}])
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "login", login_mock)
+    monkeypatch.setattr(SEIClient, "list_process_types", list_mock)
+
+    resp = client.post(
+        "/api/sei/tipos",
+        json={"usuario": "seiuser", "senha_sei": "senha", "token_sei": "123"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert resp.status_code == 200
+    login_mock.assert_called_once_with("seiuser", "senha", "123")
+    list_mock.assert_called_once_with()
+
+
+def test_processos_invokes_login_and_create(client, app, monkeypatch):
+    """Ensure process creation endpoint calls SEIClient methods with args."""
+    with app.app_context():
+        create_user()
+    token = get_token(client)
+
+    def fake_init(self, session=None):
+        pass
+
+    login_mock = MagicMock()
+    resp_obj = requests.Response()
+    resp_obj.status_code = 200
+    create_mock = MagicMock(return_value=resp_obj)
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "login", login_mock)
+    monkeypatch.setattr(SEIClient, "create_process", create_mock)
+
+    payload = {
+        "usuario": "seiuser",
+        "senha_sei": "senha",
+        "token_sei": "123",
+        "tipo_id": "7",
+        "tipo_nome": "Teste",
+        "descricao": "desc",
+    }
+    resp = client.post(
+        "/api/sei/processos",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert resp.status_code == 200
+    login_mock.assert_called_once_with("seiuser", "senha", "123")
+    create_mock.assert_called_once_with("7", "Teste", "desc")
