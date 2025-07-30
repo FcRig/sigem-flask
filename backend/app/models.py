@@ -10,6 +10,7 @@ class User(db.Model):
     cpf = db.Column(db.String(14), unique=True)
     autoprf_session = db.Column(db.Text)
     sei_session = db.Column(db.Text)
+    sei_home_html = db.Column(db.Text)
     usuario_sei = db.Column(db.String(120))
 
     def set_password(self, password):

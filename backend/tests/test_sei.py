@@ -38,11 +38,13 @@ def test_sei_login_calls_client(client, app, monkeypatch):
 
     def fake_init(self, session=None):
         self.session = requests.Session()
+        self.home_html = None
 
     def fake_login(self, usuario, senha, tok):
         captured["u"] = usuario
         captured["s"] = senha
         captured["t"] = tok
+        self.home_html = "<html>home</html>"
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
     monkeypatch.setattr(SEIClient, "login", fake_login)
@@ -67,6 +69,7 @@ def test_sei_login_stores_session(client, app, monkeypatch):
 
     def fake_login(self, usuario, senha, tok):
         self.session.cookies.set("SID", "ABC")
+        self.home_html = "<html>home</html>"
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
     monkeypatch.setattr(SEIClient, "login", fake_login)
@@ -82,6 +85,7 @@ def test_sei_login_stores_session(client, app, monkeypatch):
     with app.app_context():
         updated = User.query.get(user_id)
         assert json.loads(updated.sei_session)["SID"] == "ABC"
+        assert updated.sei_home_html == "<html>home</html>"
 
 
 def test_sei_login_strips_whitespace(client, app, monkeypatch):
@@ -93,11 +97,13 @@ def test_sei_login_strips_whitespace(client, app, monkeypatch):
 
     def fake_init(self, session=None):
         self.session = requests.Session()
+        self.home_html = None
 
     def fake_login(self, usuario, senha, tok):
         captured["u"] = usuario
         captured["s"] = senha
         captured["t"] = tok
+        self.home_html = "<html>home</html>"
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
     monkeypatch.setattr(SEIClient, "login", fake_login)
@@ -129,6 +135,7 @@ def test_list_process_types_calls_client(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
         user.sei_session = json.dumps({"SID": "ABC"})
+        user.sei_home_html = "<html>home</html>"
         db.session.commit()
     token = get_token(client)
 
@@ -138,6 +145,7 @@ def test_list_process_types_calls_client(client, app, monkeypatch):
         captured["cookie"] = session.cookies.get("SID")
 
     def fake_list(self):
+        captured["html"] = self.home_html
         return [{"id": "1", "text": "Proc"}]
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
@@ -150,13 +158,14 @@ def test_list_process_types_calls_client(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == [{"id": "1", "text": "Proc"}]
-    assert captured == {"cookie": "ABC"}
+    assert captured == {"cookie": "ABC", "html": "<html>home</html>"}
 
 
 def test_create_process_calls_client(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
         user.sei_session = json.dumps({"SID": "ABC"})
+        user.sei_home_html = "<html>home</html>"
         db.session.commit()
     token = get_token(client)
 
@@ -169,6 +178,7 @@ def test_create_process_calls_client(client, app, monkeypatch):
         captured["id"] = tipo_id
         captured["nome"] = tipo_nome
         captured["desc"] = desc
+        captured["html"] = self.home_html
         resp = requests.Response()
         resp.status_code = 200
         return resp
@@ -189,7 +199,7 @@ def test_create_process_calls_client(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == {"msg": "Processo criado com sucesso"}
-    assert captured == {"cookie": "ABC", "id": "7", "nome": "Teste", "desc": "desc"}
+    assert captured == {"cookie": "ABC", "id": "7", "nome": "Teste", "desc": "desc", "html": "<html>home</html>"}
 
 
 def test_tipos_invokes_login_and_list(client, app, monkeypatch):
@@ -197,12 +207,12 @@ def test_tipos_invokes_login_and_list(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
         user.sei_session = json.dumps({"SID": "AB"})
+        user.sei_home_html = "<html>home</html>"
         db.session.commit()
     token = get_token(client)
 
     def fake_init(self, session=None):
-        pass
-
+        self.home_html = None
     list_mock = MagicMock(return_value=[{"id": "1", "text": "Proc"}])
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
@@ -222,12 +232,12 @@ def test_processos_invokes_login_and_create(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
         user.sei_session = json.dumps({"SID": "AB"})
+        user.sei_home_html = "<html>home</html>"
         db.session.commit()
     token = get_token(client)
 
     def fake_init(self, session=None):
-        pass
-
+        self.home_html = None
     resp_obj = requests.Response()
     resp_obj.status_code = 200
     create_mock = MagicMock(return_value=resp_obj)
@@ -254,14 +264,14 @@ def test_sei_session_expired(client, app, monkeypatch):
     with app.app_context():
         user = create_user()
         user.sei_session = json.dumps({"SID": "AB"})
+        user.sei_home_html = "<html>home</html>"
         db.session.commit()
         uid = user.id
 
     token = get_token(client)
 
     def fake_init(self, session=None):
-        pass
-
+        self.home_html = None
     def fake_list(self):
         resp = requests.Response()
         resp.status_code = 401
@@ -280,3 +290,4 @@ def test_sei_session_expired(client, app, monkeypatch):
     with app.app_context():
         updated = User.query.get(uid)
         assert updated.sei_session is None
+        assert updated.sei_home_html is None
