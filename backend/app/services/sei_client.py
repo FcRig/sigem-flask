@@ -93,7 +93,7 @@ class SEIClient:
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        # Open type page
+        # Escolhendo o tipo de processo
         action_url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")
         if not action_url:
             raise RuntimeError("Action link not found")
@@ -104,6 +104,7 @@ class SEIClient:
         if not link:
             raise RuntimeError("Process type not found")
 
+        # Acessando a página de cadastro do processo
         resp = self.session.get(link)
         resp.encoding = "iso-8859-1"
         soup = BeautifulSoup(resp.text, "html.parser")
@@ -116,13 +117,6 @@ class SEIClient:
             raise RuntimeError("Form action not found")
         post_url = urljoin(self.BASE_URL, action)
 
-        assunto_default = (
-            "727"
-            if self._normalize(type_name)
-            == self._normalize("Multas: Auto de Infração - Cancelamento")
-            else "209"
-        )
-
         payload = {
             "hdnInfraTipoPagina": "1",
             "rdoProtocolo": "A",
@@ -133,7 +127,7 @@ class SEIClient:
             "hdnFlagProcedimentoCadastro": "2",
             "hdnIdTipoProcedimento": type_id,
             "hdnNomeTipoProcedimento": type_name,
-            "hdnAssuntos": assunto_default,
+            "hdnAssuntos": "727",
             "hdnSinIndividual": "N",
             "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
         }
