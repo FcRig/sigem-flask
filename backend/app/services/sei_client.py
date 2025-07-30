@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qs, urlencode
 import unicodedata
+from datetime import datetime
 
 
 class SEIClient:
@@ -110,33 +111,29 @@ class SEIClient:
         if not form:
             raise RuntimeError("Form not found")
 
-        payload = {
-            tag.get("name"): tag.get("value", "")
-            for tag in form.find_all("input")
-            if tag.get("name")
-        }
-
         select_assunto = soup.select_one("#selAssuntos")
-        if select_assunto and payload.get("hdnAssuntos") is None:
-            payload["hdnAssuntos"] = select_assunto.get("value", "")
+        assunto_value = ""
+        if select_assunto:
+            assunto_value = select_assunto.get("value", "")
 
         parsed = urlparse(link)
         query = parse_qs(parsed.query)
         params = {k: v[0] for k, v in query.items()}
         post_url = urljoin(self.BASE_URL, "controlador.php?" + urlencode(params))
 
-        payload.update(
-            {
-                "txtDescricao": description,
-                "rdoProtocolo": "A",
-                "rdoNivelAcesso": "0",
-                "hdnFlagProcedimentoCadastro": "2",
-                "hdnSinIndividual": "N",
-                "sbmSalvar": "Salvar",
-                "hdnIdUnidade": payload.get("hdnIdUnidade", ""),
-                "hdnIdTipoProcedimento": type_id,
-                "hdnInfraUnidadeAtual": payload.get("hdnInfraUnidadeAtual", ""),
-            }
-        )        
+        payload = {
+            "hdnInfraTipoPagina": "1",
+            "rdoProtocolo": "A",
+            "selTipoProcedimento": type_id,
+            "txtDescricao": description,
+            "selGrauSigilo": "null",
+            "rdoNivelAcesso": "0",
+            "hdnFlagProcedimentoCadastro": "2",
+            "hdnIdTipoProcedimento": type_id,
+            "hdnNomeTipoProcedimento": type_name,
+            "hdnAssuntos": assunto_value,
+            "hdnSinIndividual": "N",
+            "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
+        }
 
         return self.session.post(post_url, data=payload)
