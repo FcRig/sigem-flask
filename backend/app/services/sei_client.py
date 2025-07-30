@@ -137,6 +137,6 @@ class SEIClient:
                 "hdnIdTipoProcedimento": type_id,
                 "hdnInfraUnidadeAtual": payload.get("hdnInfraUnidadeAtual", ""),
             }
-        )
+        )        
 
         return self.session.post(post_url, data=payload)
