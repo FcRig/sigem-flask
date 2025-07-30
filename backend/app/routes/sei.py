@@ -30,6 +30,7 @@ def login():
         return jsonify({"msg": "Erro de autenticação no SEI"}), 401
 
     user.sei_session = json.dumps(requests.utils.dict_from_cookiejar(client.session.cookies))
+    user.sei_home_html = client.home_html
     user.usuario_sei = usuario
     db.session.commit()
     return jsonify({"msg": "Autenticação SEI realizada com sucesso"}), 200
@@ -41,17 +42,19 @@ def tipos_processo():
     """Retorna os tipos de processos disponíveis no SEI."""
     user = User.query.get_or_404(get_jwt_identity())
 
-    if not user.sei_session:
+    if not user.sei_session or not user.sei_home_html:
         return jsonify({"msg": "Sessão não iniciada"}), 400
 
     session = requests.Session()
     session.cookies = requests.utils.cookiejar_from_dict(json.loads(user.sei_session))
     client = SEIClient(session=session)
+    client.home_html = user.sei_home_html
     try:
         tipos = client.list_process_types()
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
             user.sei_session = None
+            user.sei_home_html = None
             db.session.commit()
             return jsonify({"msg": "Sessão SEI expirada"}), 401
         raise
@@ -72,18 +75,20 @@ def criar_processo():
     tipo_nome = data.get("tipo_nome")
     descricao = data.get("descricao")
 
-    if not user.sei_session or not tipo_id or not tipo_nome or not descricao:
+    if not user.sei_session or not user.sei_home_html or not tipo_id or not tipo_nome or not descricao:
         return jsonify({"msg": "Dados incompletos"}), 400
 
     session = requests.Session()
     session.cookies = requests.utils.cookiejar_from_dict(json.loads(user.sei_session))
     client = SEIClient(session=session)
+    client.home_html = user.sei_home_html
     try:
         resp = client.create_process(tipo_id, tipo_nome, descricao)
         resp.raise_for_status()
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
             user.sei_session = None
+            user.sei_home_html = None
             db.session.commit()
             return jsonify({"msg": "Sessão SEI expirada"}), 401
         return jsonify({"msg": "Erro ao criar processo no SEI"}), 400
