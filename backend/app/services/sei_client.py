@@ -117,6 +117,13 @@ class SEIClient:
             raise RuntimeError("Form action not found")
         post_url = urljoin(self.BASE_URL, action)
 
+        assunto_default = (
+            "727"
+            if self._normalize(type_name)
+            == self._normalize("Multas: Auto de Infração - Cancelamento")
+            else "209"
+        )
+
         payload = {
             "hdnInfraTipoPagina": "1",
             "rdoProtocolo": "A",
@@ -127,7 +134,7 @@ class SEIClient:
             "hdnFlagProcedimentoCadastro": "2",
             "hdnIdTipoProcedimento": type_id,
             "hdnNomeTipoProcedimento": type_name,
-            "hdnAssuntos": "727",
+            "hdnAssuntos": assunto_default,
             "hdnSinIndividual": "N",
             "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
         }
