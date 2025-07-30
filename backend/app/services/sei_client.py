@@ -67,7 +67,7 @@ class SEIClient:
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo") # O problema está aqui
+        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo") 
         print(f"Action URL: {url}")
         if not url:
             raise RuntimeError("Action link not found")
@@ -109,17 +109,12 @@ class SEIClient:
         soup = BeautifulSoup(resp.text, "html.parser")
         form = soup.select_one("#frmProcedimentoCadastro")
         if not form:
-            raise RuntimeError("Form not found")
+            raise RuntimeError("Form not found")        
 
-        select_assunto = soup.select_one("#selAssuntos")
-        assunto_value = ""
-        if select_assunto:
-            assunto_value = select_assunto.get("value", "")
-
-        parsed = urlparse(link)
-        query = parse_qs(parsed.query)
-        params = {k: v[0] for k, v in query.items()}
-        post_url = urljoin(self.BASE_URL, "controlador.php?" + urlencode(params))
+        action = form.get("action")
+        if not action:
+            raise RuntimeError("Form action not found")
+        post_url = urljoin(self.BASE_URL, action)
 
         payload = {
             "hdnInfraTipoPagina": "1",
@@ -131,9 +126,11 @@ class SEIClient:
             "hdnFlagProcedimentoCadastro": "2",
             "hdnIdTipoProcedimento": type_id,
             "hdnNomeTipoProcedimento": type_name,
-            "hdnAssuntos": assunto_value,
+            "hdnAssuntos": "727",
             "hdnSinIndividual": "N",
             "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
         }
+
+        print(payload)
 
         return self.session.post(post_url, data=payload)
