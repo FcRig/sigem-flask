@@ -62,13 +62,11 @@ class SEIClient:
                 return urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
         return None
 
-    def list_process_types(self) -> list[dict[str, str]]:
-        print("Listing process types...")
+    def list_process_types(self) -> list[dict[str, str]]:        
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo") 
-        print(f"Action URL: {url}")
+        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")         
         if not url:
             raise RuntimeError("Action link not found")
 
@@ -116,6 +114,7 @@ class SEIClient:
         if not action:
             raise RuntimeError("Form action not found")
         post_url = urljoin(self.BASE_URL, action)
+        print(f"Post URL: {post_url}")
 
         assunto_default = (
             "727"
