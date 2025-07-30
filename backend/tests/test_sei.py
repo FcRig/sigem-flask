@@ -291,3 +291,59 @@ def test_sei_session_expired(client, app, monkeypatch):
         updated = User.query.get(uid)
         assert updated.sei_session is None
         assert updated.sei_home_html is None
+
+
+class DummyResp:
+    def __init__(self, text=""):
+        self.text = text
+        self.encoding = "iso-8859-1"
+
+
+def _setup_create_mocks(monkeypatch, session, captured):
+    def fake_link_action(self, html, action):
+        return "a"
+
+    def fake_link_text(self, html, text):
+        return "b"
+
+    call = {"n": 0}
+
+    def fake_get(url):
+        call["n"] += 1
+        if call["n"] == 1:
+            return DummyResp()
+        return DummyResp('<form id="frmProcedimentoCadastro" action="c"></form>')
+
+    def fake_post(url, data=None):
+        captured["data"] = data
+        captured["url"] = url
+        return DummyResp()
+
+    session.get = fake_get
+    session.post = fake_post
+    monkeypatch.setattr(SEIClient, "get_link_by_action", fake_link_action)
+    monkeypatch.setattr(SEIClient, "get_link_by_text", fake_link_text)
+
+
+def test_create_process_sets_assunto_cancelamento(monkeypatch):
+    session = requests.Session()
+    client = SEIClient(session=session)
+    client.home_html = "<html></html>"
+    captured = {}
+    _setup_create_mocks(monkeypatch, session, captured)
+
+    client.create_process("1", "Multas: Auto de Infração - Cancelamento", "d")
+
+    assert captured["data"]["hdnAssuntos"] == "727"
+
+
+def test_create_process_sets_assunto_default(monkeypatch):
+    session = requests.Session()
+    client = SEIClient(session=session)
+    client.home_html = "<html></html>"
+    captured = {}
+    _setup_create_mocks(monkeypatch, session, captured)
+
+    client.create_process("1", "Outro Processo", "d")
+
+    assert captured["data"]["hdnAssuntos"] == "209"
