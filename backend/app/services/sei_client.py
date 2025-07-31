@@ -62,7 +62,6 @@ class SEIClient:
 
         soup = BeautifulSoup(self.home_html or "", "html.parser")
         link = soup.select_one("#lnkInfraUnidade")    
-        print("Elemento link:", link)
 
         if not link:
             return [], {}, ""
@@ -81,15 +80,13 @@ class SEIClient:
             return [], {}, ""
 
         url = urljoin(self.BASE_URL, href)
-        print("URL FINAL:", url)
 
         resp = self.session.get(url)
         resp.encoding = "iso-8859-1"
         html = resp.text
         soup = BeautifulSoup(html, "html.parser")              
 
-        table = soup.select_one("#divInfraAreaTabela table")
-        print("Tabela encontrada:", table)
+        table = soup.select_one("#divInfraAreaTabela table")        
         units: list[dict[str, str]] = []
         if table:
             for tr in table.find_all("tr"):
