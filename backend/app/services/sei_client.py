@@ -61,15 +61,35 @@ class SEIClient:
         """Fetch the units selection page and return units list, inputs and form action."""
 
         soup = BeautifulSoup(self.home_html or "", "html.parser")
-        link = soup.select_one("#lnkInfraUnidade")
-        if not link or not link.get("href"):
+        link = soup.select_one("#lnkInfraUnidade")    
+        print("Elemento link:", link)
+
+        if not link:
             return [], {}, ""
-        url = urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
+
+        href = link.get("href", "")
+
+        # Se o href for apenas "#", extrair do onclick
+        if href == "#" or not href:
+            onclick = link.get("onclick", "")
+            import re
+            match = re.search(r"window\.location\.href='([^']+)'", onclick)
+            if match:
+                href = match.group(1).replace("&amp;", "&")
+
+        if not href:
+            return [], {}, ""
+
+        url = urljoin(self.BASE_URL, href)
+        print("URL FINAL:", url)
+
         resp = self.session.get(url)
         resp.encoding = "iso-8859-1"
         html = resp.text
-        soup = BeautifulSoup(html, "html.parser")
-        table = soup.select_one("#divInfraAreaTabela table tbody")
+        soup = BeautifulSoup(html, "html.parser")              
+
+        table = soup.select_one("#divInfraAreaTabela table")
+        print("Tabela encontrada:", table)
         units: list[dict[str, str]] = []
         if table:
             for tr in table.find_all("tr"):
@@ -81,6 +101,7 @@ class SEIClient:
                             "text": tds[1].get_text(strip=True),
                         }
                     )
+
         form = soup.find("form")
         action = urljoin(self.BASE_URL, form.get("action", "")) if form else ""
         inputs = {
@@ -89,6 +110,7 @@ class SEIClient:
             if inp.get("name")
         }
         return units, inputs, action
+
 
     def list_units(self) -> list[dict[str, str]]:
         """Return a list of available units as dicts with id and text."""
