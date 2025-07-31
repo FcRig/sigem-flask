@@ -185,11 +185,14 @@ def test_create_process_calls_client(client, app, monkeypatch):
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
     monkeypatch.setattr(SEIClient, "create_process", fake_create)
+    monkeypatch.setattr(SEIClient, "get_current_unit", lambda self: "X")
+    monkeypatch.setattr(SEIClient, "change_unit", lambda self, u: None)
 
     payload = {
         "tipo_id": "7",
         "tipo_nome": "Teste",
         "descricao": "desc",
+        "unidade": "X",
     }
     response = client.post(
         "/api/sei/processos",
@@ -199,7 +202,13 @@ def test_create_process_calls_client(client, app, monkeypatch):
 
     assert response.status_code == 200
     assert response.get_json() == {"msg": "Processo criado com sucesso"}
-    assert captured == {"cookie": "ABC", "id": "7", "nome": "Teste", "desc": "desc", "html": "<html>home</html>"}
+    assert captured == {
+        "cookie": "ABC",
+        "id": "7",
+        "nome": "Teste",
+        "desc": "desc",
+        "html": "<html>home</html>",
+    }
 
 
 def test_tipos_invokes_login_and_list(client, app, monkeypatch):
@@ -213,6 +222,7 @@ def test_tipos_invokes_login_and_list(client, app, monkeypatch):
 
     def fake_init(self, session=None):
         self.home_html = None
+
     list_mock = MagicMock(return_value=[{"id": "1", "text": "Proc"}])
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
@@ -238,17 +248,21 @@ def test_processos_invokes_login_and_create(client, app, monkeypatch):
 
     def fake_init(self, session=None):
         self.home_html = None
+
     resp_obj = requests.Response()
     resp_obj.status_code = 200
     create_mock = MagicMock(return_value=resp_obj)
 
     monkeypatch.setattr(SEIClient, "__init__", fake_init)
     monkeypatch.setattr(SEIClient, "create_process", create_mock)
+    monkeypatch.setattr(SEIClient, "get_current_unit", lambda self: "X")
+    monkeypatch.setattr(SEIClient, "change_unit", lambda self, u: None)
 
     payload = {
         "tipo_id": "7",
         "tipo_nome": "Teste",
         "descricao": "desc",
+        "unidade": "X",
     }
     resp = client.post(
         "/api/sei/processos",
@@ -272,6 +286,7 @@ def test_sei_session_expired(client, app, monkeypatch):
 
     def fake_init(self, session=None):
         self.home_html = None
+
     def fake_list(self):
         resp = requests.Response()
         resp.status_code = 401
@@ -347,3 +362,68 @@ def test_create_process_sets_assunto_default(monkeypatch):
     client.create_process("1", "Outro Processo", "d")
 
     assert captured["data"]["hdnAssuntos"] == "209"
+
+
+def test_list_units_calls_client(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.sei_session = json.dumps({"SID": "ABC"})
+        user.sei_home_html = "<html>home</html>"
+        db.session.commit()
+    token = get_token(client)
+
+    def fake_init(self, session=None):
+        assert session.cookies.get("SID") == "ABC"
+        self.home_html = None
+
+    list_mock = MagicMock(return_value=[{"id": "1", "text": "U"}])
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(SEIClient, "list_units", list_mock)
+
+    resp = client.post(
+        "/api/sei/unidades",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert resp.status_code == 200
+    list_mock.assert_called_once_with()
+
+
+def test_criar_processo_changes_unit_when_different(client, app, monkeypatch):
+    with app.app_context():
+        user = create_user()
+        user.sei_session = json.dumps({"SID": "AB"})
+        user.sei_home_html = "<a id='lnkInfraUnidade'>A</a>"
+        db.session.commit()
+    token = get_token(client)
+
+    def fake_init(self, session=None):
+        self.home_html = "<a id='lnkInfraUnidade'>A</a>"
+
+    create_resp = requests.Response()
+    create_resp.status_code = 200
+
+    monkeypatch.setattr(SEIClient, "__init__", fake_init)
+    monkeypatch.setattr(
+        SEIClient, "create_process", MagicMock(return_value=create_resp)
+    )
+    change_mock = MagicMock()
+    monkeypatch.setattr(SEIClient, "change_unit", change_mock)
+    monkeypatch.setattr(SEIClient, "get_current_unit", lambda self: "A")
+
+    payload = {
+        "tipo_id": "1",
+        "tipo_nome": "T",
+        "descricao": "d",
+        "unidade": "B",
+    }
+
+    resp = client.post(
+        "/api/sei/processos",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert resp.status_code == 200
+    change_mock.assert_called_once_with("B")

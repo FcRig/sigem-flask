@@ -29,7 +29,9 @@ def login():
     except requests.HTTPError:
         return jsonify({"msg": "Erro de autenticação no SEI"}), 401
 
-    user.sei_session = json.dumps(requests.utils.dict_from_cookiejar(client.session.cookies))
+    user.sei_session = json.dumps(
+        requests.utils.dict_from_cookiejar(client.session.cookies)
+    )
     user.sei_home_html = client.home_html
     user.usuario_sei = usuario
     db.session.commit()
@@ -64,6 +66,34 @@ def tipos_processo():
     return jsonify(tipos), 200
 
 
+@bp.route("/unidades", methods=["POST"])
+@jwt_required()
+def listar_unidades():
+    """Retorna as unidades disponíveis para o usuário."""
+    user = User.query.get_or_404(get_jwt_identity())
+
+    if not user.sei_session or not user.sei_home_html:
+        return jsonify({"msg": "Sessão não iniciada"}), 400
+
+    session = requests.Session()
+    session.cookies = requests.utils.cookiejar_from_dict(json.loads(user.sei_session))
+    client = SEIClient(session=session)
+    client.home_html = user.sei_home_html
+    try:
+        unidades = client.list_units()
+        user.sei_home_html = client.home_html
+        db.session.commit()
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code in (401, 403):
+            user.sei_session = None
+            user.sei_home_html = None
+            db.session.commit()
+            return jsonify({"msg": "Sessão SEI expirada"}), 401
+        return jsonify({"msg": "Erro ao obter unidades"}), 400
+
+    return jsonify(unidades), 200
+
+
 @bp.route("/processos", methods=["POST"])
 @jwt_required()
 def criar_processo():
@@ -74,15 +104,29 @@ def criar_processo():
     tipo_id = data.get("tipo_id")
     tipo_nome = data.get("tipo_nome")
     descricao = data.get("descricao")
+    unidade = data.get("unidade")
 
-    if not user.sei_session or not user.sei_home_html or not tipo_id or not tipo_nome or not descricao:
+    if (
+        not user.sei_session
+        or not user.sei_home_html
+        or not tipo_id
+        or not tipo_nome
+        or not descricao
+        or not unidade
+    ):
         return jsonify({"msg": "Dados incompletos"}), 400
 
     session = requests.Session()
     session.cookies = requests.utils.cookiejar_from_dict(json.loads(user.sei_session))
     client = SEIClient(session=session)
     client.home_html = user.sei_home_html
+
     try:
+        if client.get_current_unit() != unidade:
+            client.change_unit(unidade)
+            user.sei_home_html = client.home_html
+            db.session.commit()
+
         resp = client.create_process(tipo_id, tipo_nome, descricao)
         resp.raise_for_status()
     except requests.HTTPError as e:

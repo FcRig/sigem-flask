@@ -33,7 +33,7 @@ class SEIClient:
         payload2 = {"txtCodigoAcesso": token, "hdnAcao": "3"}
         resp = self.session.post(self.LOGIN_URL, data=payload2)
         resp.raise_for_status()
-        self.home_html = resp.text        
+        self.home_html = resp.text
 
     def _normalize(self, text: str) -> str:
         return (
@@ -47,9 +47,69 @@ class SEIClient:
     def get_link_by_action(self, html: str, action: str) -> str | None:
         soup = BeautifulSoup(html, "html.parser")
         for link in soup.find_all("a", href=True):
-            if link.get("link") == action:                
+            if link.get("link") == action:
                 return urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
         return None
+
+    def get_current_unit(self) -> str:
+        """Return the textual name of the currently selected unit."""
+        soup = BeautifulSoup(self.home_html or "", "html.parser")
+        link = soup.select_one("#lnkInfraUnidade")
+        return link.get_text(strip=True) if link else ""
+
+    def _fetch_units_page(self) -> tuple[list[dict[str, str]], dict[str, str], str]:
+        """Fetch the units selection page and return units list, inputs and form action."""
+
+        soup = BeautifulSoup(self.home_html or "", "html.parser")
+        link = soup.select_one("#lnkInfraUnidade")
+        if not link or not link.get("href"):
+            return [], {}, ""
+        url = urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
+        resp = self.session.get(url)
+        resp.encoding = "iso-8859-1"
+        html = resp.text
+        soup = BeautifulSoup(html, "html.parser")
+        table = soup.select_one("#divInfraAreaTabela table tbody")
+        units: list[dict[str, str]] = []
+        if table:
+            for tr in table.find_all("tr"):
+                tds = tr.find_all("td")
+                if len(tds) >= 2:
+                    units.append(
+                        {
+                            "id": tds[0].get_text(strip=True),
+                            "text": tds[1].get_text(strip=True),
+                        }
+                    )
+        form = soup.find("form")
+        action = urljoin(self.BASE_URL, form.get("action", "")) if form else ""
+        inputs = {
+            inp.get("name"): inp.get("value", "")
+            for inp in (form.find_all("input") if form else [])
+            if inp.get("name")
+        }
+        return units, inputs, action
+
+    def list_units(self) -> list[dict[str, str]]:
+        """Return a list of available units as dicts with id and text."""
+        units, _, _ = self._fetch_units_page()
+        return units
+
+    def change_unit(self, unit_id: str) -> None:
+        """Change current unit to the provided id."""
+        units, inputs, action = self._fetch_units_page()
+        if not action:
+            raise RuntimeError("Unit form not found")
+        inputs.update(
+            {
+                "chkInfraItem": unit_id,
+                "hdnInfraItensSelecionados": unit_id,
+                "selInfraUnidades": unit_id,
+            }
+        )
+        resp = self.session.post(action, data=inputs)
+        resp.raise_for_status()
+        self.home_html = resp.text
 
     def get_link_by_text(self, html: str, text: str) -> str | None:
         desired = self._normalize(text)
@@ -62,17 +122,17 @@ class SEIClient:
                 return urljoin(self.BASE_URL, link["href"].replace("&amp;", "&"))
         return None
 
-    def list_process_types(self) -> list[dict[str, str]]:        
+    def list_process_types(self) -> list[dict[str, str]]:
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")         
+        url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")
         if not url:
             raise RuntimeError("Action link not found")
 
         resp = self.session.get(url)
         resp.encoding = "iso-8859-1"
-        html = resp.text        
+        html = resp.text
         soup = BeautifulSoup(html, "html.parser")
         table = soup.select_one("#tblTipoProcedimento")
         if not table:
@@ -87,12 +147,16 @@ class SEIClient:
             result.append({"id": type_id, "text": text_val})
         return result
 
-    def create_process(self, type_id: str, type_name: str, description: str) -> requests.Response:
+    def create_process(
+        self, type_id: str, type_name: str, description: str
+    ) -> requests.Response:
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
         # Escolhendo o tipo de processo
-        action_url = self.get_link_by_action(self.home_html, "procedimento_escolher_tipo")
+        action_url = self.get_link_by_action(
+            self.home_html, "procedimento_escolher_tipo"
+        )
         if not action_url:
             raise RuntimeError("Action link not found")
 
@@ -108,7 +172,7 @@ class SEIClient:
         soup = BeautifulSoup(resp.text, "html.parser")
         form = soup.select_one("#frmProcedimentoCadastro")
         if not form:
-            raise RuntimeError("Form not found")        
+            raise RuntimeError("Form not found")
 
         action = form.get("action")
         if not action:
