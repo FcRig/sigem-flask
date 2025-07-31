@@ -12,11 +12,10 @@
               label="Natureza do Processo"
               :rules="[rules.required]"
             />
-            <v-textarea
+            <v-text-field
               v-model="descricao"
-              label="Descrição"
+              label="Especificação"
               :rules="[rules.required]"
-              auto-grow
             />
             <v-btn color="primary" class="mt-2" @click="submeter" :disabled="!valid">
               SUBMETER
