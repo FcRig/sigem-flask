@@ -12,6 +12,14 @@
               label="Natureza do Processo"
               :rules="[rules.required]"
             />
+            <v-select
+              v-model="unidade"
+              :items="unidades"
+              item-title="text"
+              item-value="id"
+              label="Unidade"
+              :rules="[rules.required]"
+            />
             <v-text-field
               v-model="descricao"
               label="Especificação"
@@ -40,11 +48,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { obterTipos, criarProcesso } from '../services/sei'
+import { obterTipos, criarProcesso, obterUnidades } from '../services/sei'
 
 const tipo = ref('')
 const tipos = ref([])
 const descricao = ref('')
+const unidade = ref('')
+const unidades = ref([])
 const formRef = ref(null)
 const valid = ref(false)
 const snackbar = ref(false)
@@ -66,13 +76,26 @@ async function carregarTipos() {
   }
 }
 
+async function carregarUnidades() {
+  try {
+    const { data } = await obterUnidades()
+    unidades.value = data
+    if (data.length > 0) unidade.value = data[0].id
+  } catch (err) {
+    snackbarMsg.value = err.response?.data?.msg || 'Erro ao carregar unidades'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
+}
+
 async function submeter() {
   if (!formRef.value?.validate()) return
   try {
     await criarProcesso({
       tipo_id: tipo.value,
       tipo_nome: tipos.value.find(t => t.id === tipo.value)?.text || '',
-      descricao: descricao.value
+      descricao: descricao.value,
+      unidade: unidade.value
     })
     snackbarMsg.value = 'Processo criado com sucesso'
     snackbarColor.value = 'success'
@@ -89,9 +112,11 @@ function limpar(resetValidation = true) {
   if (resetValidation) formRef.value?.resetValidation()
   descricao.value = ''
   tipo.value = ''
+  unidade.value = ''
 }
 
 onMounted(() => {
   carregarTipos()
+  carregarUnidades()
 })
 </script>
