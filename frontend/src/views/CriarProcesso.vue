@@ -79,8 +79,8 @@ async function carregarTipos() {
 async function carregarUnidades() {
   try {
     const { data } = await obterUnidades()
-    unidades.value = data
-    if (data.length > 0) unidade.value = data[0].id
+    unidades.value = [{ id: '', text: '' }, ...data]
+    unidade.value = ''
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao carregar unidades'
     snackbarColor.value = 'error'
