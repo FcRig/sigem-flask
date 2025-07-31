@@ -53,7 +53,7 @@ import { obterTipos, criarProcesso, obterUnidades } from '../services/sei'
 const tipo = ref('')
 const tipos = ref([])
 const descricao = ref('')
-const unidade = ref('')
+const unidade = ref(null)
 const unidades = ref([])
 const formRef = ref(null)
 const valid = ref(false)
@@ -79,8 +79,8 @@ async function carregarTipos() {
 async function carregarUnidades() {
   try {
     const { data } = await obterUnidades()
-    unidades.value = [{ id: '', text: '' }, ...data]
-    unidade.value = ''
+    unidades.value = data
+    unidade.value = null
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao carregar unidades'
     snackbarColor.value = 'error'
@@ -112,7 +112,7 @@ function limpar(resetValidation = true) {
   if (resetValidation) formRef.value?.resetValidation()
   descricao.value = ''
   tipo.value = ''
-  unidade.value = ''
+  unidade.value = null
 }
 
 onMounted(() => {
