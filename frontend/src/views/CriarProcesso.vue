@@ -16,7 +16,7 @@
               v-model="unidade"
               :items="unidades"
               item-title="text"
-              item-value="id"
+              item-value="text"
               label="Unidade"
               :rules="[rules.required]"
             />

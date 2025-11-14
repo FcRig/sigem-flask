@@ -8,8 +8,8 @@ export function obterTipos(payload) {
   return api.post('/api/sei/tipos', payload)
 }
 
-export function obterUnidades() {
-  return api.post('/api/sei/unidades')
+export function obterUnidades(payload) {
+  return api.post('/api/sei/unidades',payload)
 }
 
 export function criarProcesso(payload) {
