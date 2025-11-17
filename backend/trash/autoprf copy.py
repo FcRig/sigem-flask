@@ -325,4 +325,3 @@ class AutoPRFClient:
 
 
         driver.quit()
-

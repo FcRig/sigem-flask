@@ -15,3 +15,7 @@ export function obterUnidades(payload) {
 export function criarProcesso(payload) {
   return api.post('/api/sei/processos', payload)
 }
+
+export function criarDespacho(payload) {
+  return api.post('/api/sei/despacho', payload)
+}

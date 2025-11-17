@@ -9,7 +9,7 @@ with app.app_context():
     user = User(
         username="leoadm",
         email="leoadm@gmail.com",
-        password_hash=generate_password_hash("1234"),
+        password_hash=generate_password_hash("Leo-2537?"),
         administrador=True
     )
     db.session.add(user)

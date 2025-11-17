@@ -118,6 +118,11 @@
           prepend-icon="mdi-plus-box"
           to="/sei/criar-processo"
         />
+        <v-list-item
+          title="Criar Despacho"
+          prepend-icon="mdi-plus-box"
+          to="/sei/criar-despacho"
+        />
       </v-list-group>
     </v-list>
 
