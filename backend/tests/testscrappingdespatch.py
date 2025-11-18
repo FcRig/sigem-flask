@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -14,8 +15,8 @@ from datetime import datetime, timedelta, timezone
 
 
 
-driver = Chrome();
-
+driver = Chrome()
+actions = ActionChains(driver)
 
 url = 'https://sei.prf.gov.br/sei/'
 request = requests.get(url)
@@ -53,15 +54,18 @@ incluir = WebDriverWait(driver,3).until(
 
 incluir.click()
 
-txtFiltro = email = driver.find_element(By.CSS_SELECTOR, '#txtFiltro')
+despacho = WebDriverWait(driver,3).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "tr[data-desc='despacho']"))
+)
 
-txtFiltro.send_keys("Despacho")
-time.sleep(1)
-txtFiltro.send_keys(Keys.TAB)
-time.sleep(1)
+despacho.click()
+# txtFiltro = email = driver.find_element(By.CSS_SELECTOR, '#txtFiltro')
 
+# txtFiltro.send_keys("Despacho")
 
-driver.send_keys(Keys.ENTER)
+# txtFiltro.send_keys(Keys.TAB)
+# actions.send_keys(Keys.ENTER)
+# actions.perform();
 
 
 
