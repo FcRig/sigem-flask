@@ -12,6 +12,7 @@ import CancelamentoDuplicidade from '../views/CancelamentoDuplicidade.vue'
 import CancelamentoDuplicidadeSiscom from '../views/CancelamentoDuplicidadeSiscom.vue'
 import Veiculo from '../views/Veiculo.vue'
 import CriarProcesso from '../views/CriarProcesso.vue'
+import CriarDespacho from '../views/CriarDespacho.vue'
 import store from '../store'
 
 const routes = [
@@ -71,6 +72,11 @@ const routes = [
     path: '/sei/criar-processo',
     component: CriarProcesso,
     meta: { requiresAuth: true, title: 'Criação de Processos SEI' }
+  },
+  {
+    path: '/sei/criar-despacho',
+    component: CriarDespacho,
+    meta: { requiresAuth: true, title: 'Criação de Despachos SEI' }
   },
   { path: '/:pathMatch(.*)*', redirect: '/login?error=not_found' }
 ]
