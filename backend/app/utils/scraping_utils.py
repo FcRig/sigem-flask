@@ -42,7 +42,7 @@ def init_chrome_driver(chromedriver_path: str, headless: bool = True):
     service = Service(chromedriver_path)
     return webdriver.Chrome(service=service, options=options)
 
-
+"""Função usada para esperar um elemento aparecer na tela para enviar dados"""
 def wait_visible_send_keys(driver, by: By, value: str, text: str, timeout: int = 10):
     element = WebDriverWait(driver, timeout).until(
         EC.visibility_of_element_located((by, value))

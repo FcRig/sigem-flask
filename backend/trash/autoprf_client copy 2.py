@@ -3,7 +3,7 @@ from flask import current_app
 from time import sleep
 from datetime import datetime
 
-from ..utils.scraping_utils import (
+from ...utils.scraping_utils import ( # type: ignore
     init_chrome_driver,
     wait_visible_send_keys,
     wait_click,
