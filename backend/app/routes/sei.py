@@ -138,3 +138,28 @@ def criar_processo():
         return jsonify({"msg": "Erro ao criar processo no SEI"}), 400
 
     return jsonify({"msg": "Processo criado com sucesso"}), 200
+
+
+@bp.route("/procurar-processo", methods=["POST"])
+@jwt_required()
+def procurarprocesso():
+
+    user = User.query.get_or_404(get_jwt_identity())
+    data = request.get_json() or {}
+    processo = data.get("processo")
+
+
+    client = SEIClient()
+
+    try:
+        retorno = client.procurarProcesso(processo)
+
+       
+
+        return jsonify(retorno), 200
+
+    except Exception as e:
+        print("ERRO procurarprocesso:", e)
+        return jsonify({"success": False, "msg": "erro_no_processo"}), 500
+    
+
