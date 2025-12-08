@@ -4,8 +4,21 @@
       <v-col cols="12" md="6">
         <v-card class="pa-4 mb-4" elevation="2" title="Criação de Processos SEI">
           <v-form ref="formRef" v-model="valid">
+<<<<<<< Updated upstream
             <v-select v-model="tipo" :items="tipos" item-title="text" item-value="id" label="Natureza do Processo"
               :rules="[rules.required]" />
+=======
+            <v-select
+  v-model="tipo"
+  :items="tipos"
+  item-title="text"
+  item-value="id"
+  label="Natureza do Processo"
+  variant="outlined"
+  density="comfortable"
+  :rules="[v => !!v || 'Campo obrigatório']"
+/>
+>>>>>>> Stashed changes
             <v-select v-model="unidade" :items="unidades" item-title="text" item-value="text" label="Unidade"
               :rules="[rules.required]" />
             <v-text-field v-model="descricao" label="Especificação" :rules="[rules.required]" />
@@ -69,17 +82,22 @@ async function carregarUnidades() {
 
 async function submeter() {
   if (!formRef.value?.validate()) return
+
+  const tipoSelecionado = tipos.value.find(t => t.id === tipo.value)
+
   try {
     await criarProcesso({
-      tipo_id: tipo.value,
-      tipo_nome: tipos.value.find(t => t.id === tipo.value)?.text || '',
+      tipo_id: String(tipoSelecionado.id),      // ✅ ID REAL
+      tipo_nome: String(tipoSelecionado.text),  // ✅ TEXTO REAL
       descricao: descricao.value,
       unidade: unidade.value
     })
+
     snackbarMsg.value = 'Processo criado com sucesso'
     snackbarColor.value = 'success'
     snackbar.value = true
     limpar(false)
+
   } catch (err) {
     snackbarMsg.value = err.response?.data?.msg || 'Erro ao criar processo'
     snackbarColor.value = 'error'

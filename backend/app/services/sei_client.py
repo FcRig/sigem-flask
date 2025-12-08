@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qs, urlencode
@@ -44,11 +45,14 @@ class SEIClient:
         resp = self.session.post(self.LOGIN_URL, data=payload)
         resp.raise_for_status()
 
+        
+
         payload2 = {"txtCodigoAcesso": token, "hdnAcao": "3"}
         resp = self.session.post(self.LOGIN_URL, data=payload2)
         resp.raise_for_status()
         self.home_html = resp.text
 
+<<<<<<< Updated upstream
         sei_cookies_jar = self.session.cookies
 
         chrome = Chrome()
@@ -103,6 +107,13 @@ class SEIClient:
 
         SEIClient.CHROME = chrome
         SEIClient.COOKIES = sei_cookies_jar
+=======
+
+        print("\n✅ COOKIES DA SESSÃO:")
+        for c in self.session.cookies:
+            print(c.name, "=", c.value)
+
+>>>>>>> Stashed changes
     def _normalize(self, text: str) -> str:
         return (
             unicodedata.normalize("NFKD", text or "")
@@ -224,13 +235,21 @@ class SEIClient:
         if not table:
             return []
         result: list[dict[str, str]] = []
+
         for link in table.find_all("a", href=True):
             text_val = link.get_text(strip=True)
-            href = link["href"]
-            parsed = urlparse(href)
-            q = parse_qs(parsed.query)
-            type_id = (q.get("id_tipo_procedimento") or [""])[0]
-            result.append({"id": type_id, "text": text_val})
+            onclick = link.get("onclick", "")
+
+            m = re.search(r"escolher\((\d+)\)", onclick)
+            tipo_id_real = ''
+            if m:
+                tipo_id_real = m.group(1)
+            else:
+                tipo_id_real = None
+
+            # print(f"TIPO:::: {tipo_id_real}")
+           
+            result.append({"id": tipo_id_real, "text": text_val})
         return result
 
     def create_process(self, type_id: str, type_name: str, description: str) -> requests.Response:
@@ -242,8 +261,11 @@ class SEIClient:
         action_url = self.get_link_by_action(
             self.home_html, "procedimento_escolher_tipo"
         )
+        print(f"\n\nself.home_html:::\n\n {self.home_html}")
         if not action_url:
             raise RuntimeError("Action link not found")
+        
+        print(f"\n\naction_url:::\n\n {action_url}")
 
         resp = self.session.get(action_url)
         resp.encoding = "iso-8859-1"
