@@ -5,13 +5,6 @@ from urllib.parse import urljoin, urlparse, parse_qs, urlencode
 import unicodedata
 from datetime import datetime
 
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import time
 
 import undetected_chromedriver as uc
@@ -23,9 +16,6 @@ class SEIClient:
     LOGIN_URL = (
         "https://sei.prf.gov.br/sip/login.php?sigla_sistema=SEI&sigla_orgao_sistema=PRF"
     )
-
-    CHROME = None
-    COOKIES = None
 
     def __init__(self, session: requests.Session | None = None):
         self.session = session or requests.Session()
@@ -43,77 +33,16 @@ class SEIClient:
         }
 
         resp = self.session.post(self.LOGIN_URL, data=payload)
-        resp.raise_for_status()
-
-        
+        resp.raise_for_status()      
 
         payload2 = {"txtCodigoAcesso": token, "hdnAcao": "3"}
         resp = self.session.post(self.LOGIN_URL, data=payload2)
         resp.raise_for_status()
         self.home_html = resp.text
 
-<<<<<<< Updated upstream
-        sei_cookies_jar = self.session.cookies
+        return self.home_html
 
-        chrome = Chrome()
-        
-        #options = Options()
-        #options.add-argument("--headless")
-        #chrome = chrome.Options(options=options)
 
-        chrome.get("https://sei.seusistema.gov.br")
-
-        print("\nInjetando cookies de sessão do requests para o Selenium...")
-
-        for cookie_obj in sei_cookies_jar:
-            
-            # Converte o objeto cookie do requests para o dicionário esperado pelo Selenium
-            selenium_cookie = {
-                'name': cookie_obj.name,
-                'value': cookie_obj.value,
-                'domain': cookie_obj.domain,
-                'path': cookie_obj.path,
-                'secure': cookie_obj.secure,
-                # O campo 'expires' deve ser um inteiro (timestamp), se existir
-                'expires': int(cookie_obj.expires) if cookie_obj.expires else None
-            }
-
-        try:
-            chrome.add_cookie(selenium_cookie)
-        except Exception as e:
-
-            # Pode haver erro ao injetar cookies sem domínio/path válidos
-            print(f"Aviso: Não foi possível injetar o cookie {cookie_obj.name}: {e}")
-        print(f"\n\n\n{self.home_html}\n\n\n")
-
-        chrome.get(self.LOGIN_URL.split('?')[0])
-
-        if "login" not in chrome.current_url.lower():
-            print("✅ Sessão do SEI injetada e restaurada com sucesso no Selenium!")
-        else:
-            print("❌ Injeção falhou. Sessão não restaurada.")
-
-        #options = Options()
-        #options.add-argument("--headless")
-        #chrome = chrome.Options(options=options)
-
-        # chrome.get(SEIClient.LOGIN_URL)
-        # print(f"\n\n\nUSUARIO: {usuario}\n\n\n")
-        # WebDriverWait(chrome,5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#txtUsuario'))).send_keys(usuario)
-        # WebDriverWait(chrome,5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#pwdSenha'))).send_keys(senha)
-        # WebDriverWait(chrome,5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#sbmAcessar'))).click()
-        # WebDriverWait(chrome,5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#txtCodigoAcesso'))).send_keys(token)
-        # WebDriverWait(chrome,5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#sbmValidar'))).click()
-
-        SEIClient.CHROME = chrome
-        SEIClient.COOKIES = sei_cookies_jar
-=======
-
-        print("\n✅ COOKIES DA SESSÃO:")
-        for c in self.session.cookies:
-            print(c.name, "=", c.value)
-
->>>>>>> Stashed changes
     def _normalize(self, text: str) -> str:
         return (
             unicodedata.normalize("NFKD", text or "")
@@ -122,6 +51,10 @@ class SEIClient:
             .strip()
             .lower()
         )
+
+    def extract_infra_hash(self, html: str) -> str | None:
+        m = re.search(r"infra_hash=([a-f0-9]{20,})", html, re.I)
+        return m.group(1) if m else None
     
     def get_link_by_action(self, html: str, action: str) -> str | None:
         soup = BeautifulSoup(html, "html.parser")
@@ -254,38 +187,100 @@ class SEIClient:
 
     def create_process(self, type_id: str, type_name: str, description: str) -> requests.Response:
 
+        print("\n========== CREATE PROCESS START ==========")
+
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        # Escolhendo o tipo de processo
+        print("\n[1] Buscando link de escolha de tipo...")
+
         action_url = self.get_link_by_action(
             self.home_html, "procedimento_escolher_tipo"
         )
-        print(f"\n\nself.home_html:::\n\n {self.home_html}")
+
+        print("action_url:", action_url)
+
         if not action_url:
             raise RuntimeError("Action link not found")
-        
-        print(f"\n\naction_url:::\n\n {action_url}")
 
+        print("\n[2] GET página de tipos...")
         resp = self.session.get(action_url)
+        print("GET status:", resp.status_code)
+        print("GET url final:", resp.url)
+
         resp.encoding = "iso-8859-1"
+
+        infra_hash_1 = self.extract_infra_hash(resp.text)
+        print("infra_hash extraído do GET tipos:", infra_hash_1)
+
         link = self.get_link_by_text(resp.text, type_name)
+        print("link extraído pelo texto:", link)
+
         if not link:
             raise RuntimeError("Process type not found")
 
-        # Acessando a página de cadastro do processo
-        resp = self.session.get(link)
-        resp.encoding = "iso-8859-1"
-        soup = BeautifulSoup(resp.text, "html.parser")
+        print("\n[3] POST procedimento_escolher_tipo...")
+
+        POST = self.session.post(
+            "https://sei.prf.gov.br/sei/controlador.php",
+            data={
+                "acao": "procedimento_escolher_tipo",
+                "acao_origem": "procedimento_escolher_tipo",
+                "infra_sistema": "100000100",
+                "infra_unidade_atual": "110000471",
+                "infra_hash": infra_hash_1,
+                "id_tipo_procedimento": type_id
+            }
+        )
+
+        print("POST status:", POST.status_code)
+        print("POST url final:", POST.url)
+        print("POST history:", POST.history)
+
+        infra_hash_2 = self.extract_infra_hash(POST.text)
+        print("infra_hash extraído do POST:", infra_hash_2)
+
+        print("\n[4] GET procedimento_gerar...")
+
+        GET = self.session.get(
+            "https://sei.prf.gov.br/sei/controlador.php",
+            params={
+                "acao": "procedimento_gerar",
+                "acao_origem": "procedimento_escolher_tipo",
+                "acao_retorno": "procedimento_escolher_tipo",
+                "id_tipo_procedimento": type_id,
+                "infra_sistema": "100000100",
+                "infra_unidade_atual": "110000471",
+                "infra_hash": infra_hash_2 or infra_hash_1
+            }
+        )
+
+        print("GET gerar status:", GET.status_code)
+        print("GET gerar url final:", GET.url)
+        print("GET gerar history:", GET.history)
+
+        GET.encoding = "iso-8859-1"
+
+        print("\n[5] Procurando formulário de cadastro...")
+
+        soup = BeautifulSoup(GET.text, "html.parser")
         form = soup.select_one("#frmProcedimentoCadastro")
+
+        print("Form encontrado?", bool(form))
+
         if not form:
+            print("\n===== HTML INTEIRO DA RESPOSTA =====\n")
+            print(GET.text[:3000])  # evita travar o terminal
             raise RuntimeError("Form not found")
 
         action = form.get("action")
+        print("Form action:", action)
+
         if not action:
             raise RuntimeError("Form action not found")
+
         post_url = urljoin(self.BASE_URL, action)
-        print(f"Post URL: {post_url}")
+        print("Post URL final:", post_url)
 
         assunto_default = (
             "727"
@@ -309,64 +304,16 @@ class SEIClient:
             "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
         }
 
-        print(payload)
+        print("\n[6] Payload final:", payload)
 
-        return self.session.post(post_url, data=payload)
+        print("\n[7] POST final de criação...")
 
-    def procurarProcesso(self, processo):
+        final_resp = self.session.post(post_url, data=payload)
 
-        # garante que a session foi restaurada antes de chamar (o controller deve chamar restore_session_from_user)
-        # aplica/inicia selenium e cookies
+        print("POST final status:", final_resp.status_code)
+        print("POST final url:", final_resp.url)
+        print("POST final history:", final_resp.history)
 
-        chrome = SEIClient.CHROME
-        cookies = SEIClient.COOKIES
+        print("\n========== CREATE PROCESS END ==========")
 
-        chrome.get("https://sei.prf.gov.br")
-
-        for cookie in cookies:
-
-            cookie.pop("sameSite", None)
-            cookie.pop("expiry", None)
-            chrome.add_cookie(cookie)
-
-        if not self.home_html:
-            raise RuntimeError("Not logged in")
-
-        chrome = self.selenium_driver
-        url = self.selenium_url_base or "https://sei.prf.gov.br/sei/controlador.php?acao=principal"
-
-        try:
-            chrome.switch_to.default_content()
-            chrome.maximize_window()
-            chrome.get(url)
-        except Exception:
-            return {"msg": "SESSAO_SELENIUM_PERDIDA"}
-
-        # se caiu no login, aborta imediatamente
-        cur = chrome.current_url.lower() if chrome.current_url else ""
-        if "login" in cur or "sip/login.php" in cur:
-            return {"msg": "SESSAO_SELENIUM_PERDIDA"}
-
-        try:
-            barraPesquisa = WebDriverWait(chrome, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "#txtPesquisaRapida")))
-
-            barraPesquisa.clear()
-            barraPesquisa.send_keys(processo)
-
-            bntPesquisar = WebDriverWait(chrome, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "#spnInfraUnidade")))
-
-            bntPesquisar.click()
-
-            WebDriverWait(chrome, 5).until(
-                EC.frame_to_be_available_and_switch_to_it((By.ID, "ifrConteudoVisualizacao")))
-
-            novoDoc = WebDriverWait(chrome, 5).until(
-                EC.element_to_be_clickable((By.XPATH, '//img[@title="Incluir Documento"]')))
-
-            if novoDoc:
-                return {"msg": "PROCESSO_ENCONTRADO"}
-
-        except TimeoutException:
-            pass
+        return final_resp

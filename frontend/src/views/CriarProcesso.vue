@@ -4,21 +4,8 @@
       <v-col cols="12" md="6">
         <v-card class="pa-4 mb-4" elevation="2" title="Criação de Processos SEI">
           <v-form ref="formRef" v-model="valid">
-<<<<<<< Updated upstream
             <v-select v-model="tipo" :items="tipos" item-title="text" item-value="id" label="Natureza do Processo"
               :rules="[rules.required]" />
-=======
-            <v-select
-  v-model="tipo"
-  :items="tipos"
-  item-title="text"
-  item-value="id"
-  label="Natureza do Processo"
-  variant="outlined"
-  density="comfortable"
-  :rules="[v => !!v || 'Campo obrigatório']"
-/>
->>>>>>> Stashed changes
             <v-select v-model="unidade" :items="unidades" item-title="text" item-value="text" label="Unidade"
               :rules="[rules.required]" />
             <v-text-field v-model="descricao" label="Especificação" :rules="[rules.required]" />
