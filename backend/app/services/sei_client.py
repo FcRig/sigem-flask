@@ -192,115 +192,106 @@ class SEIClient:
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        print("\n[1] Buscando link de escolha de tipo...")
+        resp.raise_for_status()
 
-        action_url = self.get_link_by_action(
-            self.home_html, "procedimento_escolher_tipo"
-        )
+        payload2 = {"txtCodigoAcesso": "023127", "hdnAcao": "3"}
 
-        print("action_url:", action_url)
+        resp = self.session.post(self.LOGIN_URL, data=payload2)
 
-        if not action_url:
-            raise RuntimeError("Action link not found")
+        resp.raise_for_status()
 
-        print("\n[2] GET página de tipos...")
+        # home principal após redirecionamento
 
-        resp = self.session.get(action_url)
+        home_html = resp.text
 
-        texto_pagina = resp.text
+        soup = BeautifulSoup(home_html, "html.parser")
 
-        soup_tipos = BeautifulSoup(texto_pagina, "html.parser")
+        # página onde é escolhido o tipo de processo
 
-        with open("paginadetipos.html", "w", encoding="utf-8") as arquivo:
-            arquivo.write(BeautifulSoup.prettify())
+        url = ""
 
-        print("GET status:", resp.status_code)
-        print("GET url final:", resp.url)
+        for link in soup.find_all("a", href = True):
+            if link.get("link") == "procedimento_escolher_tipo":
+                url = urljoin(self.BASE_URL, link["href"])
 
-        resp.encoding = "iso-8859-1"
+        resp = self.session.get(url)
 
-        infra_hash_1 = self.extract_infra_hash(resp.text)
-        print("infra_hash extraído do GET tipos:", infra_hash_1)
+        home_html = resp.text
 
-        link = self.get_link_by_text(resp.text, type_name)
-        print("link extraído pelo texto:", link)
+        soup = BeautifulSoup(home_html, "html.parser")
 
-        if not link:
-            raise RuntimeError("Process type not found")
+        # with open("sei_teste.html", "w", encoding="UTF-8") as arquivo:
 
-        print("\n[3] POST procedimento_escolher_tipo...")
+        #     arquivo.write(home_html)
+
+        # PRECISO CAPTURAR O HASH DENTRO DO FORM ONDE ESTÁ A TABELA DO FORMULÁRIO.
+
+        form = soup.find("form", id='frmProcedimentoEscolherTipo')
+
+        action = form.get('action')
+
+        # SEPARA A URL OBTIDA DA ACTION
+        parsed = urlparse(action)
+
+        # CAPTURA O PARÂMETRO DESEJADO
+        params = parse_qs(parsed.query)
+
+        infra_hash = params["infra_hash"][0]
+
+        action_url = urljoin(self.BASE_URL, action)
+
+        resp = self.session.post(action_url, data=payload)
+
+        parsed = urlparse(resp.url)
+
+        # CAPTURA O PARÂMETRO DESEJADO
+        params = parse_qs(parsed.query)
+
+        infra_hash = params["infra_hash"][0]
+
+        table = soup.select_one("#tblTipoProcedimento")
+
+        result: list[dict[str, str]] = []
+
+        for link in table.find_all("a", href=True):
+            text_val = link.get_text(strip=True)
+            onclick = link.get("onclick", "")
+
+            m = re.search(r"escolher\((\d+)\)", onclick)
+            tipo_id_real = ''
+            if m:
+                tipo_id_real = m.group(1)
+            else:
+                tipo_id_real = None
+
+            # print(f"TIPO:::: {tipo_id_real}")
+            
+            result.append({"id": tipo_id_real, "text": text_val})
 
 
-        # https://sei.prf.gov.br/sei/controlador.php?acao=procedimento_escolher_tipo&infra_item_menu=26&
-        # infra_sistema=100000100&
-        # infra_unidade_atual=110000471&
-        # infra_hash=7641f6ce464f45ed3089e17ac5ea3f84b942605c3192baeaa7073dc15c917c96
+        payload = {'acao':'procedimento_escolher_tipo',
+                'acao_origem':'procedimento_escolher_tipo',
+                'infra_sistema':'100000100',
+                'infra_unidade_atual':'110000471',
+                'infra_hash': infra_hash,
+                'hdnIdTipoProcedimento': tipo_id_real
+                }
 
-        # https://sei.prf.gov.br/sei/controlador.php?acao=procedimento_escolher_tipo&infra_item_menu=26&i
-        # nfra_sistema=100000100&
-        # infra_unidade_atual=110000471&
-        # infra_hash=7641f6ce464f45ed3089e17ac5ea3f84b942605c3192baeaa7073dc15c917c96
-
-        # infra_hash extraído do GET tipos: 0c14a52640b811e71b55ee9a271f335b44e1c8dad93ef9229d0130617002643f
+        resp = self.session.post(action_url, data=payload)
 
 
-        POST = self.session.post(
-            "https://sei.prf.gov.br/sei/controlador.php",
-            data={
-                "acao": "procedimento_escolher_tipo",
-                "acao_origem": "procedimento_escolher_tipo",
-                "infra_sistema": "100000100",
-                "infra_unidade_atual": "110000471",
-                "infra_hash": infra_hash_1,
-                "id_tipo_procedimento": type_id
-            }
-        )
+        print("REDIRECIONOU PARA:", resp.url)
 
-        print("POST status:", POST.status_code)
-        print("POST url final:", POST.url)
-        print("POST history:", POST.history)
+        # 3. Extrair o novo infra_hash do redirect
+        parsed = urlparse(resp.url)
+        params = parse_qs(parsed.query)
+        novo_hash = params["infra_hash"][0]
 
-        infra_hash_2 = self.extract_infra_hash(POST.text)
-        print("infra_hash extraído do POST:", infra_hash_2)
 
-        print("\n[4] GET procedimento_gerar...")
+        print("NOVO HASH:", novo_hash)
 
-        GET = self.session.get(
-            "https://sei.prf.gov.br/sei/controlador.php",
-            params={
-                "acao": "procedimento_gerar",
-                "acao_origem": "procedimento_escolher_tipo",
-                "acao_retorno": "procedimento_escolher_tipo",
-                "id_tipo_procedimento": type_id,
-                "infra_sistema": "100000100",
-                "infra_unidade_atual": "110000471",
-                "infra_hash": infra_hash_2 or infra_hash_1
-            }
-        )
-
-        print("GET gerar status:", GET.status_code)
-        print("GET gerar url final:", GET.url)
-        print("GET gerar history:", GET.history)
-
-        GET.encoding = "iso-8859-1"
-
-        print("\n[5] Procurando formulário de cadastro...")
-
-        soup = BeautifulSoup(GET.text, "html.parser")
-        form = soup.select_one("#frmProcedimentoCadastro")
-
-        print("Form encontrado?", bool(form))
-
-        if not form:
-            print("\n===== HTML INTEIRO DA RESPOSTA =====\n")
-            print(GET.text[:3000])  # evita travar o terminal
-            raise RuntimeError("Form not found")
-
-        action = form.get("action")
-        print("Form action:", action)
-
-        if not action:
-            raise RuntimeError("Form action not found")
+        # 4. Agora essa página já é o formulário do processo NOVO
+        soup = BeautifulSoup(resp.text, "html.parser")
 
         post_url = urljoin(self.BASE_URL, action)
         print("Post URL final:", post_url)
