@@ -101,19 +101,16 @@ def criar_processo():
     user = User.query.get_or_404(get_jwt_identity())
     data = strip_strings(request.get_json() or {})
 
-    tipo_id = data.get("tipo_id")
     tipo_nome = data.get("tipo_nome")
     descricao = data.get("descricao")
-    unidade = data.get("unidade")
 
     if (
         not user.sei_session
         or not user.sei_home_html
-        or not tipo_id
         or not tipo_nome
         or not descricao
-        or not unidade
     ):
+        
         return jsonify({"msg": "Dados incompletos"}), 400
 
     session = requests.Session()
@@ -122,12 +119,8 @@ def criar_processo():
     client.home_html = user.sei_home_html
 
     try:
-        if client.get_current_unit() != unidade:
-            client.change_unit(unidade)
-            user.sei_home_html = client.home_html
-            db.session.commit()
-
-        resp = client.create_process(tipo_id, tipo_nome, descricao)
+    
+        resp = client.create_process( tipo_nome, descricao)
         resp.raise_for_status()
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):

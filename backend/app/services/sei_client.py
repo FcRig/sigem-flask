@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -41,6 +42,27 @@ class SEIClient:
         self.home_html = resp.text
 
         return self.home_html
+
+    
+    def encode_payload_sei(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        encoded = {}
+
+        for key, value in payload.items():
+            if value is None:
+                encoded[key] = value
+                continue
+
+            # só converte strings "humanas"
+            if isinstance(value, str):
+                try:
+                    encoded[key] = value.encode("iso-8859-1")
+                except UnicodeEncodeError:
+                    # se não der (emoji, etc), manda como está
+                    encoded[key] = value
+            else:
+                encoded[key] = value
+
+        return encoded
 
 
     def _normalize(self, text: str) -> str:
@@ -185,28 +207,12 @@ class SEIClient:
             result.append({"id": tipo_id_real, "text": text_val})
         return result
 
-    def create_process(self, type_id: str, type_name: str, description: str) -> requests.Response:
-
-        print("\n========== CREATE PROCESS START ==========")
+    def create_process(self, type_name: str, description: str) -> requests.Response:
 
         if not self.home_html:
             raise RuntimeError("Not logged in")
 
-        resp.raise_for_status()
-
-        payload2 = {"txtCodigoAcesso": "023127", "hdnAcao": "3"}
-
-        resp = self.session.post(self.LOGIN_URL, data=payload2)
-
-        resp.raise_for_status()
-
-        # home principal após redirecionamento
-
-        home_html = resp.text
-
-        soup = BeautifulSoup(home_html, "html.parser")
-
-        # página onde é escolhido o tipo de processo
+        soup = BeautifulSoup(self.home_html, "html.parser")
 
         url = ""
 
@@ -220,114 +226,73 @@ class SEIClient:
 
         soup = BeautifulSoup(home_html, "html.parser")
 
-        # with open("sei_teste.html", "w", encoding="UTF-8") as arquivo:
-
-        #     arquivo.write(home_html)
-
         # PRECISO CAPTURAR O HASH DENTRO DO FORM ONDE ESTÁ A TABELA DO FORMULÁRIO.
 
-        form = soup.find("form", id='frmProcedimentoEscolherTipo')
+        form = soup.find("form", id='frmProcedimentoEscolherTipo') # puxa a form
 
-        action = form.get('action')
+        action = form.get('action') #action da form
 
-        # SEPARA A URL OBTIDA DA ACTION
-        parsed = urlparse(action)
+        action_url = urljoin(self.BASE_URL, action) # cria a url da ACTION
 
-        # CAPTURA O PARÂMETRO DESEJADO
-        params = parse_qs(parsed.query)
+        parsed = urlparse(action) # SEPARA A URL OBTIDA DA ACTION em partes.
 
-        infra_hash = params["infra_hash"][0]
+        params = parse_qs(parsed.query) # CAPTURA somente a query da url e a insere
+        #em um dicionário separando cada parãmetro da query.
 
-        action_url = urljoin(self.BASE_URL, action)
-
-        resp = self.session.post(action_url, data=payload)
-
-        parsed = urlparse(resp.url)
-
-        # CAPTURA O PARÂMETRO DESEJADO
-        params = parse_qs(parsed.query)
-
-        infra_hash = params["infra_hash"][0]
-
+        infra_hash = params["infra_hash"][0] # isola o infrahash do dicionario
+                                        # no índice 0, pois cada valor do dicionário é uma lista.
+                                                                        
         table = soup.select_one("#tblTipoProcedimento")
 
-        result: list[dict[str, str]] = []
+        inputs = table.find("input", title = type_name)
 
-        for link in table.find_all("a", href=True):
-            text_val = link.get_text(strip=True)
-            onclick = link.get("onclick", "")
-
-            m = re.search(r"escolher\((\d+)\)", onclick)
-            tipo_id_real = ''
-            if m:
-                tipo_id_real = m.group(1)
-            else:
-                tipo_id_real = None
-
-            # print(f"TIPO:::: {tipo_id_real}")
-            
-            result.append({"id": tipo_id_real, "text": text_val})
-
+        id = inputs.get("value")
 
         payload = {'acao':'procedimento_escolher_tipo',
                 'acao_origem':'procedimento_escolher_tipo',
                 'infra_sistema':'100000100',
                 'infra_unidade_atual':'110000471',
                 'infra_hash': infra_hash,
-                'hdnIdTipoProcedimento': tipo_id_real
+                'hdnIdTipoProcedimento': id
                 }
-
+        
         resp = self.session.post(action_url, data=payload)
-
-
-        print("REDIRECIONOU PARA:", resp.url)
 
         # 3. Extrair o novo infra_hash do redirect
         parsed = urlparse(resp.url)
         params = parse_qs(parsed.query)
         novo_hash = params["infra_hash"][0]
 
-
-        print("NOVO HASH:", novo_hash)
-
         # 4. Agora essa página já é o formulário do processo NOVO
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        post_url = urljoin(self.BASE_URL, action)
-        print("Post URL final:", post_url)
+        action = soup.find("form",id='frmProcedimentoCadastro').get("action")
+        action_url = urljoin(self.BASE_URL, action)
 
-        assunto_default = (
-            "727"
-            if self._normalize(type_name)
-            == self._normalize("Multas: Auto de Infração - Cancelamento")
-            else "209"
-        )
 
-        payload = {
-            "hdnInfraTipoPagina": "1",
-            "rdoProtocolo": "A",
-            "selTipoProcedimento": type_id,
-            "txtDescricao": description,
-            "selGrauSigilo": "null",
-            "rdoNivelAcesso": "0",
-            "hdnFlagProcedimentoCadastro": "2",
-            "hdnIdTipoProcedimento": type_id,
-            "hdnNomeTipoProcedimento": type_name,
-            "hdnAssuntos": assunto_default,
-            "hdnSinIndividual": "N",
-            "hdnDtaGeracao": datetime.now().strftime("%d/%m/%Y"),
-        }
+        select = soup.find('select', id ='selAssuntos')
 
-        print("\n[6] Payload final:", payload)
+        option = select.find("option")
 
-        print("\n[7] POST final de criação...")
+        hdnAssuntos = option.get("value")
 
-        final_resp = self.session.post(post_url, data=payload)
+        payload = {'infra_hash': novo_hash,
+                'hdnInfraTipoPagina':'1',
+                'rdoProtocolo':'A',
+                'selTipoProcedimento':id,
+                'txtDescricao' : description,           
+                'selTipoPrioridade':'null',
+                'selGrauSigilo':'null',
+                'rdoNivelAcesso':'0',
+                'selHipoteseLegal':'null',
+                'hdnFlagProcedimentoCadastro':'2',
+                'hdnIdTipoProcedimento':id,
+                'hdnAssuntos': hdnAssuntos,
+                'hdnSinIndividual':'N',
+                'hdnDtaGeracao': datetime.now().strftime("%d/%m/%Y")
+                }
 
-        print("POST final status:", final_resp.status_code)
-        print("POST final url:", final_resp.url)
-        print("POST final history:", final_resp.history)
 
-        print("\n========== CREATE PROCESS END ==========")
+        payload = self.encode_payload_sei(payload=payload)
 
-        return final_resp
+        return self.session.post(action_url, data=payload)
