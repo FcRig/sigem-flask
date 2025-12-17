@@ -62,3 +62,31 @@ def test_register_rejects_duplicate_users(client, app):
     assert response.status_code == 400
     assert response.get_json() == {"msg": "Usuário já existe"}
 
+
+def test_update_user_persists_sessions(client, app):
+    with app.app_context():
+        user = create_user()
+        user_id = user.id
+
+    token = get_token(client)
+
+    payload = {
+        "autoprf_session": "jwt-session-token",
+        "sei_session": "sei-cookie",
+        "sei_home_html": "<html>sei</html>",
+    }
+
+    response = client.put(
+        f"/api/auth/users/{user_id}",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        updated = User.query.get(user_id)
+        assert updated.autoprf_session == "jwt-session-token"
+        assert updated.sei_session == "sei-cookie"
+        assert updated.sei_home_html == "<html>sei</html>"
+
