@@ -136,15 +136,9 @@ def update_user(user_id):
     if 'cpf' in data:
         user.cpf = data['cpf']
     if data.get('password'):
-        user.set_password(data['password'])
-    if 'autoprf_session' in data:
-        user.autoprf_session = data.get('autoprf_session')
+        user.set_password(data['password'])    
     if data.get('usuario_sei'):
-        user.usuario_sei = data['usuario_sei']
-    if 'sei_session' in data:
-        user.sei_session = data.get('sei_session')
-    if 'sei_home_html' in data:
-        user.sei_home_html = data.get('sei_home_html')
+        user.usuario_sei = data['usuario_sei']   
     db.session.commit()
     return jsonify({'msg': 'Usuário atualizado com sucesso.'}), 200
 
