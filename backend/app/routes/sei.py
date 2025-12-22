@@ -11,12 +11,13 @@ from ..utils import strip_strings
 
 bp = Blueprint("sei", __name__, url_prefix="/api/sei")
 
-
 @bp.route("/login", methods=["POST"])
 @jwt_required()
 def login():
     user = User.query.get_or_404(get_jwt_identity())
+
     data = strip_strings(request.get_json() or {})
+
     usuario = data.get("usuario") or data.get("usuario_sei") or user.usuario_sei
     senha = data.get("senha_sei") or data.get("password")
     token = data.get("token_sei") or data.get("token")
@@ -41,7 +42,9 @@ def login():
 @bp.route("/tipos", methods=["POST"])
 @jwt_required()
 def tipos_processo():
+
     """Retorna os tipos de processos disponíveis no SEI."""
+
     user = User.query.get_or_404(get_jwt_identity())
 
     if not user.sei_session or not user.sei_home_html:
@@ -138,16 +141,21 @@ def criar_processo():
 def procurarprocesso():
 
     user = User.query.get_or_404(get_jwt_identity())
+
+    if (
+        not user.sei_session
+        or not user.sei_home_html
+    ):
+        
+        return jsonify({"msg": "Sessão Expirada"}), 400
+
     data = request.get_json() or {}
     processo = data.get("processo")
-
 
     client = SEIClient()
 
     try:
         retorno = client.procurarProcesso(processo)
-
-       
 
         return jsonify(retorno), 200
 

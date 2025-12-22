@@ -2,16 +2,11 @@ from typing import Any, Dict
 import re
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse, parse_qs, urlencode
+from urllib.parse import urljoin, urlparse, parse_qs
 import unicodedata
 from datetime import datetime
 
-import time
-
-import undetected_chromedriver as uc
-
 class SEIClient:
-    """Client to handle authentication with the SEI system."""
 
     BASE_URL = "https://sei.prf.gov.br/sei/"
     LOGIN_URL = (
@@ -296,3 +291,12 @@ class SEIClient:
         payload = self.encode_payload_sei(payload=payload)
 
         return self.session.post(action_url, data=payload)
+
+    def search_process(self, processo) :
+        
+        if not self.home_html:
+            raise RuntimeError("Sessão inexistente")
+        
+        session = self.session
+
+

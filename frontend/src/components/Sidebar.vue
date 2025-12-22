@@ -119,9 +119,9 @@
           to="/sei/criar-processo"
         />
 
-        <v-list-item title="Criar Despacho" 
+        <v-list-item title="Procurar Processo" 
         prepend-icon="mdi-plus-box" 
-        to="/sei/criar-despacho" />
+        to="/sei/procurar-processo" />
 
 
       </v-list-group>
