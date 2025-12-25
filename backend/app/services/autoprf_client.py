@@ -1,3 +1,4 @@
+import json
 import requests
 from datetime import datetime
 import re
@@ -26,31 +27,19 @@ class AutoPRFClient:
         try:
             response = requests.post(f"{self.BASE_URL}/auth/login", json=payload)
             response.raise_for_status()
-            jwt = ""
 
-            try:
-                data = response.json() if response.content else {}
-            except ValueError:
-                data = {}
-
-            if isinstance(data, dict):
-                jwt = data.get("token") or data.get("jwt") or data.get("access_token") or ""
-                if not jwt and isinstance(data.get("data"), dict):
-                    nested = data["data"]
-
-                    jwt = (
-                        nested.get("token")
-                        or nested.get("jwt")
-                        or nested.get("access_token")
-                        or ""
-                    )
-
-            if not jwt:
-                jwt = response.text.strip()
-
-            if jwt.startswith('"') and jwt.endswith('"'):
-                jwt = jwt[1:-1].strip()
-
+            raw_token = response.text.strip()
+            jwt = raw_token
+            if raw_token:
+                try:
+                    json_start = raw_token.find("{")
+                    if json_start != -1:
+                        raw_token = raw_token[json_start:]
+                    parsed = json.loads(raw_token)
+                    if isinstance(parsed, dict) and parsed.get("accessToken"):
+                        jwt = parsed["accessToken"]
+                except json.JSONDecodeError:
+                    jwt = raw_token
             if not jwt or len(jwt) < 20:
                 raise ValueError("Token JWT ausente ou inválido.")
 
