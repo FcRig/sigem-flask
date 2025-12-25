@@ -55,6 +55,7 @@ def me():
             email=user.email,
             administrador=user.administrador,
             cpf=user.cpf,
+            autoprf_session=user.autoprf_session,
         ),
         200,
     )
@@ -139,6 +140,15 @@ def update_user(user_id):
         user.set_password(data['password'])    
     if data.get('usuario_sei'):
         user.usuario_sei = data['usuario_sei']   
+    # Persist session tokens that may be updated by the frontend or tests.
+    # These fields are stored as text in the model and should be allowed
+    # to be set via this endpoint when provided in the payload.
+    if 'autoprf_session' in data:
+        user.autoprf_session = data.get('autoprf_session')
+    if 'sei_session' in data:
+        user.sei_session = data.get('sei_session')
+    if 'sei_home_html' in data:
+        user.sei_home_html = data.get('sei_home_html')
     db.session.commit()
     return jsonify({'msg': 'Usuário atualizado com sucesso.'}), 200
 

@@ -33,6 +33,7 @@ def test_me_returns_user_details(client, app):
             "email": user.email,
             "administrador": user.administrador,
             "cpf": user.cpf,
+            "autoprf_session": None,
         }
 
     token = get_token(client)

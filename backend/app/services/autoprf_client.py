@@ -21,11 +21,36 @@ class AutoPRFClient:
             "token": token,
         }
 
+        print(token)
+
         try:
             response = requests.post(f"{self.BASE_URL}/auth/login", json=payload)
             response.raise_for_status()
+            jwt = ""
 
-            jwt = response.text.strip()
+            try:
+                data = response.json() if response.content else {}
+            except ValueError:
+                data = {}
+
+            if isinstance(data, dict):
+                jwt = data.get("token") or data.get("jwt") or data.get("access_token") or ""
+                if not jwt and isinstance(data.get("data"), dict):
+                    nested = data["data"]
+
+                    jwt = (
+                        nested.get("token")
+                        or nested.get("jwt")
+                        or nested.get("access_token")
+                        or ""
+                    )
+
+            if not jwt:
+                jwt = response.text.strip()
+
+            if jwt.startswith('"') and jwt.endswith('"'):
+                jwt = jwt[1:-1].strip()
+
             if not jwt or len(jwt) < 20:
                 raise ValueError("Token JWT ausente ou inválido.")
 
@@ -44,9 +69,12 @@ class AutoPRFClient:
 
     def pesquisa_auto_infracao(self, numero: str) -> dict:
         """Return data about an Auto de Infracao in the same structure used by the frontend."""
+        print('[AutoPRF] Pesquisando auto de infração:', numero)
         headers = {}
-        if self.jwt_token:
+        if self.jwt_token:            
             headers["Authorization"] = f"Bearer {self.jwt_token}"
+            print(headers["Authorization"])
+
         # First request retrieves the page information so we can obtain the
         # identifier of the auto de infração
         response = requests.get(
@@ -54,8 +82,10 @@ class AutoPRFClient:
             params={"numero": numero},
             headers=headers,
         )
+        print('[AutoPRF] Resposta da página:', response.status_code, response.text)
         response.raise_for_status()
-        data = response.json() if response.content else {}        
+        data = response.json() if response.content else {} 
+        print('[AutoPRF] Resposta da pesquisa:', data)       
         
         item = (data.get("items") or [{}])[0]
 
