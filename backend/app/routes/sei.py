@@ -140,27 +140,27 @@ def criar_processo():
 @jwt_required()
 def procurarprocesso():
 
-    user = User.query.get_or_404(get_jwt_identity())
+    # user = User.query.get_or_404(get_jwt_identity())
 
-    if (
-        not user.sei_session
-        or not user.sei_home_html
-    ):
+    # if (
+    #     not user.sei_session
+    #     or not user.sei_home_html
+    # ):
         
-        return jsonify({"msg": "Sessão Expirada"}), 400
+    #     return jsonify({"msg": "Sessão Expirada"}), 400
 
     data = request.get_json() or {}
     processo = data.get("processo")
 
-    client = SEIClient()
+    # client = SEIClient()
 
-    try:
-        retorno = client.procurarProcesso(processo)
+    # try:
+    #     retorno = client.procurarProcesso(processo)
 
-        return jsonify(retorno), 200
+    #     return jsonify(retorno), 200
 
-    except Exception as e:
-        print("ERRO procurarprocesso:", e)
-        return jsonify({"success": False, "msg": "erro_no_processo"}), 500
-    
+    # except Exception as e:
+    #     print("ERRO procurarprocesso:", e)
+    #     return jsonify({"success": False, "msg": "erro_no_processo"}), 500
 
+    return f'{processo}'

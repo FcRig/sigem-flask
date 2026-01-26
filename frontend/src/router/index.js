@@ -16,6 +16,7 @@ import ProcurarProcesso from '../views/procurar-processo/ProcurarProcesso.vue'
 import store from '../store'
 
 const routes = [
+  
   { path: '/login', component: Login, meta: { layout: 'auth', title: 'Login' } },
 
   { path: '/register', component: Register, meta: { layout: 'auth', title: 'Cadastro de Usuário' } },
