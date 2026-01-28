@@ -46,15 +46,15 @@ def login():
 @bp.route("/procurar-processo", methods=["POST"])
 @jwt_required()
 def procurarprocesso():
-    client = SEIClient()
 
-    user = User.query.get_or_404(get_jwt_identity())
-    cookies_lista = json.loads(user.sei_session)
-    url_home = json.loads(user.sei_home_url)
+    dados = request.get_json()
+    processo = dados.get('processo')
+    client = SEIClient()
     
-    print(cookies_lista, url_home)
     try:
-        client.pularLogin(cookies_lista,url_home)
+        response = client.search_process(processo)
+        return {'response': response}
+
     except Exception as e:
         print("aaaa")
         print(e)

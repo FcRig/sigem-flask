@@ -1,8 +1,8 @@
 import time
+from flask import request
 from typing import Any, Dict
 import re
 import requests
-from flask import jsonify
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qs
 import unicodedata
@@ -15,7 +15,7 @@ from selenium.webdriver.chrome.options import Options
 from flask_jwt_extended import get_jwt_identity
 
 import json
-from models import User
+from ..models import User
 
 
 class SEIClient:
@@ -35,7 +35,7 @@ class SEIClient:
         self.session = session or requests.Session()
         self.home_html: str | None = None
         self.cookies = cookies
-        self.driver = driver
+        self.driver = None
         self.wait = wait
         self.url_home_logada = url_home_logada
 
@@ -75,16 +75,12 @@ class SEIClient:
 
         self.cookies = cookies
 
-        for cookie in self.cookies:
-            print(cookie)
-
         url_home = resp.url
 
         self.url_home_logada = str(url_home)
 
         return {"cookies": self.cookies, "home_html": self.home_html, "url_home": url_home}
         
-
     def iniciar_driver(self, strategy="normal"):
         options = Options()
         options.page_load_strategy = "none"
@@ -104,26 +100,28 @@ class SEIClient:
         self.driver = webdriver.Chrome(options=options)
         self.wait = WebDriverWait(self.driver, timeout=15)
 
-    def open_session_sei(self, cookies, url_home):
+    def open_session_sei(self):
+
+        user = User.query.get_or_404(get_jwt_identity())
+        cookies_lista = json.loads(user.sei_session)
+        url_home = json.loads(user.sei_home_url)
+
         self.iniciar_driver(strategy="none")
 
         self.driver.get(f"{self.BASE_URL}sei/imagens/sei_logomarca.png")
         self.driver.execute_script("window.stop();")
         self.driver.delete_all_cookies()
 
-        for cookie in cookies:
+        for cookie in cookies_lista: 
             cookie.pop("expiry", None)
             try:
                 self.driver.add_cookie(cookie)
             except Exception as e:
                 print(f"Não foi possível injetar o cookie {cookie['name']}: {e}")
 
-        print(f"Tentando acessar Home com {len(cookies)} cookies injetados...")
+        print(f"Tentando acessar Home com {len(cookies_lista)} cookies injetados...")
+
         self.driver.get(url_home)
-
-        time.sleep(2)
-
-        print("ABRI O NAVEGADOR COM A SESSÃO")
 
     def encode_payload_sei(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         encoded = {}
@@ -376,16 +374,17 @@ class SEIClient:
 
         return self.session.post(action_url, data=payload)
     
-    def search_process(self, )
+    def search_process(self, processo: str):
+
+        dados = request.get_json()
+        processo = dados.get('processo')
         
-        
-        user = User.query.get_or_404(get_jwt_identity())
-        cookies_lista = json.loads(user.sei_session)
-        url_home = json.loads(user.sei_home_url)
-        
-        print(cookies_lista, url_home)
         try:
-            self.open_session_sei(cookies_lista,url_home)
+            self.open_session_sei()
+            barra_pesquisa = self.wait.until(EC.presence_of_element_located((By.ID, 'txtPesquisaRapida')))
+            barra_pesquisa.send_keys(processo)
+            self.driver.find_element(By.ID, 'spnInfraUnidade').click()
+
             
         except Exception as e:
             print("aaaa")
