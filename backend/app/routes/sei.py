@@ -9,7 +9,9 @@ from ..models import User
 from ..services.sei_client import SEIClient
 from ..utils import strip_strings
 
+
 bp = Blueprint("sei", __name__, url_prefix="/api/sei")
+
 
 @bp.route("/login", methods=["POST"])
 @jwt_required()
@@ -21,28 +23,48 @@ def login():
     usuario = data.get("usuario") or data.get("usuario_sei") or user.usuario_sei
     senha = data.get("senha_sei") or data.get("password")
     token = data.get("token_sei") or data.get("token")
+
     if not usuario or not senha or not token:
         return jsonify({"msg": "Credenciais inválidas"}), 400
 
     client = SEIClient()
     try:
-        client.login(usuario, senha, token)
+        response = client.login(usuario, senha, token)
+
     except requests.HTTPError:
         return jsonify({"msg": "Erro de autenticação no SEI"}), 401
 
-    user.sei_session = json.dumps(
-        requests.utils.dict_from_cookiejar(client.session.cookies)
-    )
+    user.sei_session = json.dumps(response["cookies"])
+    user.sei_home_url = json.dumps(response["url_home"])
+
     user.sei_home_html = client.home_html
     user.usuario_sei = usuario
     db.session.commit()
     return jsonify({"msg": "Autenticação SEI realizada com sucesso"}), 200
 
 
+@bp.route("/procurar-processo", methods=["POST"])
+@jwt_required()
+def procurarprocesso():
+    client = SEIClient()
+
+    user = User.query.get_or_404(get_jwt_identity())
+    cookies_lista = json.loads(user.sei_session)
+    url_home = json.loads(user.sei_home_url)
+    
+    print(cookies_lista, url_home)
+    try:
+        client.pularLogin(cookies_lista,url_home)
+    except Exception as e:
+        print("aaaa")
+        print(e)
+
+    return {"a": "su "}
+
+
 @bp.route("/tipos", methods=["POST"])
 @jwt_required()
 def tipos_processo():
-
     """Retorna os tipos de processos disponíveis no SEI."""
 
     user = User.query.get_or_404(get_jwt_identity())
@@ -107,13 +129,7 @@ def criar_processo():
     tipo_nome = data.get("tipo_nome")
     descricao = data.get("descricao")
 
-    if (
-        not user.sei_session
-        or not user.sei_home_html
-        or not tipo_nome
-        or not descricao
-    ):
-        
+    if not user.sei_session or not user.sei_home_html or not tipo_nome or not descricao:
         return jsonify({"msg": "Dados incompletos"}), 400
 
     session = requests.Session()
@@ -122,8 +138,7 @@ def criar_processo():
     client.home_html = user.sei_home_html
 
     try:
-    
-        resp = client.create_process( tipo_nome, descricao)
+        resp = client.create_process(tipo_nome, descricao)
         resp.raise_for_status()
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code in (401, 403):
@@ -134,33 +149,3 @@ def criar_processo():
         return jsonify({"msg": "Erro ao criar processo no SEI"}), 400
 
     return jsonify({"msg": "Processo criado com sucesso"}), 200
-
-
-@bp.route("/procurar-processo", methods=["POST"])
-@jwt_required()
-def procurarprocesso():
-
-    # user = User.query.get_or_404(get_jwt_identity())
-
-    # if (
-    #     not user.sei_session
-    #     or not user.sei_home_html
-    # ):
-        
-    #     return jsonify({"msg": "Sessão Expirada"}), 400
-
-    data = request.get_json() or {}
-    processo = data.get("processo")
-
-    # client = SEIClient()
-
-    # try:
-    #     retorno = client.procurarProcesso(processo)
-
-    #     return jsonify(retorno), 200
-
-    # except Exception as e:
-    #     print("ERRO procurarprocesso:", e)
-    #     return jsonify({"success": False, "msg": "erro_no_processo"}), 500
-
-    return f'{processo}'
